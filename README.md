@@ -2,7 +2,7 @@
 
 A top-down 2D naval shooter built with **React**, **TypeScript (strict)** and **PixiJS**. Navigate between islands, fight enemy ships and score points until the match ends.
 
-> Work in progress — this README is completed as features land. The original challenge statement lives in [docs/CHALLENGE.md](docs/CHALLENGE.md).
+> Work in progress — this README is completed as features land. The original challenge statement lives in [docs/CHALLENGE.md](docs/CHALLENGE.md); code conventions are in [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md).
 
 ## Tech stack
 
