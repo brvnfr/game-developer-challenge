@@ -21,9 +21,9 @@ import { fileURLToPath } from 'node:url';
 import { XMLParser } from 'fast-xml-parser';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const src = (...p: string[]) => join(root, 'assets', ...p);
-const outDir = join(root, 'public', 'assets', 'game');
-const generatedTs = join(root, 'src', 'game', 'render', 'assets', 'atlasFrames.generated.ts');
+const sourcePath = (...segments: string[]) => join(root, 'assets', ...segments);
+const outputDirectory = join(root, 'public', 'assets', 'game');
+const generatedTypesFile = join(root, 'src', 'game', 'render', 'assets', 'atlasFrames.generated.ts');
 
 interface Rect {
   x: number;
@@ -45,14 +45,14 @@ interface PixiAtlas {
   meta: { app: string; image: string; format: 'RGBA8888'; size: { w: number; h: number }; scale: string };
 }
 
-function pngSize(file: string): { w: number; h: number } {
-  const buf = readFileSync(file);
+function readPngSize(file: string): { w: number; h: number } {
+  const bytes = readFileSync(file);
   // PNG signature (8 bytes) + IHDR length/type (8 bytes) → width/height at offsets 16 and 20.
-  if (buf.readUInt32BE(12) !== 0x49484452) throw new Error(`${file} is not a PNG`);
-  return { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
+  if (bytes.readUInt32BE(12) !== 0x49484452) throw new Error(`${file} is not a PNG`);
+  return { w: bytes.readUInt32BE(16), h: bytes.readUInt32BE(20) };
 }
 
-function frame(x: number, y: number, w: number, h: number): PixiFrame {
+function createFrame(x: number, y: number, w: number, h: number): PixiFrame {
   return {
     frame: { x, y, w, h },
     rotated: false,
@@ -62,81 +62,99 @@ function frame(x: number, y: number, w: number, h: number): PixiFrame {
   };
 }
 
-function writeAtlas(name: string, image: string, imageSrc: string, frames: Record<string, PixiFrame>, scale: number) {
-  copyFileSync(imageSrc, join(outDir, image));
+function writeAtlas(
+  name: string,
+  image: string,
+  sourceImage: string,
+  frames: Record<string, PixiFrame>,
+  scale: number,
+) {
+  copyFileSync(sourceImage, join(outputDirectory, image));
   const atlas: PixiAtlas = {
     frames,
     meta: {
       app: 'pirate-battle/scripts/build-atlases.ts',
       image,
       format: 'RGBA8888',
-      size: pngSize(imageSrc),
+      size: readPngSize(sourceImage),
       scale: String(scale),
     },
   };
-  writeFileSync(join(outDir, `${name}.json`), `${JSON.stringify(atlas, null, 1)}\n`);
+  writeFileSync(join(outputDirectory, `${name}.json`), `${JSON.stringify(atlas, null, 1)}\n`);
   return Object.keys(frames);
 }
 
-function buildShips(): string[] {
+function buildShipsAtlas(): string[] {
   const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '' });
-  const xml = parser.parse(readFileSync(src('spritesheet', 'ships_miscellaneous_sheet.xml'), 'utf8')) as {
+  const xml = parser.parse(readFileSync(sourcePath('spritesheet', 'ships_miscellaneous_sheet.xml'), 'utf8')) as {
     TextureAtlas: { SubTexture: { name: string; x: string; y: string; width: string; height: string }[] };
   };
   const frames: Record<string, PixiFrame> = {};
-  for (const sub of xml.TextureAtlas.SubTexture) {
-    frames[sub.name.replace(/\.png$/, '')] = frame(Number(sub.x), Number(sub.y), Number(sub.width), Number(sub.height));
+  for (const subTexture of xml.TextureAtlas.SubTexture) {
+    frames[subTexture.name.replace(/\.png$/, '')] = createFrame(
+      Number(subTexture.x),
+      Number(subTexture.y),
+      Number(subTexture.width),
+      Number(subTexture.height),
+    );
   }
-  return writeAtlas('ships', 'ships.png', src('spritesheet', 'ships_miscellaneous_sheet.png'), frames, 1);
+  return writeAtlas('ships', 'ships.png', sourcePath('spritesheet', 'ships_miscellaneous_sheet.png'), frames, 1);
 }
 
-function buildTiles(file: string, name: string, tileSize: number, scale: number): string[] {
-  const size = pngSize(src('tilesheet', file));
-  const cols = size.w / tileSize;
+function buildTilesAtlas(file: string, name: string, tileSize: number, scale: number): string[] {
+  const size = readPngSize(sourcePath('tilesheet', file));
+  const columns = size.w / tileSize;
   const rows = size.h / tileSize;
   const frames: Record<string, PixiFrame> = {};
-  for (let i = 0; i < cols * rows; i++) {
-    frames[`tile_${i + 1}`] = frame((i % cols) * tileSize, Math.floor(i / cols) * tileSize, tileSize, tileSize);
+  for (let index = 0; index < columns * rows; index++) {
+    frames[`tile_${index + 1}`] = createFrame(
+      (index % columns) * tileSize,
+      Math.floor(index / columns) * tileSize,
+      tileSize,
+      tileSize,
+    );
   }
-  return writeAtlas(name, `${name}.png`, src('tilesheet', file), frames, scale);
+  return writeAtlas(name, `${name}.png`, sourcePath('tilesheet', file), frames, scale);
 }
 
-function buildUi(file: string, name: string, scale: number): string[] {
-  const json = JSON.parse(readFileSync(src('spritesheet', file), 'utf8')) as {
+function buildUiAtlas(file: string, name: string, scale: number): string[] {
+  const json = JSON.parse(readFileSync(sourcePath('spritesheet', file), 'utf8')) as {
     frames: Record<string, PixiFrame & { ui?: unknown }>;
     meta: { image: string };
   };
   const frames: Record<string, PixiFrame> = {};
-  for (const [key, value] of Object.entries(json.frames)) {
-    const { ui: _ui, ...rest } = value;
-    frames[key] = rest;
+  for (const [frameName, frameData] of Object.entries(json.frames)) {
+    const { ui: _uiMetadata, ...pixiFrame } = frameData;
+    frames[frameName] = pixiFrame;
   }
-  return writeAtlas(name, `${name}.png`, src('spritesheet', json.meta.image), frames, scale);
+  return writeAtlas(name, `${name}.png`, sourcePath('spritesheet', json.meta.image), frames, scale);
 }
 
-function union(name: string, keys: string[]): string {
-  const sorted = [...keys].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
-  return `export const ${name} = [\n${sorted.map((k) => `  '${k}',`).join('\n')}\n] as const;\n`;
+function renderFrameList(name: string, frameNames: string[]): string {
+  const sorted = [...frameNames].sort((first, second) => first.localeCompare(second, 'en', { numeric: true }));
+  return `export const ${name} = [\n${sorted.map((frameName) => `  '${frameName}',`).join('\n')}\n] as const;\n`;
 }
 
-mkdirSync(outDir, { recursive: true });
-const ships = buildShips();
-const tiles1 = buildTiles('tiles_sheet.png', 'tiles@1x', 64, 1);
-const tiles2 = buildTiles('tiles_sheet_retina.png', 'tiles@2x', 128, 2);
-const ui1 = buildUi('ui_sheet.json', 'ui@1x', 1);
-const ui2 = buildUi('ui_sheet_retina.json', 'ui@2x', 2);
-if (tiles1.length !== tiles2.length || ui1.length !== ui2.length) throw new Error('1× and 2× atlases differ');
+mkdirSync(outputDirectory, { recursive: true });
+const shipFrames = buildShipsAtlas();
+const tileFrames = buildTilesAtlas('tiles_sheet.png', 'tiles@1x', 64, 1);
+const retinaTileFrames = buildTilesAtlas('tiles_sheet_retina.png', 'tiles@2x', 128, 2);
+const uiFrames = buildUiAtlas('ui_sheet.json', 'ui@1x', 1);
+const retinaUiFrames = buildUiAtlas('ui_sheet_retina.json', 'ui@2x', 2);
+if (tileFrames.length !== retinaTileFrames.length || uiFrames.length !== retinaUiFrames.length) {
+  throw new Error('1× and 2× atlases differ');
+}
 
 writeFileSync(
-  generatedTs,
+  generatedTypesFile,
   [
     '// AUTO-GENERATED by scripts/build-atlases.ts — do not edit by hand. Run `npm run assets`.\n',
-    union('SHIP_FRAMES', ships),
-    union('TILE_FRAMES', tiles1),
-    union('UI_FRAMES', ui1),
+    renderFrameList('SHIP_FRAMES', shipFrames),
+    renderFrameList('TILE_FRAMES', tileFrames),
+    renderFrameList('UI_FRAMES', uiFrames),
     'export type ShipFrame = (typeof SHIP_FRAMES)[number];',
     'export type TileFrame = (typeof TILE_FRAMES)[number];',
     'export type UiFrame = (typeof UI_FRAMES)[number];\n',
   ].join('\n'),
 );
-console.info(`Atlases written: ships(${ships.length}) tiles(${tiles1.length}) ui(${ui1.length})`);
+console.info(`Atlases written: ships(${shipFrames.length}) tiles(${tileFrames.length}) ui(${uiFrames.length})`);
