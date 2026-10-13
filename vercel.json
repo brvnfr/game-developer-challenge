@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [{ "source": "/((?!assets/|mockServiceWorker\\.js).*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/mockServiceWorker.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" },
+        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
+      ]
+    }
+  ]
+}
