@@ -1,0 +1,87 @@
+import { describe, expect, it } from 'vitest';
+import { Vector2 } from '@/game/core/math/Vector2';
+import { Arena } from './Arena';
+import type { ArenaDefinition } from './ArenaDefinition';
+import { DEFAULT_ARENA } from './defaultArena';
+
+const TINY_ARENA: ArenaDefinition = {
+  id: 'tiny',
+  tileSize: 10,
+  tiles: ['.....', '.##..', '.##..', '.....'],
+  playerStart: { column: 4.5, row: 0.5 },
+  playerStartHeading: 0,
+};
+
+describe('Arena', () => {
+  it('merges land tiles into rectangular colliders', () => {
+    const arena = new Arena(TINY_ARENA);
+    expect(arena.width).toBe(50);
+    expect(arena.height).toBe(40);
+    expect(arena.islandColliders).toEqual([{ minX: 10, minY: 10, maxX: 30, maxY: 30 }]);
+  });
+
+  it('builds colliders that cover exactly the land tiles of the default arena', () => {
+    const arena = new Arena(DEFAULT_ARENA);
+    const landTileCount = DEFAULT_ARENA.tiles
+      .join('')
+      .split('')
+      .filter((tile) => tile === '#').length;
+    const colliderArea = arena.islandColliders.reduce(
+      (area, box) => area + (box.maxX - box.minX) * (box.maxY - box.minY),
+      0,
+    );
+    expect(colliderArea).toBe(landTileCount * 64 * 64);
+    for (let row = 0; row < arena.rows; row++) {
+      for (let column = 0; column < arena.columns; column++) {
+        const tileCenter = new Vector2((column + 0.5) * 64, (row + 0.5) * 64);
+        const isInsideCollider = arena.islandColliders.some(
+          (box) =>
+            tileCenter.x > box.minX && tileCenter.x < box.maxX && tileCenter.y > box.minY && tileCenter.y < box.maxY,
+        );
+        expect(isInsideCollider).toBe(arena.isLandTile(column, row));
+      }
+    }
+  });
+
+  it('rejects malformed definitions', () => {
+    expect(() => new Arena({ ...TINY_ARENA, tiles: ['...', '..'] })).toThrow();
+    expect(() => new Arena({ ...TINY_ARENA, tiles: ['.x.'] })).toThrow();
+    expect(() => new Arena({ ...TINY_ARENA, tiles: [] })).toThrow();
+  });
+
+  it('reports circles blocked by land or by the arena edge', () => {
+    const arena = new Arena(TINY_ARENA);
+    expect(arena.isCircleBlocked(new Vector2(20, 20), 2)).toBe(true);
+    expect(arena.isCircleBlocked(new Vector2(45, 35), 3)).toBe(false);
+    expect(arena.isCircleBlocked(new Vector2(2, 20), 3)).toBe(true);
+  });
+
+  it('pushes a circle out of an island and back inside the bounds', () => {
+    const arena = new Arena(TINY_ARENA);
+    const fromIsland = arena.resolveCircle(new Vector2(33, 20), 5);
+    expect(fromIsland.touchedIsland).toBe(true);
+    expect(fromIsland.position.x).toBeCloseTo(35);
+    expect(arena.isCircleBlocked(fromIsland.position, 5 - 1e-6)).toBe(false);
+    const fromOutside = arena.resolveCircle(new Vector2(-10, 38), 3);
+    expect(fromOutside.touchedBounds).toBe(true);
+    expect(fromOutside.position).toEqual(new Vector2(3, 37));
+  });
+
+  it('measures free distance against land and bounds', () => {
+    const arena = new Arena(TINY_ARENA);
+    expect(arena.measureClearance(new Vector2(5, 20), 0, 100)).toBeCloseTo(5);
+    expect(arena.measureClearance(new Vector2(45, 35), Math.PI / 2, 100)).toBeCloseTo(5);
+    expect(arena.measureClearance(new Vector2(45, 5), Math.PI, 20)).toBeCloseTo(20);
+  });
+
+  it('computes line of sight across islands', () => {
+    const arena = new Arena(TINY_ARENA);
+    expect(arena.hasLineOfSight(new Vector2(5, 20), new Vector2(45, 20))).toBe(false);
+    expect(arena.hasLineOfSight(new Vector2(5, 5), new Vector2(45, 5))).toBe(true);
+  });
+
+  it('starts the player on open water, away from islands', () => {
+    const arena = new Arena(DEFAULT_ARENA);
+    expect(arena.isCircleBlocked(arena.playerStart, 40)).toBe(false);
+  });
+});
