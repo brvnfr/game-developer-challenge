@@ -1,0 +1,8 @@
+assets/
+public/
+dist/
+coverage/
+playwright-report/
+test-results/
+package-lock.json
+docs/CHALLENGE.md
