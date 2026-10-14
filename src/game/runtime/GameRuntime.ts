@@ -25,6 +25,8 @@ export interface GameRuntimeOptions extends MatchFactoryOptions {
 }
 
 const MANUAL_TIME_CHUNK_SECONDS = 0.1;
+/** The final explosion keeps playing this long before the result screen replaces the arena. */
+const RESULT_REVEAL_DELAY_SECONDS = 1.5;
 const WATER_BACKGROUND = 0x2c8fc9;
 
 /**
@@ -52,6 +54,7 @@ export class GameRuntime {
   private session: MatchSession;
   private timeSource: TimeSource;
   private hasReportedResult = false;
+  private secondsSinceEnd = 0;
   private disposed = false;
 
   constructor(private readonly options: GameRuntimeOptions) {
@@ -153,6 +156,7 @@ export class GameRuntime {
   restart(settings: UserSettings = this.options.settings): void {
     this.session = this.matches.create(settings);
     this.hasReportedResult = false;
+    this.secondsSinceEnd = 0;
     this.clock.discardPendingTime();
     this.input.clear();
     this.keyboard.isAcceptingActions = true;
@@ -225,15 +229,20 @@ export class GameRuntime {
     this.scene?.handleEvents(this.session.drainEvents());
     this.scene?.render(this.clock.interpolationFactor, this.session.status === 'paused' ? 0 : frameSeconds);
     this.publish();
-    this.reportResultOnce();
+    if (this.session.status === 'ended') this.handleEndedFrame(frameSeconds);
   }
 
-  private reportResultOnce(): void {
+  /** Stops input as soon as the match ends, then reports the result once the final effects have played. */
+  private handleEndedFrame(frameSeconds: number): void {
     const result = this.session.result;
     if (!result || this.hasReportedResult) return;
+    if (this.secondsSinceEnd === 0) {
+      this.keyboard.isAcceptingActions = false;
+      this.input.clear();
+    }
+    this.secondsSinceEnd += frameSeconds;
+    if (this.secondsSinceEnd < RESULT_REVEAL_DELAY_SECONDS) return;
     this.hasReportedResult = true;
-    this.keyboard.isAcceptingActions = false;
-    this.input.clear();
     this.options.onMatchEnded?.(result);
   }
 

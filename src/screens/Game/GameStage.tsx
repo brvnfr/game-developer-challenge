@@ -7,7 +7,9 @@ import { useExternalStore } from '@/game/bridge/useExternalStore';
 import { Hud } from '@/ui/hud/Hud';
 import { TouchControls } from '@/ui/touch/TouchControls';
 import type { TestModeOptions } from '@/testing/testMode';
+import { useMediaQuery } from '@/ui/useMediaQuery';
 import { PauseOverlay } from './PauseOverlay';
+import { RotateDeviceNotice } from './RotateDeviceNotice';
 
 interface GameStageProps {
   readonly textures: GameTextures;
@@ -75,7 +77,7 @@ const PAUSE_REASON_TEXT: Record<string, string> = {
   manual: 'Take a breath, captain.',
   blur: 'The game paused because the window lost focus.',
   hidden: 'The game paused because the tab was hidden.',
-  orientation: 'Rotate your device to landscape to keep playing.',
+  orientation: 'The game paused while your device was in portrait.',
 };
 
 function GameOverlays({
@@ -88,6 +90,13 @@ function GameOverlays({
   readonly onExitToMenu: () => void;
 }) {
   const match = useExternalStore(runtime.store);
+  const isPortrait = useMediaQuery('(orientation: portrait)');
+  const mustRotate = showTouchControls && isPortrait;
+  useEffect(() => {
+    if (mustRotate) runtime.pause('orientation');
+  }, [mustRotate, runtime]);
+
+  if (mustRotate) return <RotateDeviceNotice onMainMenu={onExitToMenu} />;
   return (
     <>
       <Hud store={runtime.store} onPause={() => runtime.pause('manual')} />
