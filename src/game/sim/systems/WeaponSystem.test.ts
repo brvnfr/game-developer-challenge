@@ -25,7 +25,7 @@ describe('WeaponSystem', () => {
     weapons.update(context);
     expect(context.world.projectiles).toHaveLength(1);
     const [projectile] = context.world.projectiles;
-    expect(projectile?.position.y).toBeGreaterThan(300 + ship.radius);
+    expect(projectile?.position.y).toBeGreaterThan(300 + ship.boundingRadius);
     expect(projectile?.velocity.normalized().y).toBeCloseTo(1);
     expect(projectile?.faction).toBe('player');
   });

@@ -6,8 +6,8 @@ import type { SimulationSystem } from './SimulationSystem';
 const SCRAPE_SPEED_RETENTION = 0.85;
 
 /**
- * Integrates rotation and forward motion of living ships, then resolves contact with islands and
- * arena bounds (ships slide along them). Ships only move forward, as required for the player.
+ * Integrates rotation and forward motion of living ships, then keeps the whole hull out of islands and
+ * inside the arena (ships slide along obstacles). Ships only move forward, as required for the player.
  */
 export class MovementSystem implements SimulationSystem {
   update(context: SimulationContext): void {
@@ -18,7 +18,7 @@ export class MovementSystem implements SimulationSystem {
   }
 
   private move(ship: Ship, context: SimulationContext): void {
-    const { stepSeconds, arena } = context;
+    const { stepSeconds } = context;
     ship.heading += ship.turnInput * ship.turnSpeed * stepSeconds;
 
     const targetSpeed = ship.throttle * ship.maxSpeed;
@@ -27,11 +27,10 @@ export class MovementSystem implements SimulationSystem {
         ? Math.min(targetSpeed, ship.speed + ship.acceleration * stepSeconds)
         : Math.max(targetSpeed, ship.speed - ship.deceleration * stepSeconds);
 
-    const resolution = arena.resolveCircle(
+    const hasTouchedObstacle = context.hullPlacement.place(
+      ship,
       ship.position.add(ship.forward.scale(ship.speed * stepSeconds)),
-      ship.radius,
     );
-    ship.position = resolution.position;
-    if (resolution.touchedIsland || resolution.touchedBounds) ship.speed *= SCRAPE_SPEED_RETENTION;
+    if (hasTouchedObstacle) ship.speed *= SCRAPE_SPEED_RETENTION;
   }
 }

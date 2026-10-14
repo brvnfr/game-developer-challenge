@@ -4,6 +4,7 @@ import type { Arena } from '../arena/Arena';
 import { DamageResolver } from '../DamageResolver';
 import type { Ship } from '../entities/Ship';
 import { EventQueue } from '../events/EventQueue';
+import { HullPlacement } from '../HullPlacement';
 import type { GameEvent, MatchEndReason, PauseReason } from '../events/GameEvent';
 import { IDLE_COMMANDS, type PlayerCommands } from '../PlayerCommands';
 import { ShipFactory } from '../ShipFactory';
@@ -73,6 +74,7 @@ export class MatchSession {
       random: new SeededRandom(options.seed),
       damage: new DamageResolver(this.world, this.events),
       ships,
+      hullPlacement: new HullPlacement(this.arena),
       stepSeconds: this.config.match.stepSeconds,
     };
     this.spawnSystem = new SpawnSystem(this.config);

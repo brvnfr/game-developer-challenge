@@ -42,7 +42,10 @@ export class SteeringNavigator {
     }
 
     const distanceToTarget = ship.position.distanceTo(target);
-    const lookahead = Math.min(distanceToTarget, Math.max(MIN_LOOKAHEAD, ship.speed * LOOKAHEAD_SECONDS) + ship.radius);
+    const lookahead = Math.min(
+      distanceToTarget,
+      Math.max(MIN_LOOKAHEAD, ship.speed * LOOKAHEAD_SECONDS) + ship.boundingRadius,
+    );
     const heading = this.chooseHeading(ship, ship.position.angleTo(target), lookahead, context);
     const headingError = angleDifference(ship.heading, heading);
     ship.setControls(
@@ -72,7 +75,7 @@ export class SteeringNavigator {
   private isHeadingClear(ship: Ship, heading: number, lookahead: number, context: SimulationContext): boolean {
     const sideOffset = Vector2.fromAngle(heading)
       .leftPerpendicular()
-      .scale(ship.radius * HULL_FEELER_OFFSET);
+      .scale(ship.hullRadius * HULL_FEELER_OFFSET);
     const feelerOrigins = [ship.position, ship.position.add(sideOffset), ship.position.subtract(sideOffset)];
     return feelerOrigins.every(
       (origin) => context.arena.measureClearance(origin, heading, lookahead) >= lookahead - CLEARANCE_TOLERANCE,

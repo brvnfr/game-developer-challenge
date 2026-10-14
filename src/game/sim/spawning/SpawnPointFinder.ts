@@ -13,6 +13,7 @@ const ARENA_EDGES: readonly ArenaEdge[] = ['top', 'right', 'bottom', 'left'];
 export class SpawnPointFinder {
   constructor(private readonly rules: SpawnConfig) {}
 
+  /** `radius` encloses the whole hull of the ship to spawn. */
   find(radius: number, playerPosition: Vector2, context: SimulationContext): Vector2 | null {
     for (let attempt = 0; attempt < this.rules.maxAttempts; attempt++) {
       const candidate = this.randomEdgePoint(radius, context);
@@ -32,7 +33,7 @@ export class SpawnPointFinder {
       candidate.distanceTo(playerPosition) >= minDistanceFromPlayer &&
       !context.arena.isCircleBlocked(candidate, radius + clearance) &&
       context.world.ships.every(
-        (ship) => !ship.isAlive || ship.position.distanceTo(candidate) >= ship.radius + radius + clearance,
+        (ship) => !ship.isAlive || ship.position.distanceTo(candidate) >= ship.boundingRadius + radius + clearance,
       )
     );
   }

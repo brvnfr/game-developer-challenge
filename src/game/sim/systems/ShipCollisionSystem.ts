@@ -1,4 +1,4 @@
-import type { Ship } from '../entities/Ship';
+import type { HullContact, Ship } from '../entities/Ship';
 import type { SimulationContext } from '../SimulationContext';
 import type { SimulationSystem } from './SimulationSystem';
 
@@ -13,12 +13,14 @@ export class ShipCollisionSystem implements SimulationSystem {
       for (let second = first + 1; second < ships.length; second++) {
         const shipA = ships[first];
         const shipB = ships[second];
-        if (shipA?.isAlive && shipB?.isAlive && shipA.overlaps(shipB)) this.resolveContact(shipA, shipB, context);
+        if (!shipA?.isAlive || !shipB?.isAlive) continue;
+        const contact = shipA.findContactWith(shipB);
+        if (contact) this.resolveContact(shipA, shipB, contact, context);
       }
     }
   }
 
-  private resolveContact(shipA: Ship, shipB: Ship, context: SimulationContext): void {
+  private resolveContact(shipA: Ship, shipB: Ship, contact: HullContact, context: SimulationContext): void {
     const chaser = [shipA, shipB].find((ship) => ship.kind === 'chaser');
     const player = [shipA, shipB].find((ship) => ship.kind === 'player');
     if (chaser && player) {
@@ -26,21 +28,13 @@ export class ShipCollisionSystem implements SimulationSystem {
       context.damage.applyDamage(player, chaser.ramDamage, 'ram');
       return;
     }
-    this.separate(shipA, shipB, context);
+    this.separate(shipA, shipB, contact, context);
   }
 
-  private separate(shipA: Ship, shipB: Ship, context: SimulationContext): void {
-    const offset = shipB.position.subtract(shipA.position);
-    const distance = offset.length;
-    const direction = distance > 1e-6 ? offset.scale(1 / distance) : shipA.forward;
-    const halfOverlap = (shipA.radius + shipB.radius - distance) / 2;
-    shipA.position = context.arena.resolveCircle(
-      shipA.position.subtract(direction.scale(halfOverlap)),
-      shipA.radius,
-    ).position;
-    shipB.position = context.arena.resolveCircle(
-      shipB.position.add(direction.scale(halfOverlap)),
-      shipB.radius,
-    ).position;
+  /** Pushes both hulls apart along the deepest contact, then keeps them out of islands. */
+  private separate(shipA: Ship, shipB: Ship, contact: HullContact, context: SimulationContext): void {
+    const halfPush = contact.normal.scale(contact.depth / 2);
+    context.hullPlacement.place(shipA, shipA.position.subtract(halfPush));
+    context.hullPlacement.place(shipB, shipB.position.add(halfPush));
   }
 }

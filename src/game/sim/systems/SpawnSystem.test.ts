@@ -47,7 +47,7 @@ describe('SpawnSystem', () => {
       expect(enemy.position.distanceTo(player.position)).toBeGreaterThanOrEqual(
         context.config.spawn.minDistanceFromPlayer,
       );
-      expect(context.arena.isCircleBlocked(enemy.position, enemy.radius)).toBe(false);
+      expect(context.hullPlacement.isBlocked(enemy)).toBe(false);
     }
   });
 

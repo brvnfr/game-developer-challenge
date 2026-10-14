@@ -7,6 +7,7 @@ import { Arena } from '../arena/Arena';
 import type { ArenaDefinition } from '../arena/ArenaDefinition';
 import { DamageResolver } from '../DamageResolver';
 import { EventQueue } from '../events/EventQueue';
+import { HullPlacement } from '../HullPlacement';
 import type { GameEvent, GameEventOf, GameEventType } from '../events/GameEvent';
 import { ShipFactory } from '../ShipFactory';
 import type { SimulationContext } from '../SimulationContext';
@@ -49,14 +50,16 @@ export function createTestContext(
 ): SimulationContext {
   const world = new World();
   const events = new EventQueue();
+  const arena = new Arena(definition);
   return {
     world,
-    arena: new Arena(definition),
+    arena,
     config,
     events,
     random: new SeededRandom(seed),
     damage: new DamageResolver(world, events),
     ships: new ShipFactory(world, config),
+    hullPlacement: new HullPlacement(arena),
     stepSeconds: config.match.stepSeconds,
   };
 }

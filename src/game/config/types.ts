@@ -15,8 +15,10 @@ export interface ShipStats {
   readonly deceleration: number;
   /** Rotation speed (rad/s). */
   readonly turnSpeed: number;
-  /** Collision circle radius (px). */
-  readonly radius: number;
+  /** Half the width of the hull (px). The hull is modelled as three circles of this radius along the keel. */
+  readonly hullRadius: number;
+  /** Bow-to-stern length of the hull (px), matching the ship art. */
+  readonly hullLength: number;
 }
 
 export interface WeaponStats {

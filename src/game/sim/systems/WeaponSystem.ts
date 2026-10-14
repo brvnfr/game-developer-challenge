@@ -5,8 +5,8 @@ import { isBroadside, type Weapon } from '../entities/Weapon';
 import type { SimulationContext } from '../SimulationContext';
 import type { SimulationSystem } from './SimulationSystem';
 
-/** Broadside projectiles leave from this fraction of the hull radius, on the firing side. */
-const BROADSIDE_MUZZLE_OFFSET = 0.6;
+/** Broadside projectiles leave from this fraction of the hull half-width, on the firing side. */
+const BROADSIDE_MUZZLE_OFFSET = 0.8;
 /** Gap between the bow and a front projectile when it spawns (px). */
 const BOW_MUZZLE_GAP = 2;
 
@@ -32,7 +32,7 @@ export class WeaponSystem implements SimulationSystem {
     const muzzles =
       (weapon.slot === 'left' || weapon.slot === 'right') && isBroadside(weapon.stats)
         ? this.broadsideMuzzles(ship, weapon.slot, weapon.stats.projectileCount, weapon.stats.projectileSpacing)
-        : [{ origin: ship.position.add(forward.scale(ship.radius + BOW_MUZZLE_GAP)), direction: forward }];
+        : [{ origin: ship.position.add(forward.scale(ship.boundingRadius + BOW_MUZZLE_GAP)), direction: forward }];
 
     const projectiles = muzzles.map(({ origin, direction }) =>
       context.world.addProjectile(
@@ -70,7 +70,7 @@ export class WeaponSystem implements SimulationSystem {
     const forward = ship.forward;
     const left = forward.leftPerpendicular();
     const direction = side === 'left' ? left : left.scale(-1);
-    const sideOrigin = ship.position.add(direction.scale(ship.radius * BROADSIDE_MUZZLE_OFFSET));
+    const sideOrigin = ship.position.add(direction.scale(ship.hullRadius * BROADSIDE_MUZZLE_OFFSET));
     return Array.from({ length: count }, (_, index) => ({
       origin: sideOrigin.add(forward.scale((index - (count - 1) / 2) * spacing)),
       direction,

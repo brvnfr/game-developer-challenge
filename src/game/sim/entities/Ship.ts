@@ -19,6 +19,12 @@ export interface ShipOptions {
   readonly speedMultiplier?: number;
 }
 
+export interface HullContact {
+  /** Unit vector pointing from this ship towards the other one at the deepest contact. */
+  readonly normal: Vector2;
+  readonly depth: number;
+}
+
 export interface DamageOutcome {
   readonly applied: number;
   readonly wasDestroyed: boolean;
@@ -29,7 +35,11 @@ export class Ship {
   readonly id: number;
   readonly kind: ShipKind;
   readonly faction: Faction;
-  readonly radius: number;
+  /** Half the hull width; every hull circle has this radius. */
+  readonly hullRadius: number;
+  readonly hullLength: number;
+  /** Radius of a circle enclosing the whole hull (half its length). */
+  readonly boundingRadius: number;
   readonly maxHealth: number;
   readonly maxSpeed: number;
   readonly acceleration: number;
@@ -58,7 +68,9 @@ export class Ship {
     this.id = options.id;
     this.kind = options.kind;
     this.faction = factionOf(options.kind);
-    this.radius = options.stats.radius;
+    this.hullRadius = options.stats.hullRadius;
+    this.hullLength = options.stats.hullLength;
+    this.boundingRadius = options.stats.hullLength / 2;
     this.maxHealth = options.stats.maxHealth;
     this.maxSpeed = options.stats.maxSpeed * speedMultiplier;
     this.acceleration = options.stats.acceleration * speedMultiplier;
@@ -119,8 +131,34 @@ export class Ship {
     return this.faction !== other.faction;
   }
 
+  /**
+   * Centres of the three circles that model the hull (stern, midship, bow) for a given pose.
+   * Together they cover the hull from bow to stern, matching the ship art.
+   */
+  hullCircleCenters(position: Vector2 = this.position, heading: number = this.heading): Vector2[] {
+    const keelOffset = Math.max(0, this.hullLength / 2 - this.hullRadius);
+    const forward = Vector2.fromAngle(heading);
+    return [position.subtract(forward.scale(keelOffset)), position, position.add(forward.scale(keelOffset))];
+  }
+
+  /** Deepest overlap between the two hulls, or null when they do not touch. */
+  findContactWith(other: Ship): HullContact | null {
+    const contactDistance = this.hullRadius + other.hullRadius;
+    let deepest: HullContact | null = null;
+    for (const ownCenter of this.hullCircleCenters()) {
+      for (const otherCenter of other.hullCircleCenters()) {
+        const offset = otherCenter.subtract(ownCenter);
+        const depth = contactDistance - offset.length;
+        if (depth > 0 && (deepest === null || depth > deepest.depth)) {
+          deepest = { normal: offset.length > 1e-6 ? offset.normalized() : this.forward, depth };
+        }
+      }
+    }
+    return deepest;
+  }
+
   overlaps(other: Ship): boolean {
-    return this.position.distanceTo(other.position) < this.radius + other.radius;
+    return this.findContactWith(other) !== null;
   }
 
   /** Applies damage once; health never goes below zero. Destroyed ships ignore further damage. */

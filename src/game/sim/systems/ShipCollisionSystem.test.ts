@@ -25,12 +25,30 @@ describe('ShipCollisionSystem', () => {
     expect(player.health).toBe(player.maxHealth);
   });
 
-  it('separates other overlapping ships', () => {
+  it('separates other overlapping ships side by side in one step', () => {
     const context = createTestContext();
     const first = context.ships.createShooter(new Vector2(300, 300), 0);
-    const second = context.ships.createShooter(new Vector2(310, 300), 0);
+    const second = context.ships.createShooter(new Vector2(300, 310), 0);
     collisions.update(context);
-    expect(first.position.distanceTo(second.position)).toBeCloseTo(first.radius + second.radius);
+    expect(first.position.distanceTo(second.position)).toBeCloseTo(first.hullRadius + second.hullRadius);
+    expect(first.overlaps(second)).toBe(false);
+  });
+
+  it('separates ships overlapping bow to stern within a few steps', () => {
+    const context = createTestContext();
+    const first = context.ships.createShooter(new Vector2(300, 300), 0);
+    const second = context.ships.createShooter(new Vector2(330, 300), 0);
+    for (let step = 0; step < 5; step++) collisions.update(context);
+    expect(first.overlaps(second)).toBe(false);
+  });
+
+  it('detects a ram on the bow even when the ship centres are far apart', () => {
+    const context = createTestContext();
+    const player = context.ships.createPlayer(new Vector2(300, 300), 0);
+    const chaser = context.ships.createChaser(new Vector2(300 + player.boundingRadius + 30, 300), Math.PI);
+    expect(player.position.distanceTo(chaser.position)).toBeGreaterThan(80);
+    collisions.update(context);
+    expect(chaser.isAlive).toBe(false);
   });
 });
 

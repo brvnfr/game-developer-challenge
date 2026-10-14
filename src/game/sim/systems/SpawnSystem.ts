@@ -50,7 +50,7 @@ export class SpawnSystem implements SimulationSystem {
   private spawnEnemy(kind: EnemyKind, level: DifficultyLevel, context: SimulationContext): void {
     const player = context.world.player;
     if (!player) return;
-    const position = this.spawnPoints.find(this.config[kind].radius, player.position, context);
+    const position = this.spawnPoints.find(this.config[kind].hullLength / 2, player.position, context);
     if (!position) {
       this.skipped++;
       return;

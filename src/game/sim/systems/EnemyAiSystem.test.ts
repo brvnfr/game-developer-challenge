@@ -42,7 +42,7 @@ describe('Chaser behaviour', () => {
     const isChaserAlive = () => chaser.isAlive;
     for (let step = 0; step < stepsFor(20) && isChaserAlive(); step++) {
       runStep();
-      if (isChaserAlive()) expect(context.arena.isCircleBlocked(chaser.position, chaser.radius - 0.01)).toBe(false);
+      if (isChaserAlive()) expect(context.hullPlacement.isBlocked(chaser, 0.01)).toBe(false);
     }
     expect(chaser.isAlive).toBe(false);
     expect(player.health).toBeLessThan(player.maxHealth);

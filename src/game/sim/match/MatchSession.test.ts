@@ -229,7 +229,7 @@ describe('Headless full match', () => {
       });
       for (const event of eventsOfType(session.drainEvents(), 'enemySpawned')) spawnedKinds.add(event.kind);
       for (const ship of session.world.ships) {
-        if (ship.isAlive) expect(session.arena.isCircleBlocked(ship.position, ship.radius - 0.01)).toBe(false);
+        if (ship.isAlive) expect(session.simulationContext.hullPlacement.isBlocked(ship, 0.01)).toBe(false);
       }
       peakEntityCount = Math.max(peakEntityCount, session.world.ships.length + session.world.projectiles.length);
     }

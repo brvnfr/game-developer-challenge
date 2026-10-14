@@ -82,8 +82,10 @@ export class ProjectileSystem implements SimulationSystem {
     let firstHit: ShipHit | null = null;
     for (const ship of context.world.ships) {
       if (!ship.isAlive || ship.faction === projectile.faction) continue;
-      const fraction = segmentCircleEntry(projectile.position, end, ship.position, ship.radius + projectile.radius);
-      if (fraction !== null && (firstHit === null || fraction < firstHit.fraction)) firstHit = { ship, fraction };
+      for (const hullCenter of ship.hullCircleCenters()) {
+        const fraction = segmentCircleEntry(projectile.position, end, hullCenter, ship.hullRadius + projectile.radius);
+        if (fraction !== null && (firstHit === null || fraction < firstHit.fraction)) firstHit = { ship, fraction };
+      }
     }
     return firstHit;
   }

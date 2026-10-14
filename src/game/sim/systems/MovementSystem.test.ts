@@ -52,7 +52,7 @@ describe('MovementSystem', () => {
       const ship = context.ships.createPlayer(new Vector2(300, 384), heading);
       ship.setControls(1, 0);
       simulate(context, 8, () => {
-        expect(context.arena.isCircleBlocked(ship.position, ship.radius - 0.01)).toBe(false);
+        expect(context.hullPlacement.isBlocked(ship, 0.01)).toBe(false);
       });
     },
   );
@@ -62,10 +62,20 @@ describe('MovementSystem', () => {
     const ship = context.ships.createPlayer(new Vector2(100, 100), Math.PI);
     ship.setControls(1, 0);
     simulate(context, 5);
-    expect(ship.position.x).toBe(ship.radius);
+    expect(ship.position.x).toBeCloseTo(ship.boundingRadius);
     ship.heading = -Math.PI / 2;
     simulate(context, 5);
-    expect(ship.position.y).toBe(ship.radius);
+    expect(ship.position.y).toBeCloseTo(ship.boundingRadius);
+  });
+
+  it('keeps the bow out of the island when sailing straight at it', () => {
+    const context = createTestContext(ISLAND_SEA);
+    const ship = context.ships.createPlayer(new Vector2(300, 384), 0);
+    ship.setControls(1, 0);
+    simulate(context, 5);
+    const bow = ship.hullCircleCenters().at(-1);
+    expect((bow?.x ?? Infinity) + ship.hullRadius).toBeLessThanOrEqual(512 + 0.01);
+    expect(ship.position.x).toBeCloseTo(512 - ship.boundingRadius, 0);
   });
 
   it('remembers the previous state for render interpolation', () => {

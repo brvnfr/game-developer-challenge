@@ -3,6 +3,7 @@ import type { SeededRandom } from '@/game/core/SeededRandom';
 import type { Arena } from './arena/Arena';
 import type { DamageResolver } from './DamageResolver';
 import type { EventQueue } from './events/EventQueue';
+import type { HullPlacement } from './HullPlacement';
 import type { ShipFactory } from './ShipFactory';
 import type { World } from './World';
 
@@ -15,5 +16,6 @@ export interface SimulationContext {
   readonly random: SeededRandom;
   readonly damage: DamageResolver;
   readonly ships: ShipFactory;
+  readonly hullPlacement: HullPlacement;
   readonly stepSeconds: number;
 }
