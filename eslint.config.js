@@ -15,6 +15,7 @@ export default tseslint.config(
       'public/mockServiceWorker.js',
       'node_modules',
       '.sync',
+      'docs/reports',
     ],
   },
   {
