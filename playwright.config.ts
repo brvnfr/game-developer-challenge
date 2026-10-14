@@ -1,6 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 4173;
+/**
+ * Dedicated port for E2E runs. It differs from `npm run preview` (4173) and the server is never reused, so the
+ * suite always runs against a fresh production build — a preview left open from an older build cannot be tested
+ * by mistake.
+ */
+const E2E_PORT = 4174;
 const externalBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
 
 /**
@@ -21,15 +26,17 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  ...(process.env.CI ? { workers: 2 } : {}),
-  timeout: 30_000,
+  // WebGL runs in software (SwiftShader) for deterministic screenshots, so a few browsers in parallel are
+  // faster than one per CPU core. Override with PLAYWRIGHT_WORKERS.
+  workers: Number(process.env.PLAYWRIGHT_WORKERS ?? 2),
+  timeout: 60_000,
   expect: {
-    timeout: 5_000,
+    timeout: 10_000,
     toHaveScreenshot: { maxDiffPixelRatio: 0.002, animations: 'disabled', caret: 'hide' },
   },
   reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
   use: {
-    baseURL: externalBaseUrl ?? `http://localhost:${PORT}`,
+    baseURL: externalBaseUrl ?? `http://localhost:${E2E_PORT}`,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off',
@@ -49,9 +56,9 @@ export default defineConfig({
     ? {}
     : {
         webServer: {
-          command: 'npm run build && npm run preview',
-          port: PORT,
-          reuseExistingServer: !process.env.CI,
+          command: `npm run build && npx vite preview --port ${E2E_PORT} --strictPort`,
+          port: E2E_PORT,
+          reuseExistingServer: false,
           timeout: 180_000,
         },
       }),
