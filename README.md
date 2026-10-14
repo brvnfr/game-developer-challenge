@@ -43,23 +43,36 @@ All variables are optional; copy `.env.example` to `.env.local` to override.
 
 ## Commands
 
-| Command                    | Description                                         |
-| -------------------------- | --------------------------------------------------- |
-| `npm run dev`              | Development server                                  |
-| `npm run build`            | Type-check and production build (`dist/`)           |
-| `npm run preview`          | Serve the production build on http://localhost:4173 |
-| `npm run lint`             | ESLint (zero warnings allowed)                      |
-| `npm run typecheck`        | TypeScript project build check                      |
-| `npm run format`           | Prettier                                            |
-| `npm test`                 | Unit + integration tests (Vitest)                   |
-| `npm run test:unit`        | Unit tests only (pure simulation, Node environment) |
-| `npm run test:integration` | Integration tests (jsdom, React, MSW)               |
-| `npm run test:coverage`    | Tests with coverage report (`coverage/`)            |
-| `npm run test:e2e`         | Playwright E2E — Chromium desktop and mobile        |
-| `npm run test:e2e:report`  | Open the last Playwright HTML report                |
-| `npm run assets`           | Rebuild the PixiJS texture atlases from `assets/`   |
+| Command                          | Description                                                               |
+| -------------------------------- | ------------------------------------------------------------------------- |
+| `npm run dev`                    | Development server                                                        |
+| `npm run build`                  | Type-check and production build (`dist/`)                                 |
+| `npm run preview`                | Serve the production build on http://localhost:4173                       |
+| `npm run lint`                   | ESLint (zero warnings allowed)                                            |
+| `npm run typecheck`              | TypeScript project build check                                            |
+| `npm run format`                 | Prettier                                                                  |
+| `npm test`                       | Unit + integration tests (Vitest)                                         |
+| `npm run test:unit`              | Unit tests only (pure simulation, Node environment)                       |
+| `npm run test:integration`       | Integration tests (jsdom, React, MSW)                                     |
+| `npm run test:coverage`          | Tests with coverage report (`coverage/`)                                  |
+| `npm run test:e2e`               | Playwright E2E — Chromium desktop and mobile                              |
+| `npm run test:e2e:report`        | Open the last Playwright HTML report                                      |
+| `npm run assets`                 | Rebuild the PixiJS texture atlases from `assets/`                         |
+| `npm run assets:audio`           | Convert `assets/sounds` for the web (needs ffmpeg)                        |
+| `npm run test:e2e:visual`        | Visual regression only (`@visual`)                                        |
+| `npm run test:e2e:visual:update` | Create/update the visual baselines of this platform                       |
+| `npm run test:e2e:docker`        | Whole E2E suite in the official Playwright Docker image (Linux baselines) |
 
 E2E tests always build the app and start their own `vite preview` on port **4174** (never reusing a running server), so a preview left open on 4173 from an older build cannot be tested by mistake. WebGL runs in software in the test browsers (deterministic screenshots), so the suite uses 2 parallel workers by default; set `PLAYWRIGHT_WORKERS` to change it. Set `PLAYWRIGHT_BASE_URL` to run them against a deployed URL. Failed tests keep a trace (`test-results/**/trace.zip`, open with `npx playwright show-trace`).
+
+### Visual regression
+
+`e2e/visual.spec.ts` compares the main menu, the arena in a stable state (fixed seed, manual clock, fixed
+starting layout) and the result screen, on desktop and mobile, with the baselines in `e2e/__screenshots__/`.
+Fonts and anti-aliasing differ between operating systems, so baselines are per platform; the **Linux**
+baselines are versioned as the reference. On a platform without baselines (e.g. Windows) the visual tests are
+**skipped** with a message instead of failing; create local baselines with `npm run test:e2e:visual:update`, or
+run the reference check with `npm run test:e2e:docker`. Three consecutive runs produced no diff.
 
 ## Controls
 
@@ -170,17 +183,20 @@ refresh. Scenarios can also be chosen through the URL, e.g. `/?scenario=slow&net
 Add `?test=1` to the URL to enable the test instrumentation used by the Playwright suite. It only observes the
 match and controls time; rules, input, collisions and rendering run unchanged.
 
-| Parameter     | Example           | Effect                                                         |
-| ------------- | ----------------- | -------------------------------------------------------------- |
-| `seed`        | `seed=42`         | Fixed random seed (spawns, AI decisions)                       |
-| `session`     | `session=60`      | Game session time for this page (60–180), overrides Options    |
-| `spawn`       | `spawn=10`        | Enemy spawn time for this page (1–10, step 0.5), overrides     |
-| `time=manual` | `time=manual`     | Real time stops; tests advance the game with `advanceTime(ms)` |
-| `touch=1`     | `touch=1`         | Shows the touch controls on any device (also without `test`)   |
-| `apiTimeout`  | `apiTimeout=1500` | API request timeout in ms (test mode only)                     |
+| Parameter     | Example              | Effect                                                                        |
+| ------------- | -------------------- | ----------------------------------------------------------------------------- |
+| `seed`        | `seed=42`            | Fixed random seed (spawns, AI decisions)                                      |
+| `session`     | `session=60`         | Game session time for this page (60–180), overrides Options                   |
+| `spawn`       | `spawn=10`           | Enemy spawn time for this page (1–10, step 0.5), overrides                    |
+| `time=manual` | `time=manual`        | Real time stops; tests advance the game with `advanceTime(ms)`                |
+| `touch=1`     | `touch=1`            | Shows the touch controls on any device (also without `test`)                  |
+| `apiTimeout`  | `apiTimeout=1500`    | API request timeout in ms (test mode only)                                    |
+| `setup`       | `setup=chaser-ahead` | Starting layout for combat tests: `open-water`, `chaser-ahead`, `shooter-far` |
 
-The API is available as `window.__PIRATE_BATTLE__` (`state()`, `advanceTime(ms)`, `setManualTime(bool)`,
-`liveRuntimes()`, `isPlayerHullBlocked()`).
+The API is available as `window.__PIRATE_BATTLE__` (`state()` with entities and shot/hit/kill statistics,
+`config()`, `advanceTime(ms)`, `setManualTime(bool)`, `liveRuntimes()`, `isPlayerHullBlocked()`,
+`isCircleBlocked()`, `audio()`, `whenAudioLoaded()`). A `setup` only chooses where ships start; movement, AI,
+weapons, damage and spawning then run unchanged, and combat tests drive the ship with the real keyboard.
 
 ## Assets
 
@@ -189,6 +205,13 @@ Source assets are in [`assets/`](assets/). `npm run assets` converts them into P
 - `ships.json` — converted from the Starling XML atlas `ships_miscellaneous_sheet.xml` (the provided "retina" ships sheet has the same pixel size, so only a 1× atlas is produced).
 - `tiles@1x.json` / `tiles@2x.json` — generated from the 64 px / 128 px tile sheets (row-major, `tile_1` is top-left).
 - `ui@1x.json` / `ui@2x.json` — the provided UI atlases (the `ui` metadata is stripped; `borders` are kept for 9-slice).
+
+Sounds: the WAV files in `assets/sounds` are converted by `npm run assets:audio` into `public/assets/audio`
+(effects → MP3 mono 96 kbit/s, loops → mono 22 kHz WAV for gapless looping; 5.8 MB → 1.2 MB). Audio starts after
+the first click or key press (browser autoplay rules); effects follow the game events (cannons, hits, splashes,
+explosions, points, pause, end, low health, last 10 seconds) and the ocean and sailing loops stop on pause, at
+the end and when leaving the match. The **Sound** button in the HUD and in Options mutes everything; the choice
+is saved (`pirate-battle.audio.v1`).
 
 Fonts (self-hosted through Fontsource, SIL Open Font License 1.1): [Lilita One](https://fonts.google.com/specimen/Lilita+One)
 for titles and buttons, [Nunito](https://fonts.google.com/specimen/Nunito) for text.
