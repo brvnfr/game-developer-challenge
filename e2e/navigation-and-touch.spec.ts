@@ -69,3 +69,30 @@ test.describe('touch controls (E2E-09)', () => {
     expect((await game.state()).player.speed).toBeLessThan(released.player.speed);
   });
 });
+
+test.describe('mobile orientation (E2E-09)', () => {
+  test('portrait pauses the match behind a rotate notice; landscape needs an explicit resume', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'Orientation applies to touch devices');
+    const game = new GamePage(page);
+    await game.open({ seed: 3, spawnSeconds: 10 });
+    await game.startMatch();
+    const landscape = page.viewportSize();
+    if (!landscape) throw new Error('No viewport');
+
+    await page.setViewportSize({ width: landscape.height, height: landscape.width });
+    await expect(page.getByRole('dialog', { name: 'Rotate your device' })).toBeVisible();
+    expect((await game.state()).status).toBe('paused');
+    const pausedAt = (await game.state()).elapsedSeconds;
+    await game.advance(3_000);
+    expect((await game.state()).elapsedSeconds).toBe(pausedAt);
+
+    await page.setViewportSize(landscape);
+    await expect(game.pauseDialog()).toBeVisible();
+    await expect(game.pauseDialog()).toContainText('portrait');
+    await game.pauseDialog().getByRole('button', { name: 'Resume' }).click();
+    expect((await game.state()).status).toBe('running');
+  });
+});
