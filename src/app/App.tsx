@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
 import type { UserSettings } from '@/game/config/types';
 import type { MatchResult } from '@/game/sim/match/types';
+import { RemoteServicesProvider } from '@/remote/RemoteServicesProvider';
+import { toRegisterRequest } from '@/remote/toRegisterRequest';
+import { CaptainsLogScreen, type LogTab } from '@/screens/CaptainsLog/CaptainsLogScreen';
 import { GameScreen } from '@/screens/Game/GameScreen';
 import { MainMenuScreen } from '@/screens/MainMenu/MainMenuScreen';
 import { PlayerNameDialog } from '@/screens/MainMenu/PlayerNameDialog';
@@ -13,6 +16,7 @@ import type { AppServices } from './AppServices';
 type Screen =
   | { readonly name: 'menu' }
   | { readonly name: 'options' }
+  | { readonly name: 'log'; readonly tab: LogTab }
   | { readonly name: 'game'; readonly matchNumber: number }
   | { readonly name: 'result'; readonly result: MatchResult; readonly matchNumber: number };
 
@@ -25,10 +29,18 @@ function initialScreen(services: AppServices): Screen {
 }
 
 /**
- * Screen flow: menu ⇄ options, menu → game → result → (play again | menu). Leaving the game screen unmounts
- * it, which disposes the runtime and abandons the match without a result.
+ * Screen flow: menu ⇄ options, menu ⇄ Captain's Log, menu → game → result → (play again | menu). Leaving the
+ * game screen unmounts it, which disposes the runtime and abandons the match without a result.
  */
 export function App({ services }: { readonly services: AppServices }) {
+  return (
+    <RemoteServicesProvider services={services.remote}>
+      <Screens services={services} />
+    </RemoteServicesProvider>
+  );
+}
+
+function Screens({ services }: { readonly services: AppServices }) {
   const testMode = useMemo(() => readTestMode(), []);
   const [settings, setSettings] = useState<UserSettings>(() => services.settings.load());
   const [profile, setProfile] = useState<PlayerProfile>(() => services.playerProfile.load());
@@ -47,6 +59,8 @@ export function App({ services }: { readonly services: AppServices }) {
     setScreen({ name: 'game', matchNumber });
   };
   const finishMatch = (result: MatchResult, matchNumber: number) => {
+    // Queued for the Captain's Log in the background; nothing waits for the server.
+    services.remote.registrar.register(toRegisterRequest(result, profile));
     services.lastResult.save(result);
     services.screenMemory.rememberResultOpen();
     setLastResult(result);
@@ -77,6 +91,8 @@ export function App({ services }: { readonly services: AppServices }) {
               else setNamePromptOpen(true);
             }}
             onOptions={() => setScreen({ name: 'options' })}
+            onRanking={() => setScreen({ name: 'log', tab: 'ranking' })}
+            onMatchHistory={() => setScreen({ name: 'log', tab: 'history' })}
           />
           {isNamePromptOpen && (
             <PlayerNameDialog
@@ -99,6 +115,17 @@ export function App({ services }: { readonly services: AppServices }) {
           savedSettings={settings}
           savedCaptainName={profile.name}
           onSave={saveOptions}
+          onMainMenu={showMenu}
+        />
+      );
+    case 'log':
+      return (
+        <CaptainsLogScreen
+          initialTab={screen.tab}
+          playerId={profile.playerId}
+          playerName={profile.name}
+          currentSettings={matchSettings}
+          highlightMatchId={lastResult?.matchId ?? null}
           onMainMenu={showMenu}
         />
       );

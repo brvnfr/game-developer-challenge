@@ -4,6 +4,7 @@ import { MenuLayout } from '@/ui/components/MenuLayout';
 import { formatClock } from '@/ui/hud/formatTime';
 import { END_REASON_LABELS, isoDuration, playedSecondsOf, RESULT_TITLES } from '@/ui/matchResultText';
 import { useFocusOnMount } from '@/ui/useFocusOnMount';
+import { RegistrationStatus } from './RegistrationStatus';
 
 interface ResultScreenProps {
   readonly result: MatchResult;
@@ -11,7 +12,10 @@ interface ResultScreenProps {
   readonly onMainMenu: () => void;
 }
 
-/** Result of a completed match: total score, time played and why it ended. Survives a page refresh. */
+/**
+ * Result of a completed match: total score, time played, why it ended and whether it reached the Captain's Log.
+ * Survives a page refresh.
+ */
 export function ResultScreen({ result, onPlayAgain, onMainMenu }: ResultScreenProps) {
   const playedSeconds = playedSecondsOf(result);
   const playAgainRef = useFocusOnMount<HTMLButtonElement>();
@@ -34,6 +38,7 @@ export function ResultScreen({ result, onPlayAgain, onMainMenu }: ResultScreenPr
         <span className="visually-hidden">Ended by </span>
         <span data-testid="result-reason">{END_REASON_LABELS[result.endReason]}</span>
       </p>
+      <RegistrationStatus matchId={result.matchId} />
       <div className="menu-panel__actions">
         <Button ref={playAgainRef} onClick={onPlayAgain}>
           Play Again

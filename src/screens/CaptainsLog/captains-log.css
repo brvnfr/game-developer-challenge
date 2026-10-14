@@ -1,0 +1,302 @@
+.menu-panel.captains-log {
+  width: min(1000px, 96vw);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.tab {
+  min-width: 180px;
+  min-height: 48px;
+  padding: 8px 24px;
+  border: none;
+  background: url('@assets/png/retina/ui/menu/button_secondary_normal.png') center / 100% 100% no-repeat;
+  color: var(--color-parchment);
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tab--selected {
+  background-image: url('@assets/png/retina/ui/menu/button_primary_normal.png');
+  color: #4a2a08;
+}
+
+.captains-log__panel {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.menu-panel.captains-log {
+  gap: 10px;
+}
+
+.captains-log__subtitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.log-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.log-filter select,
+.network-dialog select {
+  min-height: 40px;
+  padding: 4px 10px;
+  border: 2px solid rgb(242 179 61 / 55%);
+  border-radius: 8px;
+  background: var(--color-field);
+  color: var(--color-parchment);
+  font: 700 15px var(--font-body);
+}
+
+.log-filter select {
+  width: min(460px, 100%);
+}
+
+.log-filter option,
+.network-dialog option {
+  background: var(--color-panel);
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  text-align: left;
+}
+
+.log-table th {
+  padding: 2px 14px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.log-table td {
+  padding: 9px 14px;
+  background: rgb(8 20 34 / 72%);
+  font-weight: 700;
+}
+
+.log-table td:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.log-table td:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.log-table__row--highlight td {
+  background: rgb(242 179 61 / 24%);
+  box-shadow:
+    inset 0 1px 0 rgb(242 179 61 / 55%),
+    inset 0 -1px 0 rgb(242 179 61 / 55%);
+}
+
+.log-table__rank,
+.log-table__points {
+  color: var(--color-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.log-table__star {
+  margin-right: 6px;
+  color: var(--color-gold);
+}
+
+.log-table__date {
+  font-size: 14px;
+}
+
+.log-table__day {
+  font-size: 16px;
+}
+
+.log-table__reason {
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.log-table__reason--timeUp {
+  color: #c9f2b0;
+}
+
+.log-table__reason--playerDestroyed {
+  color: var(--color-error);
+}
+
+.badge {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border: 1px solid var(--color-gold);
+  border-radius: 4px;
+  color: var(--color-gold);
+  font-size: 11px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.pagination {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination .round-button {
+  --round-button-size: 44px;
+}
+
+.pagination__label {
+  min-width: 110px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.remote-list {
+  display: grid;
+  gap: 6px;
+  min-height: 120px;
+}
+
+.remote-list--stale table {
+  opacity: 0.6;
+}
+
+.remote-list__status {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.remote-list__skeleton {
+  display: grid;
+  gap: 6px;
+}
+
+.remote-list__skeleton-row {
+  height: 42px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgb(8 20 34 / 70%), rgb(40 60 80 / 70%), rgb(8 20 34 / 70%));
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s linear infinite;
+}
+
+@keyframes skeleton-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .remote-list__skeleton-row {
+    animation: none;
+  }
+}
+
+.remote-list__error,
+.remote-list__refresh-error {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  padding: 14px;
+  border: 2px solid var(--color-error);
+  border-radius: 8px;
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.remote-list__error p {
+  margin: 0;
+}
+
+.remote-list__empty {
+  margin: 16px 0;
+  font-weight: 700;
+}
+
+.log-pending {
+  padding: 10px 14px;
+  border: 2px dashed rgb(242 179 61 / 60%);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.log-pending__title {
+  margin: 0 0 6px;
+  color: var(--color-gold);
+  font-size: 15px;
+}
+
+.log-pending ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.log-pending li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.log-table time {
+  white-space: nowrap;
+}
+
+@media (width <= 640px) {
+  .log-table th,
+  .log-table td {
+    padding: 8px 6px;
+  }
+
+  .log-table th {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .log-table__date,
+  .log-table__reason {
+    font-size: 12px;
+  }
+
+  .log-table__day {
+    font-size: 13px;
+  }
+
+  /* The full date and time stay in the tooltip and in the datetime attribute. */
+  .log-table__time {
+    display: none;
+  }
+
+  .tab {
+    min-width: 140px;
+    font-size: 15px;
+  }
+}

@@ -1,14 +1,17 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { MatchResult } from '@/game/sim/match/types';
+import { createTestMockServer, TEST_API_BASE_URL } from '@/mocks/node';
+import { createQueryClient } from '@/remote/queryClient';
+import { createRemoteServices, type RemoteServices } from '@/remote/RemoteServices';
 import { MemoryStorage } from '@/storage/LocalStore';
 import { App } from './App';
 import { createMemoryServices } from './AppServices';
 
 const FINISHED_MATCH: MatchResult = {
   matchId: 'match-1',
-  score: 7,
+  score: 70,
   durationMs: 120_000,
   endReason: 'timeUp',
   endedAt: '2026-10-13T12:00:00.000Z',
@@ -41,9 +44,29 @@ vi.mock('@/screens/Game/GameScreen', () => ({
   ),
 }));
 
+const { mockServer, network } = createTestMockServer();
+const openClients: RemoteServices[] = [];
+
+beforeAll(() => network.listen({ onUnhandledRequest: 'error' }));
+afterEach(() => {
+  for (const remote of openClients.splice(0)) remote.queryClient.clear();
+  mockServer.resetAll();
+  mockServer.scenarios.select({ baseLatencyMs: 0 });
+});
+afterAll(() => network.close());
+
 function renderApp(persistent = new MemoryStorage(), perTab = new MemoryStorage()) {
-  const view = render(<App services={createMemoryServices(persistent, perTab)} />);
-  return { ...view, persistent, perTab, user: userEvent.setup() };
+  const remote = createRemoteServices({
+    baseUrl: TEST_API_BASE_URL,
+    timeoutMs: 1_000,
+    storage: persistent,
+    mockServer,
+    queryClient: createQueryClient({ retryDelay: () => 10 }),
+    roundDelaysMs: [50],
+  });
+  openClients.push(remote);
+  const view = render(<App services={createMemoryServices(remote, persistent, perTab)} />);
+  return { ...view, persistent, perTab, remote, user: userEvent.setup() };
 }
 
 async function nameCaptainAndPlay(user: ReturnType<typeof userEvent.setup>, name = 'Anne Bonny') {
@@ -104,15 +127,15 @@ describe('App screen flow', () => {
     await nameCaptainAndPlay(user);
     await user.click(screen.getByRole('button', { name: 'Finish match' }));
     expect(screen.getByRole('heading', { name: 'Battle complete' })).toBeInTheDocument();
-    expect(screen.getByTestId('result-score')).toHaveTextContent('7');
+    expect(screen.getByTestId('result-score')).toHaveTextContent('70');
     expect(screen.getByTestId('result-time')).toHaveTextContent('2:00');
     expect(screen.getByTestId('result-reason')).toHaveTextContent('Time up');
 
     unmount();
     const refreshed = renderApp(persistent, perTab);
-    expect(screen.getByTestId('result-score')).toHaveTextContent('7');
+    expect(screen.getByTestId('result-score')).toHaveTextContent('70');
     await refreshed.user.click(screen.getByRole('button', { name: 'Main Menu' }));
-    expect(screen.getByTestId('last-battle')).toHaveTextContent('7 points · 2:00 · Time up');
+    expect(screen.getByTestId('last-battle')).toHaveTextContent('70 points · 2:00 · Time up');
   });
 
   it('a refresh during a match goes back to the menu', async () => {
@@ -185,5 +208,74 @@ describe('Options', () => {
     expect(screen.getByTestId('captain-name')).toHaveTextContent('Grace O Malley');
     await user.click(screen.getByRole('button', { name: 'Play' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+});
+
+describe("Captain's Log", () => {
+  it('opens on the chosen tab, lists the ranking of the current settings and switches tabs with the keyboard', async () => {
+    const { user } = renderApp();
+    await user.click(screen.getByRole('button', { name: 'Ranking' }));
+    expect(screen.getByRole('heading', { name: "Captain's Log" })).toHaveFocus();
+    const rankingTab = screen.getByRole('tab', { name: 'Ranking' });
+    expect(rankingTab).toHaveAttribute('aria-selected', 'true');
+    const table = await screen.findByRole('table', { name: /Ranking for 120 second battles/ });
+    expect(within(table).getAllByRole('row')).toHaveLength(6); // header + 5 entries
+    expect(screen.getByText('Page 1 of 3')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Next page' }));
+    expect(await screen.findByRole('table', { name: /page 2 of 3/ })).toBeInTheDocument();
+
+    rankingTab.focus();
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('tab', { name: 'Match History' })).toHaveFocus();
+    expect(await screen.findByText('No battles recorded yet. Finish a match to start your log.')).toBeInTheDocument();
+  });
+
+  it('a completed match is saved and appears in Match History and the ranking, marked as yours', async () => {
+    const { user } = renderApp();
+    await nameCaptainAndPlay(user);
+    await user.click(screen.getByRole('button', { name: 'Finish match' }));
+    await waitFor(() => expect(screen.getByTestId('registration')).toHaveAttribute('data-state', 'saved'));
+
+    await user.click(screen.getByRole('button', { name: 'Main Menu' }));
+    await user.click(screen.getByRole('button', { name: 'Match History' }));
+    const history = await screen.findByRole('table', { name: /Match history of Anne Bonny/ });
+    expect(within(history).getAllByRole('row')).toHaveLength(2);
+    expect(within(history).getByText('Time up')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: 'Ranking' }));
+    expect(await screen.findByText('You')).toBeInTheDocument();
+  });
+
+  it('shows an accessible error with Retry when the ranking fails, and recovers', async () => {
+    mockServer.scenarios.select({ scenarioId: 'ranking-fail' });
+    const { user } = renderApp();
+    await user.click(screen.getByRole('button', { name: 'Ranking' }));
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('Could not load the ranking.');
+    mockServer.scenarios.select({ scenarioId: 'success' });
+    await user.click(within(alert).getByRole('button', { name: 'Retry' }));
+    expect(await screen.findByRole('table', { name: /Ranking for/ })).toBeInTheDocument();
+  });
+
+  it('keeps a match pending while the server is down, without blocking a new match', async () => {
+    mockServer.scenarios.select({ scenarioId: 'network-error' });
+    const { user } = renderApp();
+    await nameCaptainAndPlay(user);
+    await user.click(screen.getByRole('button', { name: 'Finish match' }));
+    await waitFor(() => expect(screen.getByTestId('registration')).toHaveAttribute('data-state', 'retrying'));
+    expect(screen.getByTestId('registration')).toHaveTextContent('Could not reach the server');
+    await user.click(screen.getByRole('button', { name: 'Play Again' }));
+    expect(screen.getByRole('main', { name: 'Pirate Battle match' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Abandon match' }));
+    expect(screen.getByTestId('pending-count')).toHaveTextContent('1 battle is waiting to be saved.');
+
+    await user.click(screen.getByRole('button', { name: 'Match History' }));
+    const pending = await screen.findByTestId('pending-submissions');
+    expect(pending).toHaveTextContent('70 points · Time up — Could not reach the server');
+    mockServer.scenarios.select({ scenarioId: 'success' });
+    await user.click(within(pending).getByRole('button', { name: 'Retry now' }));
+    await waitFor(() => expect(screen.queryByTestId('pending-submissions')).not.toBeInTheDocument());
+    expect(await screen.findByRole('table', { name: /Match history/ })).toBeInTheDocument();
   });
 });
