@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { AudioEngine } from '@/game/audio/AudioEngine';
 import type { UserSettings } from '@/game/config/types';
 import type { MatchResult } from '@/game/sim/match/types';
 import { RemoteServicesProvider } from '@/remote/RemoteServicesProvider';
@@ -20,6 +21,18 @@ type Screen =
   | { readonly name: 'game'; readonly matchNumber: number }
   | { readonly name: 'result'; readonly result: MatchResult; readonly matchNumber: number };
 
+/** A soft click for every button in the menus and dialogs (not for the touch controls, which repeat). */
+function useButtonClickSound(audio: AudioEngine): void {
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target instanceof Element ? event.target.closest('button') : null;
+      if (target && !target.closest('[data-testid="touch-controls"]')) audio.play('ui_click', { volume: 0.5 });
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [audio]);
+}
+
 /** The result screen comes back after a refresh; any other screen restarts at the menu (a match is abandoned). */
 function initialScreen(services: AppServices): Screen {
   const lastResult = services.lastResult.load();
@@ -33,6 +46,7 @@ function initialScreen(services: AppServices): Screen {
  * game screen unmounts it, which disposes the runtime and abandons the match without a result.
  */
 export function App({ services }: { readonly services: AppServices }) {
+  useButtonClickSound(services.audio);
   return (
     <RemoteServicesProvider services={services.remote}>
       <Screens services={services} />
@@ -112,6 +126,7 @@ function Screens({ services }: { readonly services: AppServices }) {
     case 'options':
       return (
         <OptionsScreen
+          audio={services.audio}
           savedSettings={settings}
           savedCaptainName={profile.name}
           onSave={saveOptions}
@@ -135,6 +150,7 @@ function Screens({ services }: { readonly services: AppServices }) {
           key={screen.matchNumber}
           settings={matchSettings}
           testMode={testMode}
+          audio={services.audio}
           onMatchEnded={(result) => finishMatch(result, screen.matchNumber)}
           onExitToMenu={showMenu}
         />

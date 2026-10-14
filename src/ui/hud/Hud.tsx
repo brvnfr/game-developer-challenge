@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import heartIcon from '@assets/png/retina/ui/hud/icon_heart.png';
 import healthFrame from '@assets/png/retina/ui/hud/health_frame.png';
 import healthFillGreen from '@assets/png/retina/ui/hud/health_fill_green.png';
@@ -28,12 +28,14 @@ function healthFillFor(ratio: number): string {
 interface HudProps {
   readonly store: ExternalStore<MatchView>;
   readonly onPause: () => void;
+  /** Extra buttons shown next to the pause button (e.g. the sound toggle). */
+  readonly extraControls?: ReactNode;
   /** Called on every render; lets integration tests prove the HUD does not re-render each frame. */
   readonly onRender?: () => void;
 }
 
 /** Heads-up display: health, score, time left and the pause button, plus a semantic summary for assistive tech. */
-export function Hud({ store, onPause, onRender }: HudProps) {
+export function Hud({ store, onPause, extraControls, onRender }: HudProps) {
   const match = useExternalStore(store);
   onRender?.();
   const healthRatio = match.maxHealth > 0 ? match.health / match.maxHealth : 0;
@@ -66,6 +68,7 @@ export function Hud({ store, onPause, onRender }: HudProps) {
           <span data-testid="hud-time">{formatClock(match.remainingSeconds)}</span>
         </div>
       </div>
+      {extraControls}
       <button
         type="button"
         className="round-button hud__pause"

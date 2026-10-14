@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { AudioEngine } from '@/game/audio/AudioEngine';
 import type { UserSettings } from '@/game/config/types';
 import type { MatchResult } from '@/game/sim/match/types';
 import type { TestModeOptions } from '@/testing/testMode';
@@ -10,12 +11,13 @@ import './game-screen.css';
 interface GameScreenProps {
   readonly settings: UserSettings;
   readonly testMode: TestModeOptions;
+  readonly audio: AudioEngine | null;
   readonly onMatchEnded: (result: MatchResult) => void;
   readonly onExitToMenu: () => void;
 }
 
 /** Loads the assets (with progress and retry) and then starts the match. Leaving this screen abandons the match. */
-export function GameScreen({ settings, testMode, onMatchEnded, onExitToMenu }: GameScreenProps) {
+export function GameScreen({ settings, testMode, audio, onMatchEnded, onExitToMenu }: GameScreenProps) {
   const { state, retry } = useGameAssets();
   const showTouchControls = useMemo(
     () => testMode.forceTouchControls || window.matchMedia('(pointer: coarse)').matches,
@@ -31,6 +33,7 @@ export function GameScreen({ settings, testMode, onMatchEnded, onExitToMenu }: G
           settings={settings}
           testMode={testMode}
           showTouchControls={showTouchControls}
+          audio={audio}
           onMatchEnded={onMatchEnded}
           onExitToMenu={onExitToMenu}
         />

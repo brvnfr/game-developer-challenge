@@ -5,6 +5,7 @@ import '@fontsource/nunito/latin-400.css';
 import '@fontsource/nunito/latin-700.css';
 import { App } from '@/app/App';
 import { createBrowserServices } from '@/app/AppServices';
+import { AudioEngine } from '@/game/audio/AudioEngine';
 import type { MockServer } from '@/mocks/MockServer';
 import { readApiConfig } from '@/remote/apiConfig';
 import { createRemoteServices } from '@/remote/RemoteServices';
@@ -28,7 +29,9 @@ async function startMockApi(apiPath: string, scenarioOverrides: ReturnType<typeo
 }
 
 async function bootstrap(container: HTMLElement): Promise<void> {
-  if (readTestMode().isEnabled) installTestHarness();
+  const audio = new AudioEngine({ baseUrl: import.meta.env.BASE_URL, storage: browserLocalStorage() });
+  audio.attachUnlockListeners(window);
+  if (readTestMode().isEnabled) installTestHarness(audio);
   const apiConfig = readApiConfig();
   const mockServer: MockServer | null = apiConfig.areMocksEnabled
     ? await startMockApi(apiConfig.apiPath, apiConfig.scenarioOverrides)
@@ -43,7 +46,7 @@ async function bootstrap(container: HTMLElement): Promise<void> {
 
   createRoot(container).render(
     <StrictMode>
-      <App services={createBrowserServices(remote)} />
+      <App services={createBrowserServices(remote, audio)} />
     </StrictMode>,
   );
 }

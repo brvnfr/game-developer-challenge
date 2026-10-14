@@ -68,3 +68,7 @@
 .hud__pause {
   pointer-events: auto;
 }
+
+.hud__sound {
+  pointer-events: auto;
+}

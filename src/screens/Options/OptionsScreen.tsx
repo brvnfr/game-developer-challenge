@@ -1,4 +1,5 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { useId, useRef, useState, type FormEvent } from 'react';
+import type { AudioEngine } from '@/game/audio/AudioEngine';
 import { DEFAULT_USER_SETTINGS } from '@/game/config/defaults';
 import { SETTINGS_RULES, validateSettings, type SettingsField } from '@/game/config/settingsValidation';
 import type { UserSettings } from '@/game/config/types';
@@ -7,6 +8,7 @@ import { Button } from '@/ui/components/Button';
 import { MenuLayout } from '@/ui/components/MenuLayout';
 import { NumberStepper } from '@/ui/components/NumberStepper';
 import { TextField } from '@/ui/components/TextField';
+import { SoundToggleButton } from '@/ui/SoundToggle';
 import { useFocusOnMount } from '@/ui/useFocusOnMount';
 import { canStepSettingValue, formatSettingValue, stepSettingValue } from './settingsStepping';
 
@@ -14,6 +16,7 @@ import { canStepSettingValue, formatSettingValue, stepSettingValue } from './set
 export type OptionsSaveOutcome = 'saved' | 'notPersisted';
 
 interface OptionsScreenProps {
+  readonly audio: AudioEngine;
   readonly savedSettings: UserSettings;
   readonly savedCaptainName: string;
   readonly onSave: (settings: UserSettings, captainName: string) => OptionsSaveOutcome;
@@ -48,7 +51,8 @@ function toFieldTexts(settings: UserSettings): Record<SettingsField, string> {
  * Options: Game session time, Enemy spawn time and the captain name. Values are validated as they are typed;
  * Save persists them and each new match takes a snapshot, so a running match is never affected.
  */
-export function OptionsScreen({ savedSettings, savedCaptainName, onSave, onMainMenu }: OptionsScreenProps) {
+export function OptionsScreen({ audio, savedSettings, savedCaptainName, onSave, onMainMenu }: OptionsScreenProps) {
+  const soundHintId = useId();
   const [fieldTexts, setFieldTexts] = useState(() => toFieldTexts(savedSettings));
   const [captainName, setCaptainName] = useState(savedCaptainName);
   const [status, setStatus] = useState<SaveStatus>('idle');
@@ -128,6 +132,13 @@ export function OptionsScreen({ savedSettings, savedCaptainName, onSave, onMainM
             setStatus('idle');
           }}
         />
+        <div className="field">
+          <span className="field__label">Sound effects and music</span>
+          <SoundToggleButton engine={audio} describedBy={soundHintId} />
+          <p id={soundHintId} className="field__hint">
+            Applies at once and is remembered.
+          </p>
+        </div>
         <p
           role="status"
           className={

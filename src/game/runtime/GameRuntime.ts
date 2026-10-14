@@ -1,6 +1,8 @@
 import { Application, type Ticker } from 'pixi.js';
 import type { UserSettings } from '@/game/config/types';
 import { SimulationClock } from '@/game/core/SimulationClock';
+import { MatchSoundDirector } from '@/game/audio/MatchSoundDirector';
+import type { SoundOutput } from '@/game/audio/SoundOutput';
 import { ExternalStore } from '@/game/bridge/ExternalStore';
 import type { MatchView } from '@/game/bridge/MatchView';
 import { InputState } from '@/game/input/InputState';
@@ -22,11 +24,15 @@ export interface GameRuntimeOptions extends MatchFactoryOptions {
   readonly onMatchEnded?: (result: MatchResult) => void;
   /** 'manual' freezes real time; tests advance the simulation explicitly with `advanceTime()`. */
   readonly timeSource?: TimeSource;
+  /** Where sound effects go; the game is silent without it. */
+  readonly sound?: SoundOutput | null;
 }
 
 const MANUAL_TIME_CHUNK_SECONDS = 0.1;
 /** The final explosion keeps playing this long before the result screen replaces the arena. */
 const RESULT_REVEAL_DELAY_SECONDS = 1.5;
+/** Below this speed (px/s) the ship is drifting and the sailing loop is silent. */
+const SAILING_SOUND_MIN_SPEED = 15;
 const WATER_BACKGROUND = 0x2c8fc9;
 
 /**
@@ -52,6 +58,7 @@ export class GameRuntime {
   private scene: GameScene | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private session: MatchSession;
+  private sounds: MatchSoundDirector | null;
   private timeSource: TimeSource;
   private hasReportedResult = false;
   private secondsSinceEnd = 0;
@@ -60,6 +67,7 @@ export class GameRuntime {
   constructor(private readonly options: GameRuntimeOptions) {
     this.matches = new MatchFactory(options);
     this.session = this.matches.create(options.settings);
+    this.sounds = this.createSoundDirector();
     this.clock = new SimulationClock(this.session.config.match.stepSeconds);
     this.viewport = new Viewport(this.matches.arena.width, this.matches.arena.height);
     this.timeSource = options.timeSource ?? 'realTime';
@@ -133,6 +141,7 @@ export class GameRuntime {
   /** Pauses the match (manual button/key, focus loss, hidden tab, wrong orientation). */
   pause(reason: PauseReason): void {
     if (!this.session.pause(reason)) return;
+    this.sounds?.stop();
     this.input.clear();
     this.keyboard.isAcceptingActions = false;
     this.publish();
@@ -154,7 +163,9 @@ export class GameRuntime {
 
   /** Starts a brand-new match with a fresh configuration snapshot. */
   restart(settings: UserSettings = this.options.settings): void {
+    this.sounds?.stop();
     this.session = this.matches.create(settings);
+    this.sounds = this.createSoundDirector();
     this.hasReportedResult = false;
     this.secondsSinceEnd = 0;
     this.clock.discardPendingTime();
@@ -171,21 +182,27 @@ export class GameRuntime {
     this.applyTimeSource();
   }
 
-  /** Advances the game by `milliseconds` of real time, in small chunks (manual time source, tests). */
-  advanceTime(milliseconds: number): void {
+  /**
+   * Advances the game by `milliseconds` of real time, in small chunks (manual time source, tests). Every chunk
+   * runs the rules and updates the scene; the canvas is drawn once at the end unless `shouldDraw` is false
+   * (long automated runs skip intermediate draws: software WebGL would otherwise queue seconds of GPU work).
+   */
+  advanceTime(milliseconds: number, shouldDraw = true): void {
     let remainingSeconds = milliseconds / 1000;
     while (remainingSeconds > 1e-9) {
       const chunk = Math.min(MANUAL_TIME_CHUNK_SECONDS, remainingSeconds);
       this.advanceFrame(chunk);
       remainingSeconds -= chunk;
     }
-    if (this.timeSource === 'manual') this.application?.render();
+    if (this.timeSource === 'manual' && shouldDraw) this.application?.render();
   }
 
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
     GameRuntime.liveInstances.delete(this);
+    this.sounds?.stop();
+    this.sounds = null;
     this.keyboard.detach();
     this.autoPause.detach();
     this.resizeObserver?.disconnect();
@@ -224,12 +241,34 @@ export class GameRuntime {
     const steps = isRunning ? this.clock.advance(frameSeconds) : 0;
     for (let step = 0; step < steps && this.session.status === 'running'; step++) {
       this.session.step(this.input.toCommands());
-      this.scene?.handleEvents(this.session.drainEvents());
+      this.dispatchEvents();
     }
-    this.scene?.handleEvents(this.session.drainEvents());
+    this.dispatchEvents();
     this.scene?.render(this.clock.interpolationFactor, this.session.status === 'paused' ? 0 : frameSeconds);
     this.publish();
+    this.updateSounds();
     if (this.session.status === 'ended') this.handleEndedFrame(frameSeconds);
+  }
+
+  /** Hands the events of the last step(s) to the scene (visual feedback) and the sound director. */
+  private dispatchEvents(): void {
+    const events = this.session.drainEvents();
+    this.scene?.handleEvents(events);
+    this.sounds?.handleEvents(events);
+  }
+
+  private updateSounds(): void {
+    const player = this.session.player;
+    this.sounds?.update({
+      isRunning: this.session.status === 'running',
+      isPlayerSailing: player.isAlive && Math.abs(player.speed) > SAILING_SOUND_MIN_SPEED,
+      healthRatio: player.maxHealth > 0 ? player.health / player.maxHealth : 0,
+      remainingSeconds: this.session.remainingSeconds,
+    });
+  }
+
+  private createSoundDirector(): MatchSoundDirector | null {
+    return this.options.sound ? new MatchSoundDirector(this.options.sound, this.session.player.id) : null;
   }
 
   /** Stops input as soon as the match ends, then reports the result once the final effects have played. */

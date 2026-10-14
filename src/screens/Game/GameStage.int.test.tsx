@@ -53,6 +53,7 @@ describe('GameStage lifecycle', () => {
           settings={DEFAULT_USER_SETTINGS}
           testMode={readTestMode('')}
           showTouchControls={false}
+          audio={null}
           onMatchEnded={vi.fn()}
           onExitToMenu={vi.fn()}
         />

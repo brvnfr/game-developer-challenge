@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import type { AudioEngine } from '@/game/audio/AudioEngine';
 import type { UserSettings } from '@/game/config/types';
 import type { GameTextures } from '@/game/render/assets/GameTextures';
 import { GameRuntime } from '@/game/runtime/GameRuntime';
 import type { MatchResult } from '@/game/sim/match/types';
 import { useExternalStore } from '@/game/bridge/useExternalStore';
 import { Hud } from '@/ui/hud/Hud';
+import { SoundToggleIcon } from '@/ui/SoundToggle';
 import { TouchControls } from '@/ui/touch/TouchControls';
 import type { TestModeOptions } from '@/testing/testMode';
 import { useMediaQuery } from '@/ui/useMediaQuery';
@@ -16,6 +18,7 @@ interface GameStageProps {
   readonly settings: UserSettings;
   readonly testMode: TestModeOptions;
   readonly showTouchControls: boolean;
+  readonly audio: AudioEngine | null;
   readonly onMatchEnded: (result: MatchResult) => void;
   readonly onExitToMenu: () => void;
 }
@@ -29,6 +32,7 @@ export function GameStage({
   settings,
   testMode,
   showTouchControls,
+  audio,
   onMatchEnded,
   onExitToMenu,
 }: GameStageProps) {
@@ -46,7 +50,9 @@ export function GameStage({
       textures,
       settings,
       ...(testMode.seed === undefined ? {} : { seed: testMode.seed }),
+      ...(testMode.setup === undefined ? {} : { setup: testMode.setup }),
       timeSource: testMode.manualTime ? 'manual' : 'realTime',
+      sound: audio,
       onMatchEnded: (result) => onMatchEndedRef.current(result),
     });
     let isMounted = true;
@@ -63,12 +69,19 @@ export function GameStage({
       setRuntime(null);
       gameRuntime.dispose();
     };
-  }, [textures, settings, testMode]);
+  }, [textures, settings, testMode, audio]);
 
   return (
     <div className="game-stage">
       <div ref={hostRef} className="game-stage__canvas" />
-      {runtime && <GameOverlays runtime={runtime} showTouchControls={showTouchControls} onExitToMenu={onExitToMenu} />}
+      {runtime && (
+        <GameOverlays
+          runtime={runtime}
+          audio={audio}
+          showTouchControls={showTouchControls}
+          onExitToMenu={onExitToMenu}
+        />
+      )}
     </div>
   );
 }
@@ -82,10 +95,12 @@ const PAUSE_REASON_TEXT: Record<string, string> = {
 
 function GameOverlays({
   runtime,
+  audio,
   showTouchControls,
   onExitToMenu,
 }: {
   readonly runtime: GameRuntime;
+  readonly audio: AudioEngine | null;
   readonly showTouchControls: boolean;
   readonly onExitToMenu: () => void;
 }) {
@@ -99,7 +114,11 @@ function GameOverlays({
   if (mustRotate) return <RotateDeviceNotice onMainMenu={onExitToMenu} />;
   return (
     <>
-      <Hud store={runtime.store} onPause={() => runtime.pause('manual')} />
+      <Hud
+        store={runtime.store}
+        onPause={() => runtime.pause('manual')}
+        extraControls={audio && <SoundToggleIcon engine={audio} className="hud__sound" />}
+      />
       {showTouchControls && match.status === 'running' && <TouchControls input={runtime.input} />}
       {match.status === 'paused' && (
         <PauseOverlay

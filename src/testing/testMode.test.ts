@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { COMBAT_SETUPS } from './combatSetups';
 import { readTestMode } from './testMode';
 
 describe('readTestMode', () => {
@@ -18,10 +19,17 @@ describe('readTestMode', () => {
       settings: { sessionTimeSeconds: 60, spawnIntervalSeconds: 10 },
       manualTime: true,
       forceTouchControls: false,
+      setup: undefined,
     });
   });
 
   it('ignores invalid settings', () => {
     expect(readTestMode('?test=1&session=5').settings).toBeUndefined();
+  });
+
+  it('reads a named combat setup only in test mode', () => {
+    expect(readTestMode('?test=1&setup=chaser-ahead').setup).toBe(COMBAT_SETUPS['chaser-ahead']);
+    expect(readTestMode('?setup=chaser-ahead').setup).toBeUndefined();
+    expect(readTestMode('?test=1&setup=unknown').setup).toBeUndefined();
   });
 });

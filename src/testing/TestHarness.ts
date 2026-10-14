@@ -1,6 +1,9 @@
 import { Vector2 } from '@/game/core/math/Vector2';
 import { GameRuntime } from '@/game/runtime/GameRuntime';
+import type { AudioEngine } from '@/game/audio/AudioEngine';
+import type { MatchConfig } from '@/game/config/types';
 import type { Ship } from '@/game/sim/entities/Ship';
+import type { MatchStatisticsSnapshot } from '@/game/sim/match/MatchStatistics';
 
 export interface ObservedShip {
   readonly id: number;
@@ -28,7 +31,10 @@ export interface ObservedState {
     readonly weaponSlot: string;
     readonly x: number;
     readonly y: number;
+    /** Direction of flight in radians (0 = east, clockwise). */
+    readonly heading: number;
   }[];
+  readonly statistics: MatchStatisticsSnapshot;
   readonly enemiesSpawned: number;
   readonly arena: { readonly width: number; readonly height: number };
   readonly scene: unknown;
@@ -38,11 +44,25 @@ export interface ObservedState {
 export interface PirateBattleTestApi {
   readonly liveRuntimes: () => number;
   readonly state: () => ObservedState | null;
+  /** The configuration snapshot of the current match (balancing values used by the rules). */
+  readonly config: () => MatchConfig | null;
   readonly setManualTime: (isManual: boolean) => void;
-  readonly advanceTime: (milliseconds: number) => void;
+  /** Advances the manual clock; `shouldDraw` false skips the final canvas draw (long loops). */
+  readonly advanceTime: (milliseconds: number, shouldDraw?: boolean) => void;
   readonly isCircleBlocked: (x: number, y: number, radius: number) => boolean;
   /** True when any part of the player's hull overlaps land or leaves the arena. */
   readonly isPlayerHullBlocked: () => boolean;
+  /** Audio state and the sounds actually played (most recent last). */
+  readonly audio: () => ObservedAudio;
+  /** Resolves once every sound file has been loaded and decoded (after the first gesture). */
+  readonly whenAudioLoaded: () => Promise<void>;
+}
+
+export interface ObservedAudio {
+  readonly isUnlocked: boolean;
+  readonly isMuted: boolean;
+  readonly loadedSounds: number;
+  readonly played: readonly string[];
 }
 
 declare global {
@@ -69,8 +89,15 @@ function observeShip(ship: Ship): ObservedShip {
   };
 }
 
-export function installTestHarness(): void {
+export function installTestHarness(audio: AudioEngine): void {
   window.__PIRATE_BATTLE__ = {
+    audio: () => ({
+      isUnlocked: audio.isUnlocked,
+      isMuted: audio.isMuted,
+      loadedSounds: audio.loadedSoundCount,
+      played: [...audio.playLog],
+    }),
+    whenAudioLoaded: () => audio.whenLoaded(),
     liveRuntimes: () => GameRuntime.liveInstanceCount,
     state: () => {
       const runtime = currentRuntime();
@@ -90,14 +117,17 @@ export function installTestHarness(): void {
           weaponSlot: projectile.weaponSlot,
           x: projectile.position.x,
           y: projectile.position.y,
+          heading: Math.atan2(projectile.velocity.y, projectile.velocity.x),
         })),
+        statistics: match.statisticsSnapshot,
         enemiesSpawned: match.enemiesSpawned,
         arena: { width: match.arena.width, height: match.arena.height },
         scene: runtime.sceneStatistics,
       };
     },
+    config: () => currentRuntime()?.match.config ?? null,
     setManualTime: (isManual) => currentRuntime()?.setTimeSource(isManual ? 'manual' : 'realTime'),
-    advanceTime: (milliseconds) => currentRuntime()?.advanceTime(milliseconds),
+    advanceTime: (milliseconds, shouldDraw = true) => currentRuntime()?.advanceTime(milliseconds, shouldDraw),
     isPlayerHullBlocked: () => {
       const match = currentRuntime()?.match;
       return match ? match.simulationContext.hullPlacement.isBlocked(match.player, 0.01) : false;
