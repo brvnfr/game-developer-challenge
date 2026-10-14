@@ -22,6 +22,12 @@ export class Weapon {
     return this.cooldownRemainingSeconds;
   }
 
+  /** 0 right after firing, 1 when ready again (reload indicators). */
+  get readiness(): number {
+    const fullCooldown = this.stats.cooldownSeconds * this.cooldownMultiplier;
+    return fullCooldown > 0 ? 1 - this.cooldownRemainingSeconds / fullCooldown : 1;
+  }
+
   get isReady(): boolean {
     return this.cooldownRemainingSeconds <= 0;
   }

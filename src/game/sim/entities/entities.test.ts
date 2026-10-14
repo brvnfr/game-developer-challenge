@@ -75,6 +75,17 @@ describe('Weapon', () => {
     expect(weapon.shouldFire).toBe(true);
   });
 
+  it('reports how far the reload has progressed', () => {
+    const weapon = new Weapon('front', { ...DEFAULT_GAME_CONFIG.player.frontCannon, cooldownSeconds: 1 });
+    expect(weapon.readiness).toBe(1);
+    weapon.startCooldown();
+    expect(weapon.readiness).toBe(0);
+    weapon.tick(0.25);
+    expect(weapon.readiness).toBeCloseTo(0.25);
+    weapon.tick(1);
+    expect(weapon.readiness).toBe(1);
+  });
+
   it('scales the cooldown by its multiplier', () => {
     const weapon = new Weapon('cannon', DEFAULT_GAME_CONFIG.shooter.cannon, 0.5);
     weapon.startCooldown();

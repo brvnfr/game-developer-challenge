@@ -82,4 +82,22 @@ describe('WeaponSystem', () => {
     weapons.update(context);
     expect(context.world.projectiles).toHaveLength(0);
   });
+
+  it('adds the ship velocity to its projectiles, so moving broadsides keep the ship momentum', () => {
+    const context = createTestContext();
+    const ship = context.ships.createPlayer(new Vector2(400, 300), 0);
+    ship.velocity = new Vector2(150, 0);
+    weaponOf(ship, 'left').isTriggerHeld = true;
+    weaponOf(ship, 'front').isTriggerHeld = true;
+    weapons.update(context);
+    const broadsideSpeed = context.config.player.broadside.projectileSpeed;
+    const frontSpeed = context.config.player.frontCannon.projectileSpeed;
+    const broadside = context.world.projectiles.filter((projectile) => projectile.weaponSlot === 'left');
+    const front = context.world.projectiles.find((projectile) => projectile.weaponSlot === 'front');
+    for (const projectile of broadside) {
+      expect(projectile.velocity.x).toBeCloseTo(150);
+      expect(projectile.velocity.y).toBeCloseTo(-broadsideSpeed);
+    }
+    expect(front?.velocity.x).toBeCloseTo(frontSpeed + 150);
+  });
 });

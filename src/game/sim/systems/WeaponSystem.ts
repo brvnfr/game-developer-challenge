@@ -26,6 +26,7 @@ export class WeaponSystem implements SimulationSystem {
    * Fires one shot and starts the cooldown.
    * - front / cannon: one projectile from the bow along the heading
    * - left / right: parallel projectiles perpendicular to the hull, spaced along it
+   * Projectiles add the configured share of the ship's velocity, so they keep its momentum.
    */
   fire(ship: Ship, weapon: Weapon, context: SimulationContext): Projectile[] {
     const forward = ship.forward;
@@ -42,7 +43,9 @@ export class WeaponSystem implements SimulationSystem {
           faction: ship.faction,
           weaponSlot: weapon.slot,
           position: origin,
-          velocity: direction.scale(weapon.stats.projectileSpeed),
+          velocity: direction
+            .scale(weapon.stats.projectileSpeed)
+            .add(ship.velocity.scale(weapon.stats.velocityInheritance)),
           damage: weapon.stats.damage,
           radius: weapon.stats.projectileRadius,
           range: weapon.stats.range,

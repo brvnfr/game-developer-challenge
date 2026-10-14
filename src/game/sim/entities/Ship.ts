@@ -15,7 +15,7 @@ export interface ShipOptions {
   readonly navigation?: NavigationState | null;
   /** Chaser only: damage dealt when ramming the player. */
   readonly ramDamage?: number;
-  /** Difficulty multiplier applied to speed, acceleration and turn rate. */
+  /** Difficulty multiplier applied to speed, acceleration, turn rate and turn acceleration. */
   readonly speedMultiplier?: number;
 }
 
@@ -45,6 +45,8 @@ export class Ship {
   readonly acceleration: number;
   readonly deceleration: number;
   readonly turnSpeed: number;
+  readonly turnAcceleration: number;
+  readonly lateralGrip: number;
   readonly ramDamage: number;
   readonly weapons: readonly Weapon[];
   readonly navigation: NavigationState | null;
@@ -55,8 +57,10 @@ export class Ship {
   /** Radians; 0 = +x, PI/2 = +y (down). */
   heading: number;
   previousHeading: number;
-  /** Current forward speed (px/s). */
-  speed = 0;
+  /** World-space velocity (px/s). Thrust is forward only; sideways components come from drift in turns. */
+  velocity: Vector2 = Vector2.ZERO;
+  /** Current rotation speed (rad/s); eases towards `turnInput × turnSpeed`. */
+  angularVelocity = 0;
   /** Control inputs for the current step, set by player commands or AI. */
   private throttleInput = 0;
   private turnInputValue = 0;
@@ -76,6 +80,8 @@ export class Ship {
     this.acceleration = options.stats.acceleration * speedMultiplier;
     this.deceleration = options.stats.deceleration;
     this.turnSpeed = options.stats.turnSpeed * speedMultiplier;
+    this.turnAcceleration = options.stats.turnAcceleration * speedMultiplier;
+    this.lateralGrip = options.stats.lateralGrip;
     this.ramDamage = options.ramDamage ?? 0;
     this.weapons = options.weapons ?? [];
     this.navigation = options.navigation ?? null;
@@ -104,6 +110,16 @@ export class Ship {
 
   get forward(): Vector2 {
     return Vector2.fromAngle(this.heading);
+  }
+
+  /** Speed along the heading (px/s). */
+  get speed(): number {
+    return this.velocity.dot(this.forward);
+  }
+
+  /** Sideways drift (px/s), positive towards the ship's left. */
+  get driftSpeed(): number {
+    return this.velocity.dot(this.forward.leftPerpendicular());
   }
 
   weapon(slot: WeaponSlot): Weapon | undefined {
@@ -173,7 +189,8 @@ export class Ship {
   destroy(): void {
     this.alive = false;
     this.currentHealth = 0;
-    this.speed = 0;
+    this.velocity = Vector2.ZERO;
+    this.angularVelocity = 0;
     this.stopControls();
   }
 }

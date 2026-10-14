@@ -18,10 +18,17 @@ const ESCAPE_SECONDS = 0.7;
 const ESCAPE_THROTTLE = 0.7;
 const CLEARANCE_TOLERANCE = 0.5;
 
-/** Turn input in [-1, 1] that reaches the heading error without overshooting in one step. */
+/**
+ * Turn input in [-1, 1] that closes the heading error without overshooting, given the ship's rotation
+ * inertia: the wanted turn rate follows a braking curve √(2·turnAcceleration·|error|), capped by the top
+ * turn rate and by what still fits in one step.
+ */
 export function turnInputFor(ship: Ship, headingError: number, stepSeconds: number): number {
-  const maxTurnPerStep = ship.turnSpeed * stepSeconds;
-  return maxTurnPerStep > 0 ? clamp(headingError / maxTurnPerStep, -1, 1) : 0;
+  if (ship.turnSpeed <= 0 || stepSeconds <= 0) return 0;
+  const remaining = Math.abs(headingError);
+  const brakingRate = Math.sqrt(2 * ship.turnAcceleration * remaining);
+  const wantedRate = Math.min(ship.turnSpeed, brakingRate, remaining / stepSeconds);
+  return clamp((Math.sign(headingError) * wantedRate) / ship.turnSpeed, -1, 1);
 }
 
 /**

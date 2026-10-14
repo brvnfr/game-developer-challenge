@@ -13,8 +13,15 @@ export interface ShipStats {
   readonly acceleration: number;
   /** Deceleration when not thrusting (px/s²). */
   readonly deceleration: number;
-  /** Rotation speed (rad/s). */
+  /** Top rotation speed (rad/s). */
   readonly turnSpeed: number;
+  /** How fast the rotation speeds up and slows down (rad/s²): turning eases in and out instead of snapping. */
+  readonly turnAcceleration: number;
+  /**
+   * How quickly sideways drift fades (1/s). Thrust only pushes forward; when the ship turns, part of its
+   * momentum keeps going the old way and decays at this rate (lower = more drift on the water).
+   */
+  readonly lateralGrip: number;
   /** Half the width of the hull (px). The hull is modelled as three circles of this radius along the keel. */
   readonly hullRadius: number;
   /** Bow-to-stern length of the hull (px), matching the ship art. */
@@ -29,6 +36,8 @@ export interface WeaponStats {
   /** Maximum travel distance (px). Projectile lifetime = range / speed. */
   readonly range: number;
   readonly projectileRadius: number;
+  /** Share of the firing ship's velocity added to the projectile (1 = cannonballs keep the ship's momentum). */
+  readonly velocityInheritance: number;
 }
 
 export interface BroadsideStats extends WeaponStats {

@@ -30,7 +30,8 @@ test.describe('match start and movement (E2E-03)', () => {
     const afterRight = (await game.state()).player;
     expect(afterRight.heading).toBeGreaterThan(afterForward.heading + 0.5);
 
-    await game.holdKeys(['ArrowLeft'], 1000);
+    // The rudder has momentum: the first part of the opposite turn only cancels the swing to the right.
+    await game.holdKeys(['ArrowLeft'], 1500);
     const afterLeft = (await game.state()).player;
     expect(afterLeft.heading).toBeLessThan(afterRight.heading - 1);
   });
