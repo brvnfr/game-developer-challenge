@@ -2,7 +2,16 @@
 
 A top-down 2D naval shooter built with **React**, **TypeScript (strict)** and **PixiJS**. Navigate between islands, fight enemy ships and score points until the match ends.
 
-> Work in progress — this README is completed as features land. The original challenge statement lives in [docs/CHALLENGE.md](docs/CHALLENGE.md); code conventions are in [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md).
+**Live demo:** _URL added after the Vercel deployment._
+
+| Document                                             | Content                                                                                                           |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [ARCHITECTURE.md](ARCHITECTURE.md)                   | React/PixiJS integration, simulation, collisions, resources, persistence, ranking/history, limitations, balancing |
+| [docs/PERFORMANCE.md](docs/PERFORMANCE.md)           | Frame rate, p95 frame time, entities, memory over 5 cycles, environment                                           |
+| [docs/reports/](docs/reports/summary.md)             | Test reports (Vitest JUnit + coverage, Playwright HTML) and profiling evidence                                    |
+| [docs/CREDITS.md](docs/CREDITS.md)                   | Assets, conversions, fonts and licenses                                                                           |
+| [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) | Naming, classes vs functions, design and test conventions                                                         |
+| [docs/CHALLENGE.md](docs/CHALLENGE.md)               | Original challenge statement (Portuguese)                                                                         |
 
 ## Tech stack
 
@@ -43,25 +52,29 @@ All variables are optional; copy `.env.example` to `.env.local` to override.
 
 ## Commands
 
-| Command                          | Description                                                               |
-| -------------------------------- | ------------------------------------------------------------------------- |
-| `npm run dev`                    | Development server                                                        |
-| `npm run build`                  | Type-check and production build (`dist/`)                                 |
-| `npm run preview`                | Serve the production build on http://localhost:4173                       |
-| `npm run lint`                   | ESLint (zero warnings allowed)                                            |
-| `npm run typecheck`              | TypeScript project build check                                            |
-| `npm run format`                 | Prettier                                                                  |
-| `npm test`                       | Unit + integration tests (Vitest)                                         |
-| `npm run test:unit`              | Unit tests only (pure simulation, Node environment)                       |
-| `npm run test:integration`       | Integration tests (jsdom, React, MSW)                                     |
-| `npm run test:coverage`          | Tests with coverage report (`coverage/`)                                  |
-| `npm run test:e2e`               | Playwright E2E — Chromium desktop and mobile                              |
-| `npm run test:e2e:report`        | Open the last Playwright HTML report                                      |
-| `npm run assets`                 | Rebuild the PixiJS texture atlases from `assets/`                         |
-| `npm run assets:audio`           | Convert `assets/sounds` for the web (needs ffmpeg)                        |
-| `npm run test:e2e:visual`        | Visual regression only (`@visual`)                                        |
-| `npm run test:e2e:visual:update` | Create/update the visual baselines of this platform                       |
-| `npm run test:e2e:docker`        | Whole E2E suite in the official Playwright Docker image (Linux baselines) |
+| Command                              | Description                                                                           |
+| ------------------------------------ | ------------------------------------------------------------------------------------- |
+| `npm run dev`                        | Development server                                                                    |
+| `npm run build`                      | Type-check and production build (`dist/`)                                             |
+| `npm run preview`                    | Serve the production build on http://localhost:4173                                   |
+| `npm run lint`                       | ESLint (zero warnings allowed)                                                        |
+| `npm run typecheck`                  | TypeScript project build check                                                        |
+| `npm run format`                     | Prettier                                                                              |
+| `npm test`                           | Unit + integration tests (Vitest)                                                     |
+| `npm run test:unit`                  | Unit tests only (pure simulation, Node environment)                                   |
+| `npm run test:integration`           | Integration tests (jsdom, React, MSW)                                                 |
+| `npm run test:coverage`              | Tests with coverage report (`coverage/`)                                              |
+| `npm run test:e2e`                   | Playwright E2E — Chromium desktop and mobile                                          |
+| `npm run test:e2e:report`            | Open the last Playwright HTML report                                                  |
+| `npm run assets`                     | Rebuild the PixiJS texture atlases from `assets/`                                     |
+| `npm run assets:audio`               | Convert `assets/sounds` for the web (needs ffmpeg)                                    |
+| `npm run test:e2e:visual`            | Visual regression only (`@visual`)                                                    |
+| `npm run test:e2e:visual:update`     | Create/update the visual baselines of this platform                                   |
+| `npm run test:e2e:docker`            | Whole E2E suite in the official Playwright Docker image (Linux baselines)             |
+| `npm run perf`                       | Performance (3-minute match) and memory (5 cycles) runs on the production build       |
+| `npm run perf:match` / `perf:memory` | Only one of the two runs                                                              |
+| `npm run reports`                    | Run Vitest (JUnit + coverage) and Playwright and store the reports in `docs/reports/` |
+| `npm run check`                      | Lint + typecheck + unit and integration tests                                         |
 
 E2E tests always build the app and start their own `vite preview` on port **4174** (never reusing a running server), so a preview left open on 4173 from an older build cannot be tested by mistake. WebGL runs in software in the test browsers (deterministic screenshots), so the suite uses 2 parallel workers by default; set `PLAYWRIGHT_WORKERS` to change it. Set `PLAYWRIGHT_BASE_URL` to run them against a deployed URL. Failed tests keep a trace (`test-results/**/trace.zip`, open with `npx playwright show-trace`).
 
@@ -215,6 +228,29 @@ is saved (`pirate-battle.audio.v1`).
 
 Fonts (self-hosted through Fontsource, SIL Open Font License 1.1): [Lilita One](https://fonts.google.com/specimen/Lilita+One)
 for titles and buttons, [Nunito](https://fonts.google.com/specimen/Nunito) for text.
+
+## Performance and memory
+
+`npm run perf` builds the production bundle, serves it on port 4175 and plays in **real time** with Chromium
+(using the machine's GPU when available; `PERF_HEADED=1` shows the browser):
+
+- **3-minute match** (`?test=1&profile=1`, 180 s, spawn every 3 s, seed 7, all cannons firing while sailing in
+  loops): average FPS, p50/p95/p99 frame interval, main-thread frame work, entity counts every second and a
+  5-second Chrome trace → `docs/reports/performance/match-3min-<platform>.json` and `…-trace-<platform>.json`
+  (open the trace in Chrome DevTools › Performance). The player's health is raised to 10 000 (`playerHealth`, a
+  value of the typed config) so the match lasts the full 3 minutes; every other value is the default.
+- **Memory, 5 cycles** of Play → 20 s of combat → Main Menu, with forced garbage collection: JS heap, DOM nodes,
+  event listeners, live runtimes, canvases and native objects (canvases, WebGL contexts, audio nodes) counted in
+  heap snapshots → `docs/reports/performance/memory-5-cycles-<platform>.json`. `PERF_MEMORY_CYCLES=10` runs more.
+
+Results, environment and limitations: [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
+
+## Reports and CI
+
+`npm run reports` runs Vitest (JUnit + coverage) and the Playwright suite and stores the reports in
+`docs/reports/` (`summary.md`, `vitest/`, `e2e/index.html`). Failed E2E tests keep traces in `test-results/`.
+`.github/workflows/ci.yml` runs format, lint, typecheck, unit/integration tests and the build, then the E2E suite
+in the official Playwright Docker image (same Linux baselines), uploading the HTML report and traces.
 
 ## Deployment
 
