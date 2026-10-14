@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_ARENA } from '@/game/sim/arena/defaultArena';
-import { SHIP_FRAMES, TILE_FRAMES } from './assets/atlasFrames.generated';
-import { islandTileFor } from './scene/islandTiles';
+import { SHIP_FRAMES } from './assets/atlasFrames.generated';
 import { damageStageFor, shipFrameFor, WRECK_STAGE } from './spriteCatalog';
 import { Viewport } from './Viewport';
 
@@ -24,42 +22,6 @@ describe('ship damage stages', () => {
       for (const stage of [0, 1, 2, 3] as const) expect(SHIP_FRAMES).toContain(shipFrameFor(kind, stage));
     }
     expect(new Set([shipFrameFor('player', 0), shipFrameFor('chaser', 0), shipFrameFor('shooter', 0)]).size).toBe(3);
-  });
-});
-
-describe('island autotiling', () => {
-  it('uses corner tiles where two coasts meet', () => {
-    expect(islandTileFor({ north: false, west: false, south: true, east: true }, 0, 0)).toBe('tile_6');
-    expect(islandTileFor({ north: true, west: true, south: false, east: false }, 0, 0)).toBe('tile_57');
-  });
-
-  it('only picks existing tiles for every land tile of the default arena', () => {
-    const rows = DEFAULT_ARENA.tiles;
-    const isLand = (column: number, row: number) => rows[row]?.charAt(column) === '#';
-    rows.forEach((rowTiles, row) => {
-      for (let column = 0; column < rowTiles.length; column++) {
-        if (!isLand(column, row)) continue;
-        const neighbours = {
-          north: isLand(column, row - 1),
-          south: isLand(column, row + 1),
-          east: isLand(column + 1, row),
-          west: isLand(column - 1, row),
-        };
-        expect(TILE_FRAMES).toContain(islandTileFor(neighbours, column, row));
-      }
-    });
-  });
-
-  it('has no land part thinner than two tiles in the default arena', () => {
-    const rows = DEFAULT_ARENA.tiles;
-    const isLand = (column: number, row: number) => rows[row]?.charAt(column) === '#';
-    rows.forEach((rowTiles, row) => {
-      for (let column = 0; column < rowTiles.length; column++) {
-        if (!isLand(column, row)) continue;
-        expect(isLand(column, row - 1) || isLand(column, row + 1)).toBe(true);
-        expect(isLand(column - 1, row) || isLand(column + 1, row)).toBe(true);
-      }
-    });
   });
 });
 

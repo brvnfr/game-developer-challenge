@@ -8,9 +8,11 @@ import { ExplosionEffect, MuzzleFlashEffect, SinkingWreckEffect, SplashEffect } 
 import { EFFECT_FRAMES, SHIP_SPRITE_ROTATION_OFFSET, shipFrameFor, WRECK_STAGE } from '../spriteCatalog';
 import type { ViewportLayout } from '../Viewport';
 import { DamageFeedback } from './DamageFeedback';
+import { PlayerGunneryView } from './PlayerGunneryView';
 import { ProjectileViews } from './ProjectileViews';
 import { ShipView } from './ShipView';
-import { TerrainView } from './TerrainView';
+import { TerrainView } from './terrain/TerrainView';
+import { WakeLayer } from './WakeLayer';
 
 const WATER_SPLASH_COLOUR = 0xe8f8ff;
 const DUST_COLOUR = 0xf3dcab;
@@ -20,16 +22,20 @@ export interface SceneStatistics {
   readonly projectiles: number;
   readonly pooledProjectiles: number;
   readonly effects: number;
+  readonly wakePuffs: number;
 }
 
 /**
  * PixiJS presentation of a match. Reads the simulation (never writes to it), keeps one view per entity,
- * and turns domain events into effects. Layers, bottom to top: terrain, ships, projectiles, effects,
- * health bars, damage flash.
+ * and turns domain events into effects. Layers, bottom to top: terrain, wakes, aim guide, ships, projectiles,
+ * effects, health bars and reload arcs, damage flash.
  */
 export class GameScene {
   readonly root = new Container({ label: 'world' });
   private readonly terrain: TerrainView;
+  private readonly wakes = new WakeLayer();
+  private readonly aimGuideLayer = new Container({ label: 'aim-guide' });
+  private gunnery: PlayerGunneryView;
   private readonly shipLayer = new Container({ label: 'ships' });
   private readonly overlayLayer = new Container({ label: 'health-bars' });
   private readonly projectiles: ProjectileViews;
@@ -43,11 +49,14 @@ export class GameScene {
     private readonly textures: GameTextures,
     prefersReducedMotion: boolean,
   ) {
-    this.terrain = new TerrainView(session.arena, textures);
+    this.terrain = new TerrainView(session.arena, textures, { isAnimated: !prefersReducedMotion });
     this.projectiles = new ProjectileViews(textures);
     this.damageFeedback = new DamageFeedback(session.arena.width, session.arena.height, prefersReducedMotion);
+    this.gunnery = this.createGunnery();
     this.root.addChild(
       this.terrain.container,
+      this.wakes.container,
+      this.aimGuideLayer,
       this.shipLayer,
       this.projectiles.container,
       this.effects.container,
@@ -62,6 +71,7 @@ export class GameScene {
       projectiles: this.projectiles.activeCount,
       pooledProjectiles: this.projectiles.pooledCount,
       effects: this.effects.activeCount,
+      wakePuffs: this.wakes.activeCount,
     };
   }
 
@@ -85,6 +95,9 @@ export class GameScene {
     this.shipViews.clear();
     this.projectiles.clear();
     this.effects.clear();
+    this.wakes.clear();
+    this.gunnery.destroy();
+    this.gunnery = this.createGunnery();
     this.damageFeedback.reset();
   }
 
@@ -100,7 +113,10 @@ export class GameScene {
 
   /** Draws the current state. `deltaSeconds` is presentation time (0 while paused, freezing effects). */
   render(interpolation: number, deltaSeconds: number): void {
+    this.terrain.update(deltaSeconds);
+    this.wakes.update(deltaSeconds);
     this.syncShips(interpolation, deltaSeconds);
+    this.gunnery.update(interpolation);
     this.projectiles.sync(this.session.world.projectiles, interpolation);
     this.effects.update(deltaSeconds);
     const shake = this.damageFeedback.update(deltaSeconds);
@@ -115,6 +131,8 @@ export class GameScene {
     this.shipViews.clear();
     this.projectiles.destroy();
     this.effects.destroy();
+    this.gunnery.destroy();
+    this.wakes.destroy();
     this.terrain.destroy();
     this.root.destroy({ children: true });
   }
@@ -135,10 +153,22 @@ export class GameScene {
   private viewFor(ship: Ship): ShipView {
     let view = this.shipViews.get(ship.id);
     if (!view) {
-      view = new ShipView(ship, this.textures, this.shipLayer, this.overlayLayer);
+      view = new ShipView(ship, this.textures, {
+        ships: this.shipLayer,
+        overlay: this.overlayLayer,
+        wakes: this.wakes,
+      });
       this.shipViews.set(ship.id, view);
     }
     return view;
+  }
+
+  /** Aim guide and reload arcs of the current match's player. */
+  private createGunnery(): PlayerGunneryView {
+    const gunnery = new PlayerGunneryView(this.session.player);
+    this.aimGuideLayer.addChild(gunnery.guide);
+    this.overlayLayer.addChild(gunnery.reloadIndicator);
+    return gunnery;
   }
 
   private handleEvent(event: GameEvent): void {

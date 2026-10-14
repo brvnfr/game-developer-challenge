@@ -7,6 +7,8 @@ export class GameTextures {
     private readonly ships: Spritesheet,
     private readonly tiles: Spritesheet,
     private readonly ui: Spritesheet,
+    /** Standalone sea texture (not in an atlas) so it can repeat across the arena. */
+    readonly water: Texture,
   ) {}
 
   ship(frame: ShipFrame): Texture {

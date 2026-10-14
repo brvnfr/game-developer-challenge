@@ -9,6 +9,17 @@ import {
   type DamageStage,
 } from '../spriteCatalog';
 import { ENEMY_HEALTH_BAR, HealthBarView, PLAYER_HEALTH_BAR } from './HealthBarView';
+import { WakeEmitter } from './WakeEmitter';
+import type { WakeLayer } from './WakeLayer';
+
+/** Scene layers a ship view draws into. */
+export interface ShipViewLayers {
+  readonly ships: Container;
+  /** Above every ship: health bars. */
+  readonly overlay: Container;
+  /** Under every ship: foam. */
+  readonly wakes: WakeLayer;
+}
 
 const HIT_FLASH_SECONDS = 0.18;
 const HIT_TINT = 0xff7a7a;
@@ -17,7 +28,7 @@ const FIRE_FLICKER_SPEED = 9;
 
 /**
  * Visual of one ship: hull sprite whose art deteriorates with the health ratio, flames when damaged,
- * a red flash when hit and a health bar that stays upright above the ship.
+ * a red flash when hit, a health bar that stays upright above the ship and a foam wake while it sails.
  */
 export class ShipView {
   /** Rotated body holding the hull art and the flames. */
@@ -25,6 +36,7 @@ export class ShipView {
   private readonly hull: Sprite;
   readonly healthBar: HealthBarView;
   private readonly fire: Sprite;
+  private readonly wake: WakeEmitter;
   private shownStage: DamageStage | null = null;
   private hitFlashSeconds = 0;
   private elapsedSeconds = 0;
@@ -32,16 +44,16 @@ export class ShipView {
   constructor(
     private readonly ship: Ship,
     private readonly textures: GameTextures,
-    shipLayer: Container,
-    overlayLayer: Container,
+    layers: ShipViewLayers,
   ) {
     this.body = new Container({ label: `ship-${ship.kind}-${ship.id}` });
     this.hull = new Sprite({ anchor: 0.5 });
     this.fire = new Sprite({ texture: textures.ship(EFFECT_FRAMES.fires[0]), anchor: 0.5, visible: false });
     this.body.addChild(this.hull, this.fire);
     this.healthBar = new HealthBarView(textures, ship.kind === 'player' ? PLAYER_HEALTH_BAR : ENEMY_HEALTH_BAR);
-    shipLayer.addChild(this.body);
-    overlayLayer.addChild(this.healthBar.container);
+    this.wake = new WakeEmitter(ship, layers.wakes);
+    layers.ships.addChild(this.body);
+    layers.overlay.addChild(this.healthBar.container);
     this.syncArt();
   }
 
@@ -60,6 +72,7 @@ export class ShipView {
     this.healthBar.container.visible = ship.isAlive;
     this.healthBar.setRatio(ship.health / ship.maxHealth);
     this.syncArt();
+    this.wake.update(position, heading, deltaSeconds);
 
     this.elapsedSeconds += deltaSeconds;
     this.hitFlashSeconds = Math.max(0, this.hitFlashSeconds - deltaSeconds);

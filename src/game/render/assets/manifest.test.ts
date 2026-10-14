@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { SHIP_FRAMES, TILE_FRAMES, UI_FRAMES } from './atlasFrames.generated';
-import { atlasFile, createGameBundle, GAME_ATLASES, pickAtlasResolution, type AtlasResolution, type GameAtlas } from './manifest';
+import { atlasFile, createGameBundle, GAME_ATLASES, GAME_TEXTURES, pickAtlasResolution, type AtlasResolution, type GameAtlas } from './manifest';
 
 const publicDir = join(process.cwd(), 'public', 'assets', 'game');
 
@@ -28,6 +28,13 @@ describe('game asset manifest', () => {
     },
   );
 
+  it.each(GAME_TEXTURES)('ships the %s texture as a square power-of-two PNG (it repeats on the GPU)', (texture) => {
+    const bytes = readFileSync(join(publicDir, `${texture}.png`));
+    const width = bytes.readUInt32BE(16);
+    expect(bytes.readUInt32BE(20)).toBe(width);
+    expect(Math.log2(width) % 1).toBe(0);
+  });
+
   it('uses the 1× ships atlas for every resolution (no retina variant exists)', () => {
     expect(atlasFile('ships', 2)).toBe('ships.json');
   });
@@ -45,6 +52,7 @@ describe('game asset manifest', () => {
       { alias: 'ships', src: '/assets/game/ships.json' },
       { alias: 'tiles', src: '/assets/game/tiles@2x.json' },
       { alias: 'ui', src: '/assets/game/ui@2x.json' },
+      { alias: 'water', src: '/assets/game/water.png' },
     ]);
   });
 });

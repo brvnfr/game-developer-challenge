@@ -1,5 +1,5 @@
 import type { ShipKind } from '@/game/sim/entities/types';
-import type { ShipFrame, TileFrame } from './assets/atlasFrames.generated';
+import type { ShipFrame } from './assets/atlasFrames.generated';
 
 /**
  * Visual identity of each ship kind. Each hull colour exists in four art variants:
@@ -31,8 +31,6 @@ export function shipFrameFor(kind: ShipKind, stage: DamageStage): ShipFrame {
 
 /** The ship art points its bow down (+y); simulation heading 0 points to +x. */
 export const SHIP_SPRITE_ROTATION_OFFSET = -Math.PI / 2;
-
-export const WATER_TILE: TileFrame = 'tile_73';
 
 export const EFFECT_FRAMES = {
   cannonBall: 'cannon_ball',

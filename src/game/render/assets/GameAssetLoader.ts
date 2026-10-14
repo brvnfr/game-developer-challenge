@@ -1,8 +1,12 @@
-import { Assets, type Spritesheet } from 'pixi.js';
+import { Assets, Texture, type Spritesheet } from 'pixi.js';
 import { GameTextures } from './GameTextures';
 import { createGameBundle, GAME_BUNDLE, pickAtlasResolution } from './manifest';
 
 export const DEFAULT_LOAD_TIMEOUT_MS = 20_000;
+
+function isSpritesheet(asset: Spritesheet | Texture | undefined): asset is Spritesheet {
+  return asset !== undefined && 'textures' in asset;
+}
 
 export class AssetLoadError extends Error {
   constructor(
@@ -59,10 +63,15 @@ export class GameAssetLoader {
       }, this.timeoutMs);
     });
     try {
-      const atlases = (await Promise.race([Assets.loadBundle(GAME_BUNDLE, onProgress), timeout])) as Record<string, Spritesheet | undefined>;
-      const { ships, tiles, ui } = atlases;
-      if (!ships || !tiles || !ui) throw new AssetLoadError('Some game assets are missing.', 'network');
-      GameAssetLoader.loadedTextures = new GameTextures(ships, tiles, ui);
+      const assets = (await Promise.race([Assets.loadBundle(GAME_BUNDLE, onProgress), timeout])) as Record<
+        string,
+        Spritesheet | Texture | undefined
+      >;
+      const { ships, tiles, ui, water } = assets;
+      if (!isSpritesheet(ships) || !isSpritesheet(tiles) || !isSpritesheet(ui) || !(water instanceof Texture)) {
+        throw new AssetLoadError('Some game assets are missing.', 'network');
+      }
+      GameAssetLoader.loadedTextures = new GameTextures(ships, tiles, ui, water);
       return GameAssetLoader.loadedTextures;
     } catch (error) {
       await Assets.unloadBundle(GAME_BUNDLE).catch(() => undefined);

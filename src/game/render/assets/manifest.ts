@@ -4,6 +4,10 @@ import type { AssetsBundle } from 'pixi.js';
 export const GAME_ATLASES = ['ships', 'tiles', 'ui'] as const;
 export type GameAtlas = (typeof GAME_ATLASES)[number];
 
+/** Plain textures of the bundle (not atlases): the sea, which is drawn as a repeating, moving pattern. */
+export const GAME_TEXTURES = ['water'] as const;
+export type GameTextureName = (typeof GAME_TEXTURES)[number];
+
 export const GAME_BUNDLE = 'game';
 
 /** Texture resolution to request. Ships only exist at 1×; tiles and UI have 1× and 2× variants. */
@@ -21,9 +25,9 @@ export function atlasFile(atlas: GameAtlas, resolution: AtlasResolution): string
 export function createGameBundle(baseUrl: string, resolution: AtlasResolution): AssetsBundle {
   return {
     name: GAME_BUNDLE,
-    assets: GAME_ATLASES.map((atlas) => ({
-      alias: atlas,
-      src: `${baseUrl}assets/game/${atlasFile(atlas, resolution)}`,
-    })),
+    assets: [
+      ...GAME_ATLASES.map((atlas) => ({ alias: atlas, src: `${baseUrl}assets/game/${atlasFile(atlas, resolution)}` })),
+      ...GAME_TEXTURES.map((texture) => ({ alias: texture, src: `${baseUrl}assets/game/${texture}.png` })),
+    ],
   };
 }

@@ -8,6 +8,7 @@
  *   public/assets/game/tiles@1x.json + tiles@1x.png   ← assets/tilesheet/tiles_sheet.png (64×64 grid)
  *   public/assets/game/tiles@2x.json + tiles@2x.png   ← assets/tilesheet/tiles_sheet_retina.png (128×128 grid)
  *   public/assets/game/ui@1x.json / ui@2x.json (+png) ← assets/spritesheet/ui_sheet(_retina).json
+ *   public/assets/game/water.png                      ← assets/png/retina/tiles/tile_73.png (repeating sea texture)
  *   src/game/render/assets/atlasFrames.generated.ts   ← typed frame names
  *
  * Notes:
@@ -136,6 +137,8 @@ function renderFrameList(name: string, frameNames: string[]): string {
 }
 
 mkdirSync(outputDirectory, { recursive: true });
+// The sea is drawn as one repeating texture (TilingSprite), which needs a standalone image rather than an atlas frame.
+copyFileSync(sourcePath('png', 'retina', 'tiles', 'tile_73.png'), join(outputDirectory, 'water.png'));
 const shipFrames = buildShipsAtlas();
 const tileFrames = buildTilesAtlas('tiles_sheet.png', 'tiles@1x', 64, 1);
 const retinaTileFrames = buildTilesAtlas('tiles_sheet_retina.png', 'tiles@2x', 128, 2);

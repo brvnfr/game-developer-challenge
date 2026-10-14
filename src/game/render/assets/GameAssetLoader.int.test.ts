@@ -5,7 +5,13 @@ const pixiAssets = vi.hoisted(() => ({
   loadBundle: vi.fn(),
   unloadBundle: vi.fn(() => Promise.resolve()),
 }));
-vi.mock('pixi.js', () => ({ Assets: pixiAssets }));
+const FakeTexture = vi.hoisted(
+  () =>
+    class FakeTexture {
+      readonly label = 'water';
+    },
+);
+vi.mock('pixi.js', () => ({ Assets: pixiAssets, Texture: FakeTexture }));
 
 const fakeSheet = (name: string) => ({ textures: { [name]: { label: name } } });
 
@@ -29,7 +35,7 @@ describe('GameAssetLoader', () => {
     pixiAssets.loadBundle.mockImplementation((_bundle: string, onProgress: (progress: number) => void) => {
       onProgress(0.5);
       onProgress(1);
-      return Promise.resolve({ ships: fakeSheet('ship_1'), tiles: fakeSheet('tile_1'), ui: fakeSheet('panel_menu') });
+      return Promise.resolve({ ships: fakeSheet('ship_1'), tiles: fakeSheet('tile_1'), ui: fakeSheet('panel_menu'), water: new FakeTexture() });
     });
     const { loader, module } = await freshLoader();
     const progress: number[] = [];
@@ -43,7 +49,7 @@ describe('GameAssetLoader', () => {
 
   it('fails with a readable error, clears the partial load and succeeds on retry', async () => {
     pixiAssets.loadBundle.mockRejectedValueOnce(new Error('404'));
-    pixiAssets.loadBundle.mockResolvedValueOnce({ ships: fakeSheet('ship_1'), tiles: fakeSheet('tile_1'), ui: fakeSheet('panel_menu') });
+    pixiAssets.loadBundle.mockResolvedValueOnce({ ships: fakeSheet('ship_1'), tiles: fakeSheet('tile_1'), ui: fakeSheet('panel_menu'), water: new FakeTexture() });
     const { loader, module } = await freshLoader();
     await expect(loader.load()).rejects.toMatchObject({ name: 'AssetLoadError', reason: 'network' });
     expect(pixiAssets.unloadBundle).toHaveBeenCalledOnce();
@@ -67,7 +73,7 @@ describe('GameAssetLoader', () => {
     const { loader } = await freshLoader();
     const first = loader.load();
     const second = loader.load();
-    resolveLoad({ ships: fakeSheet('ship_1'), tiles: fakeSheet('tile_1'), ui: fakeSheet('panel_menu') });
+    resolveLoad({ ships: fakeSheet('ship_1'), tiles: fakeSheet('tile_1'), ui: fakeSheet('panel_menu'), water: new FakeTexture() });
     expect(await first).toBe(await second);
     expect(pixiAssets.loadBundle).toHaveBeenCalledTimes(1);
   });
