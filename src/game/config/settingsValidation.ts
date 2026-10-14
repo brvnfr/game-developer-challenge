@@ -2,7 +2,7 @@ import type { UserSettings } from './types';
 
 export type SettingsField = keyof UserSettings;
 
-interface FieldRule {
+export interface FieldRule {
   readonly label: string;
   readonly minimum: number;
   readonly maximum: number;
@@ -24,7 +24,7 @@ export type SettingsValidationResult =
 const SETTINGS_FIELDS = Object.keys(SETTINGS_RULES) as SettingsField[];
 
 /** Accepts numbers or numeric strings; a decimal comma is accepted ("2,5" → 2.5). */
-function parseNumber(rawValue: unknown): number | null {
+export function parseSettingValue(rawValue: unknown): number | null {
   if (typeof rawValue === 'number') return Number.isFinite(rawValue) ? rawValue : null;
   if (typeof rawValue !== 'string' || rawValue.trim() === '') return null;
   const parsed = Number(rawValue.trim().replace(',', '.'));
@@ -32,7 +32,7 @@ function parseNumber(rawValue: unknown): number | null {
 }
 
 function validateField(rule: FieldRule, rawValue: unknown): { value: number } | { error: string } {
-  const value = parseNumber(rawValue);
+  const value = parseSettingValue(rawValue);
   if (value === null) return { error: `${rule.label} must be a number.` };
   if (value < rule.minimum || value > rule.maximum) {
     return { error: `${rule.label} must be between ${rule.minimum} and ${rule.maximum} seconds.` };

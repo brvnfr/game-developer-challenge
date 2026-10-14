@@ -1,43 +1,115 @@
 import { useMemo, useState } from 'react';
-import { DEFAULT_USER_SETTINGS } from '@/game/config/defaults';
+import type { UserSettings } from '@/game/config/types';
 import type { MatchResult } from '@/game/sim/match/types';
 import { GameScreen } from '@/screens/Game/GameScreen';
 import { MainMenuScreen } from '@/screens/MainMenu/MainMenuScreen';
+import { PlayerNameDialog } from '@/screens/MainMenu/PlayerNameDialog';
+import { OptionsScreen, type OptionsSaveOutcome } from '@/screens/Options/OptionsScreen';
 import { ResultScreen } from '@/screens/Result/ResultScreen';
+import type { PlayerProfile } from '@/storage/repositories';
 import { readTestMode } from '@/testing/testMode';
+import type { AppServices } from './AppServices';
 
 type Screen =
   | { readonly name: 'menu' }
+  | { readonly name: 'options' }
   | { readonly name: 'game'; readonly matchNumber: number }
   | { readonly name: 'result'; readonly result: MatchResult; readonly matchNumber: number };
 
+/** The result screen comes back after a refresh; any other screen restarts at the menu (a match is abandoned). */
+function initialScreen(services: AppServices): Screen {
+  const lastResult = services.lastResult.load();
+  if (services.screenMemory.isResultOpen() && lastResult) return { name: 'result', result: lastResult, matchNumber: 0 };
+  services.screenMemory.forget();
+  return { name: 'menu' };
+}
+
 /**
- * Screen flow: menu → game → result → (play again | menu). Leaving the game screen unmounts it,
- * which disposes the runtime and abandons the match without a result.
+ * Screen flow: menu ⇄ options, menu → game → result → (play again | menu). Leaving the game screen unmounts
+ * it, which disposes the runtime and abandons the match without a result.
  */
-export function App() {
+export function App({ services }: { readonly services: AppServices }) {
   const testMode = useMemo(() => readTestMode(), []);
-  const settings = useMemo(() => testMode.settings ?? DEFAULT_USER_SETTINGS, [testMode]);
-  const [screen, setScreen] = useState<Screen>({ name: 'menu' });
+  const [settings, setSettings] = useState<UserSettings>(() => services.settings.load());
+  const [profile, setProfile] = useState<PlayerProfile>(() => services.playerProfile.load());
+  const [lastResult, setLastResult] = useState<MatchResult | null>(() => services.lastResult.load());
+  const [screen, setScreen] = useState<Screen>(() => initialScreen(services));
+  const [isNamePromptOpen, setNamePromptOpen] = useState(false);
+  // Test mode may pin the settings through the URL; otherwise each match snapshots the saved options.
+  const matchSettings = testMode.settings ?? settings;
+
+  const showMenu = () => {
+    services.screenMemory.forget();
+    setScreen({ name: 'menu' });
+  };
   const startMatch = (matchNumber: number) => {
+    services.screenMemory.forget();
     setScreen({ name: 'game', matchNumber });
+  };
+  const finishMatch = (result: MatchResult, matchNumber: number) => {
+    services.lastResult.save(result);
+    services.screenMemory.rememberResultOpen();
+    setLastResult(result);
+    setScreen({ name: 'result', result, matchNumber });
+  };
+  const renameCaptain = (name: string) => {
+    const outcome = services.playerProfile.rename(name);
+    if ('error' in outcome) return { error: outcome.error };
+    setProfile(outcome.profile);
+    return { profile: outcome.profile };
+  };
+  const saveOptions = (newSettings: UserSettings, captainName: string): OptionsSaveOutcome => {
+    const isSettingsPersisted = services.settings.save(newSettings);
+    setSettings(newSettings);
+    const renamed = renameCaptain(captainName);
+    return isSettingsPersisted && !('error' in renamed) ? 'saved' : 'notPersisted';
   };
 
   switch (screen.name) {
     case 'menu':
-      return <MainMenuScreen onPlay={() => startMatch(1)} />;
+      return (
+        <>
+          <MainMenuScreen
+            captainName={profile.name}
+            lastResult={lastResult}
+            onPlay={() => {
+              if (profile.hasChosenName) startMatch(1);
+              else setNamePromptOpen(true);
+            }}
+            onOptions={() => setScreen({ name: 'options' })}
+          />
+          {isNamePromptOpen && (
+            <PlayerNameDialog
+              suggestedName={profile.name}
+              onConfirm={(name) => {
+                const renamed = renameCaptain(name);
+                if ('error' in renamed) return renamed.error;
+                setNamePromptOpen(false);
+                startMatch(1);
+                return undefined;
+              }}
+              onCancel={() => setNamePromptOpen(false)}
+            />
+          )}
+        </>
+      );
+    case 'options':
+      return (
+        <OptionsScreen
+          savedSettings={settings}
+          savedCaptainName={profile.name}
+          onSave={saveOptions}
+          onMainMenu={showMenu}
+        />
+      );
     case 'game':
       return (
         <GameScreen
           key={screen.matchNumber}
-          settings={settings}
+          settings={matchSettings}
           testMode={testMode}
-          onMatchEnded={(result) => {
-            setScreen({ name: 'result', result, matchNumber: screen.matchNumber });
-          }}
-          onExitToMenu={() => {
-            setScreen({ name: 'menu' });
-          }}
+          onMatchEnded={(result) => finishMatch(result, screen.matchNumber)}
+          onExitToMenu={showMenu}
         />
       );
     case 'result':
@@ -45,9 +117,7 @@ export function App() {
         <ResultScreen
           result={screen.result}
           onPlayAgain={() => startMatch(screen.matchNumber + 1)}
-          onMainMenu={() => {
-            setScreen({ name: 'menu' });
-          }}
+          onMainMenu={showMenu}
         />
       );
   }
