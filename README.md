@@ -39,7 +39,7 @@ All variables are optional; copy `.env.example` to `.env.local` to override.
 | --------------------- | ------- | ----------------------------------------- |
 | `VITE_API_BASE_URL`   | `/api`  | Base URL of the ranking/history REST API. |
 | `VITE_ENABLE_MOCKS`   | `true`  | Starts the MSW worker that mocks the API. |
-| `VITE_API_TIMEOUT_MS` | `8000`  | Axios request timeout in milliseconds.    |
+| `VITE_API_TIMEOUT_MS` | `8000`  | Request timeout in milliseconds.          |
 
 ## Commands
 
@@ -102,18 +102,82 @@ ranking. Everything is stored in the browser:
 `sessionStorage` remembers whether the result screen is open, so a refresh shows the result again; a refresh or
 leaving during a match abandons it and returns to the menu. Invalid or outdated stored data is discarded.
 
+## Ranking and Match History
+
+The main menu opens the **Captain's Log** on either tab:
+
+- **Ranking**: completed matches played with the **same settings** (session time and spawn interval), 5 per
+  page. The filter starts on the current options and lists every configuration with matches. Order (ADR-011):
+  more points → shorter match → earlier end → match id, so ties are always broken the same way. Your entries
+  are marked **You**.
+- **Match History**: your completed matches, newest first, with date, points, duration and how they ended.
+  Matches still waiting to be saved are listed above it with a **Retry now** button.
+
+Every completed match is queued in a persistent outbox (`pirate-battle.outbox.v1`) **before** it is sent with
+`PUT /api/matches/:matchId`. The request is idempotent, so a retry after a timeout returns the stored record
+instead of creating a second one. Pending matches survive failures and refreshes and are retried automatically
+(backoff, when the browser comes back online, when the app starts) or with **Retry now**. The result screen
+shows the status (_Saving… / Saved / Not saved yet / Could not be saved_). Nothing here ever blocks the game,
+the options or a new match.
+
+The API is simulated by **MSW** in every environment, including the published build (service worker
+`public/mockServiceWorker.js`). The same handlers, contracts (`src/api/contracts.ts`) and fixtures run in the
+browser and in Vitest (`msw/node`). Confirmed matches are kept in `pirate-battle.mock-server.v1`; 12 fixture
+captains fill the ranking for four configurations.
+
+| Endpoint                                   | Response                                        |
+| ------------------------------------------ | ----------------------------------------------- |
+| `GET /api/ranking?configKey&page&pageSize` | Ranking page for one configuration (`s120-i3`)  |
+| `GET /api/ranking/configurations`          | Configurations that have matches                |
+| `GET /api/players/:playerId/matches`       | The player's history page                       |
+| `PUT /api/matches/:matchId`                | 201 created · 200 already stored · 409 conflict |
+
+## Network scenarios
+
+Open **Network scenarios** at the bottom of the main menu to choose how the mock server behaves, with a
+**seed** (reproducible delays) and a **base latency**. **Reset mock server** restores the initial state: only
+the fixtures and the _Success_ scenario. The choice is stored (`pirate-battle.network.v1`) and survives a
+refresh. Scenarios can also be chosen through the URL, e.g. `/?scenario=slow&networkSeed=3&latency=0`.
+
+| Scenario (`scenario=`)          | Behaviour                                                                      |
+| ------------------------------- | ------------------------------------------------------------------------------ |
+| `success`                       | Everything works with a short delay (base latency ±50 %)                       |
+| `empty`                         | Ranking and Match History are empty                                            |
+| `many-pages`                    | Extra entries: many pages in both lists                                        |
+| `slow`                          | Every answer ~2.5 s slower                                                     |
+| `variable-latency`              | Delays between 0.1 and 2.5 s (seeded)                                          |
+| `out-of-order`                  | Odd requests slow (2 s), even ones fast: older answers arrive after newer ones |
+| `timeout`                       | No answer: requests time out                                                   |
+| `network-error`                 | Connection failure                                                             |
+| `http-4xx`                      | 400 Bad Request (not retried automatically)                                    |
+| `http-5xx`                      | 503 Service Unavailable                                                        |
+| `ranking-fail` / `history-fail` | Only that list fails (500)                                                     |
+| `register-timeout-after-commit` | The first save of each match is stored but never answered; a retry recovers it |
+| `unavailable-then-recover`      | The first 3 requests to each endpoint fail with 503, then everything works     |
+
+**Reproducing failures by hand**
+
+1. _Server down at the end of a match:_ choose **Connection failure**, play a match → the result says _Not saved
+   yet_; refresh → still pending (menu: "1 battle is waiting to be saved"); choose **Success** → it is saved once.
+2. _Timeout after saving:_ choose **Timeout after saving**, finish a match → the first answer never arrives, the
+   retry returns the stored record; Match History shows the match once.
+3. _Late answers:_ choose **Out-of-order responses**, open Ranking and press Next/Previous quickly → the page on
+   screen is always the last one asked for (obsolete requests are aborted).
+4. _Errors:_ choose **Ranking fails** → the Ranking tab shows an error with **Retry**; Match History still works.
+
 ## Test mode
 
 Add `?test=1` to the URL to enable the test instrumentation used by the Playwright suite. It only observes the
 match and controls time; rules, input, collisions and rendering run unchanged.
 
-| Parameter     | Example       | Effect                                                         |
-| ------------- | ------------- | -------------------------------------------------------------- |
-| `seed`        | `seed=42`     | Fixed random seed (spawns, AI decisions)                       |
-| `session`     | `session=60`  | Game session time for this page (60–180), overrides Options    |
-| `spawn`       | `spawn=10`    | Enemy spawn time for this page (1–10, step 0.5), overrides     |
-| `time=manual` | `time=manual` | Real time stops; tests advance the game with `advanceTime(ms)` |
-| `touch=1`     | `touch=1`     | Shows the touch controls on any device (also without `test`)   |
+| Parameter     | Example           | Effect                                                         |
+| ------------- | ----------------- | -------------------------------------------------------------- |
+| `seed`        | `seed=42`         | Fixed random seed (spawns, AI decisions)                       |
+| `session`     | `session=60`      | Game session time for this page (60–180), overrides Options    |
+| `spawn`       | `spawn=10`        | Enemy spawn time for this page (1–10, step 0.5), overrides     |
+| `time=manual` | `time=manual`     | Real time stops; tests advance the game with `advanceTime(ms)` |
+| `touch=1`     | `touch=1`         | Shows the touch controls on any device (also without `test`)   |
+| `apiTimeout`  | `apiTimeout=1500` | API request timeout in ms (test mode only)                     |
 
 The API is available as `window.__PIRATE_BATTLE__` (`state()`, `advanceTime(ms)`, `setManualTime(bool)`,
 `liveRuntimes()`, `isPlayerHullBlocked()`).
