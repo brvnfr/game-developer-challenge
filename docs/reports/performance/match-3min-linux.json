@@ -1,0 +1,2133 @@
+{
+  "environment": {
+    "recordedAt": "2026-10-14T16:29:52.997Z",
+    "machine": {
+      "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+      "cores": 2,
+      "memoryGb": 8,
+      "os": "Linux 6.18.44-fc-v114 (x64)"
+    },
+    "browser": {
+      "name": "Chromium",
+      "version": "141.0.7390.37",
+      "headless": true
+    },
+    "page": {
+      "viewport": "1280×720",
+      "devicePixelRatio": 1,
+      "webglRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36"
+    }
+  },
+  "match": {
+    "sessionSeconds": 180,
+    "spawnIntervalSeconds": 3,
+    "seed": 7,
+    "playerMaxHealth": 10000,
+    "input": "W held, turning left/right alternately every 12 s, Space + Q + E held (all cannons)",
+    "score": 53,
+    "enemiesSpawned": 110,
+    "statistics": {
+      "playerVolleys": {
+        "front": 386,
+        "left": 129,
+        "right": 129
+      },
+      "playerProjectilesFired": 1160,
+      "enemyProjectilesFired": 395,
+      "hitsOnEnemies": 180,
+      "hitsOnPlayer": 191,
+      "damageTakenByPlayer": 3010,
+      "enemiesDestroyedByPlayer": 53,
+      "enemiesDestroyedByRam": 44,
+      "enemiesSpawnedByKind": {
+        "chaser": 56,
+        "shooter": 54
+      }
+    }
+  },
+  "wallClockSeconds": 278,
+  "usedJsHeapMbAtEnd": 21,
+  "profile": {
+    "durationSeconds": 278.3,
+    "frames": {
+      "frames": 1800,
+      "averageFps": 6.5,
+      "averageFrameMs": 154.62,
+      "p50FrameMs": 144.3,
+      "p95FrameMs": 215.4,
+      "p99FrameMs": 263.5,
+      "maxFrameMs": 627.3,
+      "framesOver33Ms": 1800
+    },
+    "updateWork": {
+      "averageMs": 1.57,
+      "p95Ms": 4.3,
+      "maxMs": 52.9
+    },
+    "peakEntities": {
+      "enemies": 12,
+      "projectiles": 12,
+      "effects": 14,
+      "displayObjects": 724
+    },
+    "timeline": [
+      {
+        "atSeconds": 1.1,
+        "fps": 4.6,
+        "enemies": 0,
+        "projectiles": 7,
+        "effects": 3,
+        "displayObjects": 635
+      },
+      {
+        "atSeconds": 2.1,
+        "fps": 6.9,
+        "enemies": 0,
+        "projectiles": 2,
+        "effects": 7,
+        "displayObjects": 634
+      },
+      {
+        "atSeconds": 3.2,
+        "fps": 6.5,
+        "enemies": 0,
+        "projectiles": 7,
+        "effects": 4,
+        "displayObjects": 636
+      },
+      {
+        "atSeconds": 4.2,
+        "fps": 7.9,
+        "enemies": 0,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 630
+      },
+      {
+        "atSeconds": 5.2,
+        "fps": 7.6,
+        "enemies": 1,
+        "projectiles": 8,
+        "effects": 2,
+        "displayObjects": 642
+      },
+      {
+        "atSeconds": 6.4,
+        "fps": 6.3,
+        "enemies": 1,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 637
+      },
+      {
+        "atSeconds": 7.4,
+        "fps": 7.8,
+        "enemies": 1,
+        "projectiles": 8,
+        "effects": 0,
+        "displayObjects": 640
+      },
+      {
+        "atSeconds": 8.4,
+        "fps": 6.7,
+        "enemies": 1,
+        "projectiles": 2,
+        "effects": 6,
+        "displayObjects": 640
+      },
+      {
+        "atSeconds": 9.5,
+        "fps": 7.4,
+        "enemies": 1,
+        "projectiles": 6,
+        "effects": 2,
+        "displayObjects": 640
+      },
+      {
+        "atSeconds": 10.6,
+        "fps": 7.4,
+        "enemies": 1,
+        "projectiles": 2,
+        "effects": 2,
+        "displayObjects": 636
+      },
+      {
+        "atSeconds": 11.7,
+        "fps": 6.3,
+        "enemies": 1,
+        "projectiles": 8,
+        "effects": 0,
+        "displayObjects": 640
+      },
+      {
+        "atSeconds": 12.7,
+        "fps": 3.9,
+        "enemies": 1,
+        "projectiles": 2,
+        "effects": 8,
+        "displayObjects": 642
+      },
+      {
+        "atSeconds": 13.8,
+        "fps": 4.6,
+        "enemies": 1,
+        "projectiles": 8,
+        "effects": 4,
+        "displayObjects": 644
+      },
+      {
+        "atSeconds": 14.9,
+        "fps": 7.2,
+        "enemies": 2,
+        "projectiles": 2,
+        "effects": 7,
+        "displayObjects": 648
+      },
+      {
+        "atSeconds": 15.9,
+        "fps": 6.7,
+        "enemies": 2,
+        "projectiles": 7,
+        "effects": 1,
+        "displayObjects": 647
+      },
+      {
+        "atSeconds": 17.1,
+        "fps": 6.1,
+        "enemies": 2,
+        "projectiles": 3,
+        "effects": 2,
+        "displayObjects": 644
+      },
+      {
+        "atSeconds": 18.1,
+        "fps": 7.7,
+        "enemies": 2,
+        "projectiles": 6,
+        "effects": 5,
+        "displayObjects": 650
+      },
+      {
+        "atSeconds": 19.2,
+        "fps": 7.5,
+        "enemies": 3,
+        "projectiles": 1,
+        "effects": 4,
+        "displayObjects": 651
+      },
+      {
+        "atSeconds": 20.2,
+        "fps": 6.8,
+        "enemies": 3,
+        "projectiles": 8,
+        "effects": 1,
+        "displayObjects": 655
+      },
+      {
+        "atSeconds": 21.4,
+        "fps": 7,
+        "enemies": 3,
+        "projectiles": 1,
+        "effects": 1,
+        "displayObjects": 648
+      },
+      {
+        "atSeconds": 22.4,
+        "fps": 6.7,
+        "enemies": 3,
+        "projectiles": 8,
+        "effects": 0,
+        "displayObjects": 654
+      },
+      {
+        "atSeconds": 23.5,
+        "fps": 6.4,
+        "enemies": 3,
+        "projectiles": 3,
+        "effects": 5,
+        "displayObjects": 654
+      },
+      {
+        "atSeconds": 24.5,
+        "fps": 6.9,
+        "enemies": 3,
+        "projectiles": 7,
+        "effects": 3,
+        "displayObjects": 656
+      },
+      {
+        "atSeconds": 25.6,
+        "fps": 6.7,
+        "enemies": 2,
+        "projectiles": 1,
+        "effects": 3,
+        "displayObjects": 643
+      },
+      {
+        "atSeconds": 26.6,
+        "fps": 7.5,
+        "enemies": 2,
+        "projectiles": 4,
+        "effects": 5,
+        "displayObjects": 648
+      },
+      {
+        "atSeconds": 27.7,
+        "fps": 7.1,
+        "enemies": 3,
+        "projectiles": 4,
+        "effects": 3,
+        "displayObjects": 653
+      },
+      {
+        "atSeconds": 28.8,
+        "fps": 6.5,
+        "enemies": 3,
+        "projectiles": 2,
+        "effects": 4,
+        "displayObjects": 652
+      },
+      {
+        "atSeconds": 29.9,
+        "fps": 7.3,
+        "enemies": 2,
+        "projectiles": 8,
+        "effects": 5,
+        "displayObjects": 652
+      },
+      {
+        "atSeconds": 30.9,
+        "fps": 6.7,
+        "enemies": 2,
+        "projectiles": 4,
+        "effects": 5,
+        "displayObjects": 648
+      },
+      {
+        "atSeconds": 32,
+        "fps": 6.8,
+        "enemies": 2,
+        "projectiles": 5,
+        "effects": 7,
+        "displayObjects": 651
+      },
+      {
+        "atSeconds": 33,
+        "fps": 6.7,
+        "enemies": 2,
+        "projectiles": 2,
+        "effects": 7,
+        "displayObjects": 648
+      },
+      {
+        "atSeconds": 34.1,
+        "fps": 5.7,
+        "enemies": 2,
+        "projectiles": 5,
+        "effects": 5,
+        "displayObjects": 649
+      },
+      {
+        "atSeconds": 35.1,
+        "fps": 7.5,
+        "enemies": 0,
+        "projectiles": 1,
+        "effects": 8,
+        "displayObjects": 634
+      },
+      {
+        "atSeconds": 36.2,
+        "fps": 6.5,
+        "enemies": 1,
+        "projectiles": 8,
+        "effects": 5,
+        "displayObjects": 645
+      },
+      {
+        "atSeconds": 37.2,
+        "fps": 7.7,
+        "enemies": 1,
+        "projectiles": 2,
+        "effects": 6,
+        "displayObjects": 640
+      },
+      {
+        "atSeconds": 38.3,
+        "fps": 6.5,
+        "enemies": 1,
+        "projectiles": 6,
+        "effects": 1,
+        "displayObjects": 639
+      },
+      {
+        "atSeconds": 39.3,
+        "fps": 7,
+        "enemies": 1,
+        "projectiles": 1,
+        "effects": 3,
+        "displayObjects": 636
+      },
+      {
+        "atSeconds": 40.4,
+        "fps": 6.3,
+        "enemies": 2,
+        "projectiles": 7,
+        "effects": 1,
+        "displayObjects": 647
+      },
+      {
+        "atSeconds": 41.5,
+        "fps": 7.2,
+        "enemies": 2,
+        "projectiles": 2,
+        "effects": 5,
+        "displayObjects": 646
+      },
+      {
+        "atSeconds": 42.7,
+        "fps": 6.2,
+        "enemies": 2,
+        "projectiles": 6,
+        "effects": 1,
+        "displayObjects": 646
+      },
+      {
+        "atSeconds": 43.8,
+        "fps": 6.3,
+        "enemies": 1,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 637
+      },
+      {
+        "atSeconds": 44.8,
+        "fps": 6.7,
+        "enemies": 2,
+        "projectiles": 7,
+        "effects": 3,
+        "displayObjects": 649
+      },
+      {
+        "atSeconds": 45.9,
+        "fps": 6.6,
+        "enemies": 2,
+        "projectiles": 1,
+        "effects": 1,
+        "displayObjects": 641
+      },
+      {
+        "atSeconds": 47,
+        "fps": 5.4,
+        "enemies": 2,
+        "projectiles": 6,
+        "effects": 0,
+        "displayObjects": 645
+      },
+      {
+        "atSeconds": 48.1,
+        "fps": 6.2,
+        "enemies": 2,
+        "projectiles": 2,
+        "effects": 5,
+        "displayObjects": 646
+      },
+      {
+        "atSeconds": 49.1,
+        "fps": 6.9,
+        "enemies": 2,
+        "projectiles": 8,
+        "effects": 1,
+        "displayObjects": 648
+      },
+      {
+        "atSeconds": 50.1,
+        "fps": 6,
+        "enemies": 3,
+        "projectiles": 1,
+        "effects": 7,
+        "displayObjects": 654
+      },
+      {
+        "atSeconds": 51.2,
+        "fps": 6.8,
+        "enemies": 3,
+        "projectiles": 4,
+        "effects": 3,
+        "displayObjects": 653
+      },
+      {
+        "atSeconds": 52.2,
+        "fps": 6.7,
+        "enemies": 3,
+        "projectiles": 2,
+        "effects": 5,
+        "displayObjects": 653
+      },
+      {
+        "atSeconds": 53.3,
+        "fps": 6.7,
+        "enemies": 2,
+        "projectiles": 8,
+        "effects": 5,
+        "displayObjects": 652
+      },
+      {
+        "atSeconds": 54.3,
+        "fps": 6.9,
+        "enemies": 3,
+        "projectiles": 2,
+        "effects": 5,
+        "displayObjects": 653
+      },
+      {
+        "atSeconds": 55.4,
+        "fps": 6.9,
+        "enemies": 3,
+        "projectiles": 4,
+        "effects": 1,
+        "displayObjects": 651
+      },
+      {
+        "atSeconds": 56.4,
+        "fps": 6.9,
+        "enemies": 3,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 651
+      },
+      {
+        "atSeconds": 57.5,
+        "fps": 7.7,
+        "enemies": 3,
+        "projectiles": 8,
+        "effects": 1,
+        "displayObjects": 655
+      },
+      {
+        "atSeconds": 58.5,
+        "fps": 6.6,
+        "enemies": 3,
+        "projectiles": 1,
+        "effects": 5,
+        "displayObjects": 652
+      },
+      {
+        "atSeconds": 59.7,
+        "fps": 7.1,
+        "enemies": 3,
+        "projectiles": 5,
+        "effects": 6,
+        "displayObjects": 657
+      },
+      {
+        "atSeconds": 60.7,
+        "fps": 6.4,
+        "enemies": 3,
+        "projectiles": 2,
+        "effects": 4,
+        "displayObjects": 652
+      },
+      {
+        "atSeconds": 61.8,
+        "fps": 7.8,
+        "enemies": 3,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 651
+      },
+      {
+        "atSeconds": 62.9,
+        "fps": 7.4,
+        "enemies": 4,
+        "projectiles": 3,
+        "effects": 1,
+        "displayObjects": 657
+      },
+      {
+        "atSeconds": 64,
+        "fps": 7.3,
+        "enemies": 4,
+        "projectiles": 4,
+        "effects": 4,
+        "displayObjects": 661
+      },
+      {
+        "atSeconds": 65,
+        "fps": 7.4,
+        "enemies": 4,
+        "projectiles": 4,
+        "effects": 3,
+        "displayObjects": 660
+      },
+      {
+        "atSeconds": 66.2,
+        "fps": 7,
+        "enemies": 4,
+        "projectiles": 1,
+        "effects": 4,
+        "displayObjects": 658
+      },
+      {
+        "atSeconds": 67.3,
+        "fps": 7.3,
+        "enemies": 5,
+        "projectiles": 5,
+        "effects": 2,
+        "displayObjects": 667
+      },
+      {
+        "atSeconds": 68.4,
+        "fps": 6.2,
+        "enemies": 5,
+        "projectiles": 0,
+        "effects": 3,
+        "displayObjects": 663
+      },
+      {
+        "atSeconds": 69.4,
+        "fps": 6,
+        "enemies": 4,
+        "projectiles": 8,
+        "effects": 3,
+        "displayObjects": 664
+      },
+      {
+        "atSeconds": 70.5,
+        "fps": 6.5,
+        "enemies": 3,
+        "projectiles": 3,
+        "effects": 4,
+        "displayObjects": 653
+      },
+      {
+        "atSeconds": 71.5,
+        "fps": 6.7,
+        "enemies": 4,
+        "projectiles": 7,
+        "effects": 2,
+        "displayObjects": 662
+      },
+      {
+        "atSeconds": 72.6,
+        "fps": 6.5,
+        "enemies": 3,
+        "projectiles": 1,
+        "effects": 5,
+        "displayObjects": 652
+      },
+      {
+        "atSeconds": 73.7,
+        "fps": 6.2,
+        "enemies": 2,
+        "projectiles": 5,
+        "effects": 5,
+        "displayObjects": 649
+      },
+      {
+        "atSeconds": 74.8,
+        "fps": 5.7,
+        "enemies": 2,
+        "projectiles": 1,
+        "effects": 7,
+        "displayObjects": 647
+      },
+      {
+        "atSeconds": 75.8,
+        "fps": 6.7,
+        "enemies": 2,
+        "projectiles": 7,
+        "effects": 5,
+        "displayObjects": 651
+      },
+      {
+        "atSeconds": 76.9,
+        "fps": 7.5,
+        "enemies": 3,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 651
+      },
+      {
+        "atSeconds": 78,
+        "fps": 6.5,
+        "enemies": 3,
+        "projectiles": 7,
+        "effects": 0,
+        "displayObjects": 653
+      },
+      {
+        "atSeconds": 79,
+        "fps": 6.9,
+        "enemies": 2,
+        "projectiles": 3,
+        "effects": 2,
+        "displayObjects": 644
+      },
+      {
+        "atSeconds": 80,
+        "fps": 6.9,
+        "enemies": 2,
+        "projectiles": 4,
+        "effects": 5,
+        "displayObjects": 648
+      },
+      {
+        "atSeconds": 81.1,
+        "fps": 6.6,
+        "enemies": 3,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 651
+      },
+      {
+        "atSeconds": 82.2,
+        "fps": 6.9,
+        "enemies": 2,
+        "projectiles": 8,
+        "effects": 3,
+        "displayObjects": 650
+      },
+      {
+        "atSeconds": 83.4,
+        "fps": 7.1,
+        "enemies": 2,
+        "projectiles": 1,
+        "effects": 5,
+        "displayObjects": 645
+      },
+      {
+        "atSeconds": 84.5,
+        "fps": 6.3,
+        "enemies": 2,
+        "projectiles": 5,
+        "effects": 0,
+        "displayObjects": 644
+      },
+      {
+        "atSeconds": 85.6,
+        "fps": 7.2,
+        "enemies": 2,
+        "projectiles": 2,
+        "effects": 5,
+        "displayObjects": 646
+      },
+      {
+        "atSeconds": 86.7,
+        "fps": 7.2,
+        "enemies": 2,
+        "projectiles": 4,
+        "effects": 3,
+        "displayObjects": 646
+      },
+      {
+        "atSeconds": 87.7,
+        "fps": 7.8,
+        "enemies": 2,
+        "projectiles": 5,
+        "effects": 3,
+        "displayObjects": 647
+      },
+      {
+        "atSeconds": 88.8,
+        "fps": 6.3,
+        "enemies": 2,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 644
+      },
+      {
+        "atSeconds": 90,
+        "fps": 6.9,
+        "enemies": 4,
+        "projectiles": 8,
+        "effects": 5,
+        "displayObjects": 666
+      },
+      {
+        "atSeconds": 91.1,
+        "fps": 7.6,
+        "enemies": 4,
+        "projectiles": 1,
+        "effects": 3,
+        "displayObjects": 657
+      },
+      {
+        "atSeconds": 92.1,
+        "fps": 7.3,
+        "enemies": 3,
+        "projectiles": 4,
+        "effects": 7,
+        "displayObjects": 657
+      },
+      {
+        "atSeconds": 93.2,
+        "fps": 7.5,
+        "enemies": 5,
+        "projectiles": 1,
+        "effects": 1,
+        "displayObjects": 662
+      },
+      {
+        "atSeconds": 94.3,
+        "fps": 6.8,
+        "enemies": 5,
+        "projectiles": 8,
+        "effects": 1,
+        "displayObjects": 669
+      },
+      {
+        "atSeconds": 95.3,
+        "fps": 7.5,
+        "enemies": 5,
+        "projectiles": 1,
+        "effects": 1,
+        "displayObjects": 662
+      },
+      {
+        "atSeconds": 96.4,
+        "fps": 7.7,
+        "enemies": 3,
+        "projectiles": 7,
+        "effects": 3,
+        "displayObjects": 656
+      },
+      {
+        "atSeconds": 97.4,
+        "fps": 7,
+        "enemies": 5,
+        "projectiles": 1,
+        "effects": 4,
+        "displayObjects": 665
+      },
+      {
+        "atSeconds": 98.4,
+        "fps": 6.7,
+        "enemies": 5,
+        "projectiles": 1,
+        "effects": 2,
+        "displayObjects": 663
+      },
+      {
+        "atSeconds": 99.5,
+        "fps": 7.5,
+        "enemies": 4,
+        "projectiles": 4,
+        "effects": 5,
+        "displayObjects": 662
+      },
+      {
+        "atSeconds": 100.5,
+        "fps": 6.8,
+        "enemies": 4,
+        "projectiles": 2,
+        "effects": 4,
+        "displayObjects": 659
+      },
+      {
+        "atSeconds": 101.6,
+        "fps": 6.3,
+        "enemies": 4,
+        "projectiles": 6,
+        "effects": 4,
+        "displayObjects": 663
+      },
+      {
+        "atSeconds": 102.7,
+        "fps": 5.7,
+        "enemies": 4,
+        "projectiles": 2,
+        "effects": 10,
+        "displayObjects": 665
+      },
+      {
+        "atSeconds": 103.8,
+        "fps": 5.2,
+        "enemies": 4,
+        "projectiles": 1,
+        "effects": 2,
+        "displayObjects": 656
+      },
+      {
+        "atSeconds": 104.9,
+        "fps": 6.3,
+        "enemies": 4,
+        "projectiles": 6,
+        "effects": 4,
+        "displayObjects": 663
+      },
+      {
+        "atSeconds": 106,
+        "fps": 6.6,
+        "enemies": 4,
+        "projectiles": 1,
+        "effects": 4,
+        "displayObjects": 658
+      },
+      {
+        "atSeconds": 107.2,
+        "fps": 6.1,
+        "enemies": 6,
+        "projectiles": 7,
+        "effects": 1,
+        "displayObjects": 675
+      },
+      {
+        "atSeconds": 108.2,
+        "fps": 5.6,
+        "enemies": 6,
+        "projectiles": 2,
+        "effects": 4,
+        "displayObjects": 673
+      },
+      {
+        "atSeconds": 109.3,
+        "fps": 6.7,
+        "enemies": 5,
+        "projectiles": 6,
+        "effects": 5,
+        "displayObjects": 671
+      },
+      {
+        "atSeconds": 110.3,
+        "fps": 6.6,
+        "enemies": 4,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 658
+      },
+      {
+        "atSeconds": 111.4,
+        "fps": 6.5,
+        "enemies": 4,
+        "projectiles": 6,
+        "effects": 1,
+        "displayObjects": 660
+      },
+      {
+        "atSeconds": 112.4,
+        "fps": 6.8,
+        "enemies": 4,
+        "projectiles": 1,
+        "effects": 7,
+        "displayObjects": 661
+      },
+      {
+        "atSeconds": 113.5,
+        "fps": 5.5,
+        "enemies": 4,
+        "projectiles": 8,
+        "effects": 5,
+        "displayObjects": 666
+      },
+      {
+        "atSeconds": 114.7,
+        "fps": 6.2,
+        "enemies": 4,
+        "projectiles": 1,
+        "effects": 3,
+        "displayObjects": 657
+      },
+      {
+        "atSeconds": 115.8,
+        "fps": 6.3,
+        "enemies": 4,
+        "projectiles": 5,
+        "effects": 1,
+        "displayObjects": 659
+      },
+      {
+        "atSeconds": 116.8,
+        "fps": 5.7,
+        "enemies": 6,
+        "projectiles": 2,
+        "effects": 1,
+        "displayObjects": 670
+      },
+      {
+        "atSeconds": 117.9,
+        "fps": 6.6,
+        "enemies": 4,
+        "projectiles": 6,
+        "effects": 3,
+        "displayObjects": 662
+      },
+      {
+        "atSeconds": 118.9,
+        "fps": 6.6,
+        "enemies": 4,
+        "projectiles": 1,
+        "effects": 5,
+        "displayObjects": 659
+      },
+      {
+        "atSeconds": 120,
+        "fps": 6.4,
+        "enemies": 3,
+        "projectiles": 9,
+        "effects": 3,
+        "displayObjects": 658
+      },
+      {
+        "atSeconds": 121,
+        "fps": 6.9,
+        "enemies": 5,
+        "projectiles": 3,
+        "effects": 5,
+        "displayObjects": 668
+      },
+      {
+        "atSeconds": 122.2,
+        "fps": 7.1,
+        "enemies": 5,
+        "projectiles": 3,
+        "effects": 5,
+        "displayObjects": 668
+      },
+      {
+        "atSeconds": 123.3,
+        "fps": 6.5,
+        "enemies": 5,
+        "projectiles": 2,
+        "effects": 0,
+        "displayObjects": 662
+      },
+      {
+        "atSeconds": 124.3,
+        "fps": 6.7,
+        "enemies": 5,
+        "projectiles": 6,
+        "effects": 1,
+        "displayObjects": 667
+      },
+      {
+        "atSeconds": 125.4,
+        "fps": 7.2,
+        "enemies": 7,
+        "projectiles": 0,
+        "effects": 3,
+        "displayObjects": 677
+      },
+      {
+        "atSeconds": 126.4,
+        "fps": 6.8,
+        "enemies": 7,
+        "projectiles": 3,
+        "effects": 1,
+        "displayObjects": 678
+      },
+      {
+        "atSeconds": 127.5,
+        "fps": 6.3,
+        "enemies": 7,
+        "projectiles": 2,
+        "effects": 4,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 128.7,
+        "fps": 6.2,
+        "enemies": 7,
+        "projectiles": 6,
+        "effects": 0,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 129.7,
+        "fps": 7.7,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 4,
+        "displayObjects": 682
+      },
+      {
+        "atSeconds": 130.8,
+        "fps": 6.6,
+        "enemies": 9,
+        "projectiles": 7,
+        "effects": 4,
+        "displayObjects": 699
+      },
+      {
+        "atSeconds": 131.8,
+        "fps": 5.6,
+        "enemies": 9,
+        "projectiles": 6,
+        "effects": 1,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 133,
+        "fps": 5.1,
+        "enemies": 9,
+        "projectiles": 12,
+        "effects": 3,
+        "displayObjects": 703
+      },
+      {
+        "atSeconds": 134.1,
+        "fps": 4.5,
+        "enemies": 9,
+        "projectiles": 4,
+        "effects": 4,
+        "displayObjects": 696
+      },
+      {
+        "atSeconds": 135.3,
+        "fps": 6,
+        "enemies": 10,
+        "projectiles": 9,
+        "effects": 4,
+        "displayObjects": 708
+      },
+      {
+        "atSeconds": 136.5,
+        "fps": 5.9,
+        "enemies": 10,
+        "projectiles": 4,
+        "effects": 1,
+        "displayObjects": 700
+      },
+      {
+        "atSeconds": 137.6,
+        "fps": 6.1,
+        "enemies": 9,
+        "projectiles": 9,
+        "effects": 7,
+        "displayObjects": 704
+      },
+      {
+        "atSeconds": 138.7,
+        "fps": 5.8,
+        "enemies": 9,
+        "projectiles": 4,
+        "effects": 1,
+        "displayObjects": 693
+      },
+      {
+        "atSeconds": 139.8,
+        "fps": 6.4,
+        "enemies": 9,
+        "projectiles": 5,
+        "effects": 4,
+        "displayObjects": 697
+      },
+      {
+        "atSeconds": 141,
+        "fps": 5.8,
+        "enemies": 8,
+        "projectiles": 3,
+        "effects": 4,
+        "displayObjects": 688
+      },
+      {
+        "atSeconds": 142,
+        "fps": 5.9,
+        "enemies": 8,
+        "projectiles": 0,
+        "effects": 5,
+        "displayObjects": 686
+      },
+      {
+        "atSeconds": 143.1,
+        "fps": 6.4,
+        "enemies": 7,
+        "projectiles": 0,
+        "effects": 3,
+        "displayObjects": 677
+      },
+      {
+        "atSeconds": 144.1,
+        "fps": 6.6,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 2,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 145.1,
+        "fps": 6.9,
+        "enemies": 8,
+        "projectiles": 2,
+        "effects": 4,
+        "displayObjects": 687
+      },
+      {
+        "atSeconds": 146.2,
+        "fps": 7,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 6,
+        "displayObjects": 684
+      },
+      {
+        "atSeconds": 147.4,
+        "fps": 6.7,
+        "enemies": 5,
+        "projectiles": 1,
+        "effects": 7,
+        "displayObjects": 668
+      },
+      {
+        "atSeconds": 148.5,
+        "fps": 6.3,
+        "enemies": 5,
+        "projectiles": 6,
+        "effects": 5,
+        "displayObjects": 671
+      },
+      {
+        "atSeconds": 149.5,
+        "fps": 6.6,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 6,
+        "displayObjects": 684
+      },
+      {
+        "atSeconds": 150.7,
+        "fps": 6.9,
+        "enemies": 6,
+        "projectiles": 10,
+        "effects": 6,
+        "displayObjects": 683
+      },
+      {
+        "atSeconds": 151.7,
+        "fps": 6.6,
+        "enemies": 6,
+        "projectiles": 3,
+        "effects": 8,
+        "displayObjects": 678
+      },
+      {
+        "atSeconds": 152.8,
+        "fps": 7.3,
+        "enemies": 6,
+        "projectiles": 9,
+        "effects": 2,
+        "displayObjects": 678
+      },
+      {
+        "atSeconds": 153.9,
+        "fps": 6.3,
+        "enemies": 8,
+        "projectiles": 5,
+        "effects": 5,
+        "displayObjects": 691
+      },
+      {
+        "atSeconds": 155.1,
+        "fps": 6.8,
+        "enemies": 7,
+        "projectiles": 7,
+        "effects": 6,
+        "displayObjects": 687
+      },
+      {
+        "atSeconds": 156.3,
+        "fps": 6.1,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 3,
+        "displayObjects": 681
+      },
+      {
+        "atSeconds": 157.3,
+        "fps": 6.9,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 7,
+        "displayObjects": 685
+      },
+      {
+        "atSeconds": 158.4,
+        "fps": 7.1,
+        "enemies": 8,
+        "projectiles": 4,
+        "effects": 5,
+        "displayObjects": 690
+      },
+      {
+        "atSeconds": 159.4,
+        "fps": 7,
+        "enemies": 5,
+        "projectiles": 9,
+        "effects": 11,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 160.5,
+        "fps": 7.3,
+        "enemies": 5,
+        "projectiles": 0,
+        "effects": 5,
+        "displayObjects": 665
+      },
+      {
+        "atSeconds": 161.5,
+        "fps": 6.7,
+        "enemies": 5,
+        "projectiles": 4,
+        "effects": 3,
+        "displayObjects": 667
+      },
+      {
+        "atSeconds": 162.6,
+        "fps": 6.4,
+        "enemies": 5,
+        "projectiles": 4,
+        "effects": 2,
+        "displayObjects": 666
+      },
+      {
+        "atSeconds": 163.7,
+        "fps": 6.4,
+        "enemies": 6,
+        "projectiles": 7,
+        "effects": 6,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 164.8,
+        "fps": 7.2,
+        "enemies": 6,
+        "projectiles": 3,
+        "effects": 5,
+        "displayObjects": 675
+      },
+      {
+        "atSeconds": 165.9,
+        "fps": 7.3,
+        "enemies": 5,
+        "projectiles": 5,
+        "effects": 6,
+        "displayObjects": 671
+      },
+      {
+        "atSeconds": 167,
+        "fps": 6.5,
+        "enemies": 5,
+        "projectiles": 6,
+        "effects": 4,
+        "displayObjects": 670
+      },
+      {
+        "atSeconds": 168.1,
+        "fps": 6.4,
+        "enemies": 6,
+        "projectiles": 7,
+        "effects": 4,
+        "displayObjects": 678
+      },
+      {
+        "atSeconds": 169.1,
+        "fps": 6.8,
+        "enemies": 6,
+        "projectiles": 8,
+        "effects": 4,
+        "displayObjects": 679
+      },
+      {
+        "atSeconds": 170.2,
+        "fps": 6.8,
+        "enemies": 6,
+        "projectiles": 7,
+        "effects": 3,
+        "displayObjects": 677
+      },
+      {
+        "atSeconds": 171.3,
+        "fps": 6.2,
+        "enemies": 5,
+        "projectiles": 5,
+        "effects": 7,
+        "displayObjects": 672
+      },
+      {
+        "atSeconds": 172.3,
+        "fps": 6.8,
+        "enemies": 7,
+        "projectiles": 6,
+        "effects": 2,
+        "displayObjects": 682
+      },
+      {
+        "atSeconds": 173.4,
+        "fps": 5.3,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 3,
+        "displayObjects": 681
+      },
+      {
+        "atSeconds": 174.4,
+        "fps": 5,
+        "enemies": 7,
+        "projectiles": 6,
+        "effects": 5,
+        "displayObjects": 685
+      },
+      {
+        "atSeconds": 175.5,
+        "fps": 6.7,
+        "enemies": 7,
+        "projectiles": 3,
+        "effects": 2,
+        "displayObjects": 679
+      },
+      {
+        "atSeconds": 176.6,
+        "fps": 7.3,
+        "enemies": 8,
+        "projectiles": 6,
+        "effects": 8,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 177.6,
+        "fps": 6.8,
+        "enemies": 8,
+        "projectiles": 5,
+        "effects": 1,
+        "displayObjects": 687
+      },
+      {
+        "atSeconds": 178.7,
+        "fps": 6.7,
+        "enemies": 7,
+        "projectiles": 11,
+        "effects": 9,
+        "displayObjects": 694
+      },
+      {
+        "atSeconds": 179.8,
+        "fps": 5.5,
+        "enemies": 6,
+        "projectiles": 4,
+        "effects": 6,
+        "displayObjects": 677
+      },
+      {
+        "atSeconds": 180.9,
+        "fps": 6.1,
+        "enemies": 6,
+        "projectiles": 10,
+        "effects": 3,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 182,
+        "fps": 5.7,
+        "enemies": 8,
+        "projectiles": 5,
+        "effects": 6,
+        "displayObjects": 692
+      },
+      {
+        "atSeconds": 183,
+        "fps": 5.7,
+        "enemies": 7,
+        "projectiles": 6,
+        "effects": 7,
+        "displayObjects": 687
+      },
+      {
+        "atSeconds": 184.2,
+        "fps": 4.4,
+        "enemies": 7,
+        "projectiles": 5,
+        "effects": 3,
+        "displayObjects": 682
+      },
+      {
+        "atSeconds": 185.3,
+        "fps": 5.1,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 2,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 186.5,
+        "fps": 6.3,
+        "enemies": 7,
+        "projectiles": 8,
+        "effects": 4,
+        "displayObjects": 686
+      },
+      {
+        "atSeconds": 187.6,
+        "fps": 6.3,
+        "enemies": 9,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 693
+      },
+      {
+        "atSeconds": 188.7,
+        "fps": 6.3,
+        "enemies": 9,
+        "projectiles": 5,
+        "effects": 7,
+        "displayObjects": 700
+      },
+      {
+        "atSeconds": 189.8,
+        "fps": 5.5,
+        "enemies": 8,
+        "projectiles": 5,
+        "effects": 3,
+        "displayObjects": 689
+      },
+      {
+        "atSeconds": 190.8,
+        "fps": 5.8,
+        "enemies": 8,
+        "projectiles": 10,
+        "effects": 8,
+        "displayObjects": 699
+      },
+      {
+        "atSeconds": 192,
+        "fps": 5.2,
+        "enemies": 8,
+        "projectiles": 5,
+        "effects": 4,
+        "displayObjects": 690
+      },
+      {
+        "atSeconds": 193.1,
+        "fps": 4.5,
+        "enemies": 10,
+        "projectiles": 9,
+        "effects": 4,
+        "displayObjects": 708
+      },
+      {
+        "atSeconds": 194.3,
+        "fps": 4.9,
+        "enemies": 10,
+        "projectiles": 9,
+        "effects": 1,
+        "displayObjects": 705
+      },
+      {
+        "atSeconds": 195.4,
+        "fps": 6.3,
+        "enemies": 10,
+        "projectiles": 9,
+        "effects": 4,
+        "displayObjects": 708
+      },
+      {
+        "atSeconds": 196.4,
+        "fps": 6.9,
+        "enemies": 9,
+        "projectiles": 9,
+        "effects": 6,
+        "displayObjects": 703
+      },
+      {
+        "atSeconds": 197.5,
+        "fps": 6.2,
+        "enemies": 11,
+        "projectiles": 8,
+        "effects": 5,
+        "displayObjects": 715
+      },
+      {
+        "atSeconds": 198.6,
+        "fps": 6.7,
+        "enemies": 11,
+        "projectiles": 6,
+        "effects": 1,
+        "displayObjects": 709
+      },
+      {
+        "atSeconds": 199.7,
+        "fps": 5.5,
+        "enemies": 11,
+        "projectiles": 6,
+        "effects": 1,
+        "displayObjects": 709
+      },
+      {
+        "atSeconds": 200.7,
+        "fps": 6.8,
+        "enemies": 10,
+        "projectiles": 5,
+        "effects": 9,
+        "displayObjects": 709
+      },
+      {
+        "atSeconds": 201.8,
+        "fps": 5.5,
+        "enemies": 10,
+        "projectiles": 4,
+        "effects": 2,
+        "displayObjects": 701
+      },
+      {
+        "atSeconds": 202.9,
+        "fps": 5.7,
+        "enemies": 12,
+        "projectiles": 11,
+        "effects": 4,
+        "displayObjects": 724
+      },
+      {
+        "atSeconds": 203.9,
+        "fps": 5.6,
+        "enemies": 12,
+        "projectiles": 5,
+        "effects": 5,
+        "displayObjects": 719
+      },
+      {
+        "atSeconds": 205,
+        "fps": 6.5,
+        "enemies": 10,
+        "projectiles": 9,
+        "effects": 13,
+        "displayObjects": 717
+      },
+      {
+        "atSeconds": 206.1,
+        "fps": 6.3,
+        "enemies": 9,
+        "projectiles": 3,
+        "effects": 9,
+        "displayObjects": 700
+      },
+      {
+        "atSeconds": 207.2,
+        "fps": 7.1,
+        "enemies": 10,
+        "projectiles": 8,
+        "effects": 10,
+        "displayObjects": 713
+      },
+      {
+        "atSeconds": 208.3,
+        "fps": 6.4,
+        "enemies": 9,
+        "projectiles": 3,
+        "effects": 5,
+        "displayObjects": 696
+      },
+      {
+        "atSeconds": 209.5,
+        "fps": 6.9,
+        "enemies": 9,
+        "projectiles": 7,
+        "effects": 4,
+        "displayObjects": 699
+      },
+      {
+        "atSeconds": 210.5,
+        "fps": 6.9,
+        "enemies": 9,
+        "projectiles": 3,
+        "effects": 3,
+        "displayObjects": 694
+      },
+      {
+        "atSeconds": 211.6,
+        "fps": 7.2,
+        "enemies": 11,
+        "projectiles": 7,
+        "effects": 1,
+        "displayObjects": 710
+      },
+      {
+        "atSeconds": 212.8,
+        "fps": 7,
+        "enemies": 9,
+        "projectiles": 5,
+        "effects": 10,
+        "displayObjects": 703
+      },
+      {
+        "atSeconds": 213.8,
+        "fps": 6.7,
+        "enemies": 9,
+        "projectiles": 6,
+        "effects": 4,
+        "displayObjects": 698
+      },
+      {
+        "atSeconds": 214.9,
+        "fps": 6.6,
+        "enemies": 7,
+        "projectiles": 7,
+        "effects": 14,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 216,
+        "fps": 6.3,
+        "enemies": 9,
+        "projectiles": 8,
+        "effects": 6,
+        "displayObjects": 702
+      },
+      {
+        "atSeconds": 217,
+        "fps": 6.7,
+        "enemies": 9,
+        "projectiles": 7,
+        "effects": 9,
+        "displayObjects": 704
+      },
+      {
+        "atSeconds": 218.1,
+        "fps": 6.6,
+        "enemies": 8,
+        "projectiles": 3,
+        "effects": 11,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 219.2,
+        "fps": 7.2,
+        "enemies": 8,
+        "projectiles": 4,
+        "effects": 10,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 220.3,
+        "fps": 7.1,
+        "enemies": 9,
+        "projectiles": 3,
+        "effects": 7,
+        "displayObjects": 698
+      },
+      {
+        "atSeconds": 221.5,
+        "fps": 6,
+        "enemies": 8,
+        "projectiles": 5,
+        "effects": 6,
+        "displayObjects": 692
+      },
+      {
+        "atSeconds": 222.6,
+        "fps": 6.6,
+        "enemies": 8,
+        "projectiles": 3,
+        "effects": 5,
+        "displayObjects": 689
+      },
+      {
+        "atSeconds": 223.7,
+        "fps": 6.3,
+        "enemies": 7,
+        "projectiles": 2,
+        "effects": 10,
+        "displayObjects": 686
+      },
+      {
+        "atSeconds": 224.7,
+        "fps": 7.5,
+        "enemies": 6,
+        "projectiles": 3,
+        "effects": 3,
+        "displayObjects": 673
+      },
+      {
+        "atSeconds": 225.8,
+        "fps": 7.2,
+        "enemies": 8,
+        "projectiles": 8,
+        "effects": 6,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 227,
+        "fps": 6.1,
+        "enemies": 7,
+        "projectiles": 1,
+        "effects": 6,
+        "displayObjects": 681
+      },
+      {
+        "atSeconds": 228.1,
+        "fps": 6,
+        "enemies": 7,
+        "projectiles": 10,
+        "effects": 3,
+        "displayObjects": 687
+      },
+      {
+        "atSeconds": 229.2,
+        "fps": 6.5,
+        "enemies": 7,
+        "projectiles": 2,
+        "effects": 3,
+        "displayObjects": 679
+      },
+      {
+        "atSeconds": 230.2,
+        "fps": 6.8,
+        "enemies": 9,
+        "projectiles": 10,
+        "effects": 3,
+        "displayObjects": 701
+      },
+      {
+        "atSeconds": 231.3,
+        "fps": 5.9,
+        "enemies": 9,
+        "projectiles": 3,
+        "effects": 6,
+        "displayObjects": 697
+      },
+      {
+        "atSeconds": 232.4,
+        "fps": 7,
+        "enemies": 9,
+        "projectiles": 11,
+        "effects": 1,
+        "displayObjects": 700
+      },
+      {
+        "atSeconds": 233.4,
+        "fps": 6.9,
+        "enemies": 9,
+        "projectiles": 8,
+        "effects": 6,
+        "displayObjects": 702
+      },
+      {
+        "atSeconds": 234.6,
+        "fps": 5.9,
+        "enemies": 12,
+        "projectiles": 12,
+        "effects": 2,
+        "displayObjects": 723
+      },
+      {
+        "atSeconds": 235.7,
+        "fps": 6.3,
+        "enemies": 10,
+        "projectiles": 7,
+        "effects": 10,
+        "displayObjects": 712
+      },
+      {
+        "atSeconds": 236.8,
+        "fps": 6.2,
+        "enemies": 10,
+        "projectiles": 8,
+        "effects": 4,
+        "displayObjects": 707
+      },
+      {
+        "atSeconds": 238,
+        "fps": 6.2,
+        "enemies": 9,
+        "projectiles": 4,
+        "effects": 6,
+        "displayObjects": 698
+      },
+      {
+        "atSeconds": 239,
+        "fps": 6.5,
+        "enemies": 11,
+        "projectiles": 8,
+        "effects": 6,
+        "displayObjects": 716
+      },
+      {
+        "atSeconds": 240.1,
+        "fps": 6.5,
+        "enemies": 9,
+        "projectiles": 5,
+        "effects": 9,
+        "displayObjects": 702
+      },
+      {
+        "atSeconds": 241.2,
+        "fps": 6.7,
+        "enemies": 9,
+        "projectiles": 7,
+        "effects": 8,
+        "displayObjects": 703
+      },
+      {
+        "atSeconds": 242.2,
+        "fps": 5.9,
+        "enemies": 9,
+        "projectiles": 5,
+        "effects": 5,
+        "displayObjects": 698
+      },
+      {
+        "atSeconds": 243.3,
+        "fps": 5.5,
+        "enemies": 8,
+        "projectiles": 7,
+        "effects": 7,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 244.4,
+        "fps": 5.2,
+        "enemies": 9,
+        "projectiles": 1,
+        "effects": 8,
+        "displayObjects": 697
+      },
+      {
+        "atSeconds": 245.6,
+        "fps": 6.9,
+        "enemies": 8,
+        "projectiles": 7,
+        "effects": 8,
+        "displayObjects": 696
+      },
+      {
+        "atSeconds": 246.6,
+        "fps": 6.9,
+        "enemies": 8,
+        "projectiles": 3,
+        "effects": 6,
+        "displayObjects": 690
+      },
+      {
+        "atSeconds": 247.8,
+        "fps": 5.9,
+        "enemies": 8,
+        "projectiles": 7,
+        "effects": 4,
+        "displayObjects": 692
+      },
+      {
+        "atSeconds": 248.9,
+        "fps": 6.3,
+        "enemies": 11,
+        "projectiles": 2,
+        "effects": 6,
+        "displayObjects": 710
+      },
+      {
+        "atSeconds": 250.1,
+        "fps": 6.1,
+        "enemies": 9,
+        "projectiles": 9,
+        "effects": 5,
+        "displayObjects": 702
+      },
+      {
+        "atSeconds": 251.1,
+        "fps": 5.6,
+        "enemies": 8,
+        "projectiles": 3,
+        "effects": 10,
+        "displayObjects": 694
+      },
+      {
+        "atSeconds": 252.2,
+        "fps": 5.8,
+        "enemies": 8,
+        "projectiles": 7,
+        "effects": 7,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 253.3,
+        "fps": 5.4,
+        "enemies": 6,
+        "projectiles": 8,
+        "effects": 5,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 254.3,
+        "fps": 4.8,
+        "enemies": 9,
+        "projectiles": 3,
+        "effects": 4,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 255.4,
+        "fps": 7.1,
+        "enemies": 8,
+        "projectiles": 7,
+        "effects": 4,
+        "displayObjects": 692
+      },
+      {
+        "atSeconds": 256.5,
+        "fps": 5.8,
+        "enemies": 6,
+        "projectiles": 3,
+        "effects": 10,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 257.5,
+        "fps": 5.9,
+        "enemies": 5,
+        "projectiles": 8,
+        "effects": 8,
+        "displayObjects": 676
+      },
+      {
+        "atSeconds": 258.6,
+        "fps": 7,
+        "enemies": 7,
+        "projectiles": 3,
+        "effects": 6,
+        "displayObjects": 683
+      },
+      {
+        "atSeconds": 259.7,
+        "fps": 6.4,
+        "enemies": 7,
+        "projectiles": 9,
+        "effects": 7,
+        "displayObjects": 690
+      },
+      {
+        "atSeconds": 260.8,
+        "fps": 5.7,
+        "enemies": 7,
+        "projectiles": 4,
+        "effects": 6,
+        "displayObjects": 684
+      },
+      {
+        "atSeconds": 261.8,
+        "fps": 5.6,
+        "enemies": 7,
+        "projectiles": 8,
+        "effects": 2,
+        "displayObjects": 684
+      },
+      {
+        "atSeconds": 262.9,
+        "fps": 5.3,
+        "enemies": 7,
+        "projectiles": 8,
+        "effects": 4,
+        "displayObjects": 686
+      },
+      {
+        "atSeconds": 264.1,
+        "fps": 6.3,
+        "enemies": 10,
+        "projectiles": 11,
+        "effects": 8,
+        "displayObjects": 714
+      },
+      {
+        "atSeconds": 265.1,
+        "fps": 5.9,
+        "enemies": 9,
+        "projectiles": 4,
+        "effects": 7,
+        "displayObjects": 699
+      },
+      {
+        "atSeconds": 266.1,
+        "fps": 6,
+        "enemies": 9,
+        "projectiles": 2,
+        "effects": 5,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 267.1,
+        "fps": 6,
+        "enemies": 9,
+        "projectiles": 8,
+        "effects": 2,
+        "displayObjects": 698
+      },
+      {
+        "atSeconds": 268.2,
+        "fps": 5.2,
+        "enemies": 6,
+        "projectiles": 2,
+        "effects": 11,
+        "displayObjects": 680
+      },
+      {
+        "atSeconds": 269.4,
+        "fps": 6.2,
+        "enemies": 8,
+        "projectiles": 8,
+        "effects": 6,
+        "displayObjects": 695
+      },
+      {
+        "atSeconds": 270.5,
+        "fps": 6.4,
+        "enemies": 8,
+        "projectiles": 2,
+        "effects": 5,
+        "displayObjects": 688
+      },
+      {
+        "atSeconds": 271.6,
+        "fps": 7.1,
+        "enemies": 8,
+        "projectiles": 6,
+        "effects": 1,
+        "displayObjects": 688
+      },
+      {
+        "atSeconds": 272.7,
+        "fps": 7.1,
+        "enemies": 8,
+        "projectiles": 6,
+        "effects": 4,
+        "displayObjects": 691
+      },
+      {
+        "atSeconds": 273.8,
+        "fps": 4.6,
+        "enemies": 11,
+        "projectiles": 9,
+        "effects": 2,
+        "displayObjects": 713
+      },
+      {
+        "atSeconds": 274.9,
+        "fps": 6.5,
+        "enemies": 11,
+        "projectiles": 3,
+        "effects": 5,
+        "displayObjects": 710
+      },
+      {
+        "atSeconds": 275.9,
+        "fps": 6.9,
+        "enemies": 11,
+        "projectiles": 10,
+        "effects": 4,
+        "displayObjects": 716
+      },
+      {
+        "atSeconds": 277,
+        "fps": 7.1,
+        "enemies": 10,
+        "projectiles": 3,
+        "effects": 5,
+        "displayObjects": 703
+      },
+      {
+        "atSeconds": 278.2,
+        "fps": 5.3,
+        "enemies": 10,
+        "projectiles": 8,
+        "effects": 8,
+        "displayObjects": 711
+      }
+    ]
+  }
+}
