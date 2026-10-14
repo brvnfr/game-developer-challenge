@@ -74,6 +74,34 @@ E2E tests always build the app and start their own `vite preview` on port **4174
 Sailing and firing can be combined. Game keys are only captured while a match is on screen. The match pauses
 automatically when the window loses focus or the tab is hidden; resuming always needs a player action.
 
+**Mobile orientation:** matches are played in **landscape**. On touch devices held in portrait the match pauses
+behind a "Rotate your device" notice; after rotating back, the pause dialog asks the player to resume. Menus
+work in both orientations.
+
+## Options and local data
+
+The Options screen exposes the two player-facing settings. Values are validated as they are typed (accessible
+error messages), saved with **Save**, and kept after a refresh. Each match takes a snapshot of the saved options
+when it starts, so changes apply from the next match.
+
+| Option            | Limits     | Step  | Default |
+| ----------------- | ---------- | ----- | ------- |
+| Game session time | 60–180 s   | 1 s   | 120 s   |
+| Enemy spawn time  | 1–10 s     | 0.5 s | 3 s     |
+| Captain name      | 1–20 chars | —     | random  |
+
+The captain name is asked on the first **Play** (and can be changed in Options); it identifies the player in the
+ranking. Everything is stored in the browser:
+
+| Key (localStorage)             | Content                                                       |
+| ------------------------------ | ------------------------------------------------------------- |
+| `pirate-battle.settings.v1`    | Saved options                                                 |
+| `pirate-battle.player.v1`      | Player id and captain name                                    |
+| `pirate-battle.last-result.v1` | Result of the last **completed** match (abandoned ones never) |
+
+`sessionStorage` remembers whether the result screen is open, so a refresh shows the result again; a refresh or
+leaving during a match abandons it and returns to the menu. Invalid or outdated stored data is discarded.
+
 ## Test mode
 
 Add `?test=1` to the URL to enable the test instrumentation used by the Playwright suite. It only observes the
@@ -82,8 +110,8 @@ match and controls time; rules, input, collisions and rendering run unchanged.
 | Parameter     | Example       | Effect                                                         |
 | ------------- | ------------- | -------------------------------------------------------------- |
 | `seed`        | `seed=42`     | Fixed random seed (spawns, AI decisions)                       |
-| `session`     | `session=60`  | Game session time for this page (60–180)                       |
-| `spawn`       | `spawn=10`    | Enemy spawn time for this page (1–10, step 0.5)                |
+| `session`     | `session=60`  | Game session time for this page (60–180), overrides Options    |
+| `spawn`       | `spawn=10`    | Enemy spawn time for this page (1–10, step 0.5), overrides     |
 | `time=manual` | `time=manual` | Real time stops; tests advance the game with `advanceTime(ms)` |
 | `touch=1`     | `touch=1`     | Shows the touch controls on any device (also without `test`)   |
 
@@ -97,6 +125,9 @@ Source assets are in [`assets/`](assets/). `npm run assets` converts them into P
 - `ships.json` — converted from the Starling XML atlas `ships_miscellaneous_sheet.xml` (the provided "retina" ships sheet has the same pixel size, so only a 1× atlas is produced).
 - `tiles@1x.json` / `tiles@2x.json` — generated from the 64 px / 128 px tile sheets (row-major, `tile_1` is top-left).
 - `ui@1x.json` / `ui@2x.json` — the provided UI atlases (the `ui` metadata is stripped; `borders` are kept for 9-slice).
+
+Fonts (self-hosted through Fontsource, SIL Open Font License 1.1): [Lilita One](https://fonts.google.com/specimen/Lilita+One)
+for titles and buttons, [Nunito](https://fonts.google.com/specimen/Nunito) for text.
 
 ## Deployment
 
