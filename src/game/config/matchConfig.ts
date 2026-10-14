@@ -31,3 +31,12 @@ export function createMatchConfig(settings: UserSettings, base: GameConfig = DEF
 export function createConfigKey(settings: UserSettings): string {
   return `s${settings.sessionTimeSeconds}-i${settings.spawnIntervalSeconds}`;
 }
+
+const CONFIG_KEY_PATTERN = /^s(\d+)-i(\d+(?:\.\d+)?)$/;
+
+/** Inverse of createConfigKey; null for text that is not a configuration key. */
+export function parseConfigKey(configKey: string): UserSettings | null {
+  const match = CONFIG_KEY_PATTERN.exec(configKey);
+  if (!match) return null;
+  return { sessionTimeSeconds: Number(match[1]), spawnIntervalSeconds: Number(match[2]) };
+}

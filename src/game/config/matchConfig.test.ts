@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_GAME_CONFIG } from './defaults';
-import { createConfigKey, createMatchConfig } from './matchConfig';
+import { createConfigKey, createMatchConfig, parseConfigKey } from './matchConfig';
 
 describe('createMatchConfig', () => {
   it('applies the player settings to the snapshot', () => {
@@ -32,5 +32,19 @@ describe('createMatchConfig', () => {
 describe('createConfigKey', () => {
   it('identifies comparable configurations', () => {
     expect(createConfigKey({ sessionTimeSeconds: 120, spawnIntervalSeconds: 2.5 })).toBe('s120-i2.5');
+  });
+});
+
+describe('parseConfigKey', () => {
+  it('reads back the settings of a configuration key', () => {
+    const settings = { sessionTimeSeconds: 90, spawnIntervalSeconds: 2.5 };
+    expect(parseConfigKey(createConfigKey(settings))).toEqual(settings);
+    expect(parseConfigKey('s120-i3')).toEqual({ sessionTimeSeconds: 120, spawnIntervalSeconds: 3 });
+  });
+
+  it('rejects anything else', () => {
+    expect(parseConfigKey('')).toBeNull();
+    expect(parseConfigKey('s120')).toBeNull();
+    expect(parseConfigKey('x120-i3')).toBeNull();
   });
 });
