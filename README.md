@@ -59,7 +59,36 @@ All variables are optional; copy `.env.example` to `.env.local` to override.
 | `npm run test:e2e:report`  | Open the last Playwright HTML report                |
 | `npm run assets`           | Rebuild the PixiJS texture atlases from `assets/`   |
 
-E2E tests build the app and run against `vite preview`. Set `PLAYWRIGHT_BASE_URL` to run them against a deployed URL. Failed tests keep a trace (`test-results/**/trace.zip`, open with `npx playwright show-trace`).
+E2E tests always build the app and start their own `vite preview` on port **4174** (never reusing a running server), so a preview left open on 4173 from an older build cannot be tested by mistake. WebGL runs in software in the test browsers (deterministic screenshots), so the suite uses 2 parallel workers by default; set `PLAYWRIGHT_WORKERS` to change it. Set `PLAYWRIGHT_BASE_URL` to run them against a deployed URL. Failed tests keep a trace (`test-results/**/trace.zip`, open with `npx playwright show-trace`).
+
+## Controls
+
+| Action                      | Keyboard          | Touch                             |
+| --------------------------- | ----------------- | --------------------------------- |
+| Sail forward                | `W` / `↑`         | Up arrow button (left group)      |
+| Turn left / right           | `A` `D` / `←` `→` | Curved arrow buttons (left group) |
+| Fire front cannon           | `Space`           | Centre button (right group)       |
+| Fire left / right broadside | `Q` / `E`         | Side buttons (right group)        |
+| Pause / resume              | `P` / `Esc`       | Pause button (top right)          |
+
+Sailing and firing can be combined. Game keys are only captured while a match is on screen. The match pauses
+automatically when the window loses focus or the tab is hidden; resuming always needs a player action.
+
+## Test mode
+
+Add `?test=1` to the URL to enable the test instrumentation used by the Playwright suite. It only observes the
+match and controls time; rules, input, collisions and rendering run unchanged.
+
+| Parameter     | Example       | Effect                                                         |
+| ------------- | ------------- | -------------------------------------------------------------- |
+| `seed`        | `seed=42`     | Fixed random seed (spawns, AI decisions)                       |
+| `session`     | `session=60`  | Game session time for this page (60–180)                       |
+| `spawn`       | `spawn=10`    | Enemy spawn time for this page (1–10, step 0.5)                |
+| `time=manual` | `time=manual` | Real time stops; tests advance the game with `advanceTime(ms)` |
+| `touch=1`     | `touch=1`     | Shows the touch controls on any device (also without `test`)   |
+
+The API is available as `window.__PIRATE_BATTLE__` (`state()`, `advanceTime(ms)`, `setManualTime(bool)`,
+`liveRuntimes()`, `isPlayerHullBlocked()`).
 
 ## Assets
 
