@@ -15,6 +15,7 @@ challenge and are not redistributed for any other purpose. The originals are kep
 | `public/assets/game/ships.{json,png}` | `npm run assets`       | Starling XML atlas `ships_miscellaneous_sheet.xml` converted to a PixiJS JSON atlas (same image) |
 | `public/assets/game/tiles@{1x,2x}.*`  | `npm run assets`       | 64 px and 128 px tile sheets sliced into a PixiJS atlas (`tile_1` = top-left, row-major)         |
 | `public/assets/game/ui@{1x,2x}.*`     | `npm run assets`       | Provided UI atlases; the `ui` metadata is stripped, 9-slice `borders` are kept                   |
+| `public/assets/game/water.png`        | `npm run assets`       | Unchanged copy of `assets/png/retina/tiles/tile_73.png`, used as a repeating sea texture         |
 | `public/assets/audio/*`               | `npm run assets:audio` | WAV → MP3 mono 96 kbit/s for effects, WAV mono 22.05 kHz for loops (ffmpeg); 5.8 MB → 1.2 MB     |
 
 The menus use the PNGs under `assets/png/retina/ui/` directly (buttons, panel, title, icons).
@@ -23,6 +24,8 @@ The menus use the PNGs under `assets/png/retina/ui/` directly (buttons, panel, t
 
 - `src/ui/icons/sound-on.svg`, `src/ui/icons/sound-off.svg` — drawn for this project in the colours of the
   provided UI; same license as the source code.
+- The wake foam texture is generated at runtime (a soft white disc drawn on a canvas); the aim lanes and reload
+  arcs are drawn with PixiJS graphics. No external art was added.
 - All source code, tests, fixtures and documentation in this repository.
 
 ## Fonts

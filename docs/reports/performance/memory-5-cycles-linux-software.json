@@ -1,6 +1,6 @@
 {
   "environment": {
-    "recordedAt": "2026-10-14T17:37:02.285Z",
+    "recordedAt": "2026-10-14T20:13:31.909Z",
     "machine": {
       "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
       "cores": 2,
@@ -24,90 +24,95 @@
   "samples": [
     {
       "label": "menu before any match",
-      "jsHeapUsedMb": 3.21,
+      "jsHeapUsedMb": 3.28,
       "domNodes": 26,
-      "jsEventListeners": 6,
+      "jsEventListeners": 5,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0
     },
     {
       "label": "after cycle 1",
-      "jsHeapUsedMb": 7.59,
-      "domNodes": 118,
+      "jsHeapUsedMb": 7.95,
+      "domNodes": 117,
       "jsEventListeners": 185,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 4,
+        "ships": 3,
         "projectiles": 1,
-        "pooledProjectiles": 9,
-        "effects": 2
+        "pooledProjectiles": 7,
+        "effects": 1,
+        "wakePuffs": 60
       }
     },
     {
       "label": "after cycle 2",
-      "jsHeapUsedMb": 7.86,
-      "domNodes": 118,
+      "jsHeapUsedMb": 8.16,
+      "domNodes": 117,
       "jsEventListeners": 185,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 4,
-        "projectiles": 7,
-        "pooledProjectiles": 3,
-        "effects": 0
+        "ships": 3,
+        "projectiles": 6,
+        "pooledProjectiles": 2,
+        "effects": 2,
+        "wakePuffs": 62
       }
     },
     {
       "label": "after cycle 3",
-      "jsHeapUsedMb": 8.1,
-      "domNodes": 118,
+      "jsHeapUsedMb": 8.34,
+      "domNodes": 117,
       "jsEventListeners": 185,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 4,
+        "ships": 3,
         "projectiles": 1,
-        "pooledProjectiles": 9,
-        "effects": 5
+        "pooledProjectiles": 7,
+        "effects": 1,
+        "wakePuffs": 58
       }
     },
     {
       "label": "after cycle 4",
-      "jsHeapUsedMb": 8.18,
-      "domNodes": 118,
+      "jsHeapUsedMb": 8.41,
+      "domNodes": 117,
       "jsEventListeners": 185,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 4,
-        "projectiles": 2,
+        "ships": 3,
+        "projectiles": 1,
         "pooledProjectiles": 7,
-        "effects": 5
+        "effects": 2,
+        "wakePuffs": 56
       }
     },
     {
       "label": "after cycle 5",
-      "jsHeapUsedMb": 8.19,
-      "domNodes": 118,
+      "jsHeapUsedMb": 8.54,
+      "domNodes": 117,
       "jsEventListeners": 185,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 4,
-        "projectiles": 2,
+        "ships": 3,
+        "projectiles": 1,
         "pooledProjectiles": 7,
-        "effects": 0
+        "effects": 2,
+        "wakePuffs": 56
       }
     }
   ],
-  "heapGrowthFromCycle1ToLastMb": 0.6,
+  "heapGrowthFromCycle1ToLastMb": 0.59,
   "nativeObjectsInHeapSnapshots": {
     "after cycle 1": {
       "HTMLCanvasElement": 6,

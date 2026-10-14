@@ -100,6 +100,12 @@ run the reference check with `npm run test:e2e:docker`. Three consecutive runs p
 Sailing and firing can be combined. Game keys are only captured while a match is on screen. The match pauses
 automatically when the window loses focus or the tab is hidden; resuming always needs a player action.
 
+**Handling and aiming.** The ship has momentum: the rudder takes a moment to swing and to straighten, the hull
+drifts a little after a turn, and it glides for about a second and a half after you stop sailing. Cannonballs
+carry the ship's speed. Dashed lanes around your ship show where each cannon fires and how far (bright when
+loaded, faint while reloading), and the three arcs around the hull fill up as the bow chaser and each broadside
+reload. The sea, shallows and wakes are animated; they stay still when the system asks for reduced motion.
+
 **Mobile orientation:** matches are played in **landscape**. On touch devices held in portrait the match pauses
 behind a "Rotate your device" notice; after rotating back, the pause dialog asks the player to resume. Menus
 work in both orientations.
@@ -218,6 +224,7 @@ Source assets are in [`assets/`](assets/). `npm run assets` converts them into P
 - `ships.json` — converted from the Starling XML atlas `ships_miscellaneous_sheet.xml` (the provided "retina" ships sheet has the same pixel size, so only a 1× atlas is produced).
 - `tiles@1x.json` / `tiles@2x.json` — generated from the 64 px / 128 px tile sheets (row-major, `tile_1` is top-left).
 - `ui@1x.json` / `ui@2x.json` — the provided UI atlases (the `ui` metadata is stripped; `borders` are kept for 9-slice).
+- `water.png` — a standalone copy of the water tile (tile 73, 128 px), so the sea can be drawn as one repeating texture.
 
 Sounds: the WAV files in `assets/sounds` are converted by `npm run assets:audio` into `public/assets/audio`
 (effects → MP3 mono 96 kbit/s, loops → mono 22 kHz WAV for gapless looping; 5.8 MB → 1.2 MB). Audio starts after
