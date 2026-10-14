@@ -1,0 +1,131 @@
+{
+  "environment": {
+    "recordedAt": "2026-10-14T17:52:03.406Z",
+    "machine": {
+      "cpu": "AMD Ryzen 7 5700X 8-Core Processor",
+      "cores": 16,
+      "memoryGb": 32,
+      "os": "Windows_NT 10.0.26200 (x64)"
+    },
+    "browser": {
+      "name": "Chromium",
+      "version": "141.0.7390.37",
+      "headless": false
+    },
+    "page": {
+      "viewport": "1280×720",
+      "devicePixelRatio": 1,
+      "webglRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5080 (0x00002C02) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+      "isGpuAccelerated": true
+    }
+  },
+  "method": "5 cycles: Play → 20 s of real-time combat (all cannons) → pause → Main Menu; after each cycle three forced garbage collections (CDP HeapProfiler.collectGarbage), then JS heap (Runtime.getHeapUsage) and DOM counters (Memory.getDOMCounters).",
+  "samples": [
+    {
+      "label": "menu before any match",
+      "jsHeapUsedMb": 3.43,
+      "domNodes": 107,
+      "jsEventListeners": 153,
+      "documents": 1,
+      "liveRuntimes": 0,
+      "canvases": 0
+    },
+    {
+      "label": "after cycle 1",
+      "jsHeapUsedMb": 7.88,
+      "domNodes": 118,
+      "jsEventListeners": 198,
+      "documents": 1,
+      "liveRuntimes": 0,
+      "canvases": 0,
+      "sceneDuringMatch": {
+        "ships": 3,
+        "projectiles": 7,
+        "pooledProjectiles": 3,
+        "effects": 3
+      }
+    },
+    {
+      "label": "after cycle 2",
+      "jsHeapUsedMb": 8.17,
+      "domNodes": 118,
+      "jsEventListeners": 195,
+      "documents": 1,
+      "liveRuntimes": 0,
+      "canvases": 0,
+      "sceneDuringMatch": {
+        "ships": 3,
+        "projectiles": 7,
+        "pooledProjectiles": 2,
+        "effects": 4
+      }
+    },
+    {
+      "label": "after cycle 3",
+      "jsHeapUsedMb": 8.37,
+      "domNodes": 118,
+      "jsEventListeners": 195,
+      "documents": 1,
+      "liveRuntimes": 0,
+      "canvases": 0,
+      "sceneDuringMatch": {
+        "ships": 3,
+        "projectiles": 7,
+        "pooledProjectiles": 2,
+        "effects": 4
+      }
+    },
+    {
+      "label": "after cycle 4",
+      "jsHeapUsedMb": 8.32,
+      "domNodes": 118,
+      "jsEventListeners": 195,
+      "documents": 1,
+      "liveRuntimes": 0,
+      "canvases": 0,
+      "sceneDuringMatch": {
+        "ships": 3,
+        "projectiles": 7,
+        "pooledProjectiles": 2,
+        "effects": 4
+      }
+    },
+    {
+      "label": "after cycle 5",
+      "jsHeapUsedMb": 8.45,
+      "domNodes": 118,
+      "jsEventListeners": 196,
+      "documents": 1,
+      "liveRuntimes": 0,
+      "canvases": 0,
+      "sceneDuringMatch": {
+        "ships": 3,
+        "projectiles": 7,
+        "pooledProjectiles": 2,
+        "effects": 4
+      }
+    }
+  ],
+  "heapGrowthFromCycle1ToLastMb": 0.57,
+  "nativeObjectsInHeapSnapshots": {
+    "after cycle 1": {
+      "HTMLCanvasElement": 6,
+      "Detached HTMLCanvasElement": 0,
+      "WebGL2RenderingContext": 3,
+      "WebGLRenderingContext": 4,
+      "ResizeObserver": 2,
+      "AudioBufferSourceNode": 16,
+      "GainNode": 17
+    },
+    "after cycle 5": {
+      "HTMLCanvasElement": 6,
+      "Detached HTMLCanvasElement": 0,
+      "WebGL2RenderingContext": 3,
+      "WebGLRenderingContext": 4,
+      "ResizeObserver": 2,
+      "AudioBufferSourceNode": 14,
+      "GainNode": 15
+    }
+  }
+}

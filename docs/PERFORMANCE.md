@@ -1,13 +1,17 @@
 # Performance and memory
 
-Target: **60 FPS** during combat in the optimised production build. This page records how the game was
+Target: **60 FPS** during combat in the optimised production build — **met**: 144 FPS (the display's refresh rate),
+p95 7.1 ms, on a desktop GPU (Environment C). This page records how the game was
 measured, the results, and what limits them. Raw evidence is in [`docs/reports/performance/`](reports/performance/).
 
 ## How it is measured
 
 `npm run perf` (Playwright, `playwright.perf.config.ts`) builds the production bundle, serves it with
 `vite preview` and plays in **real time** (no manual clock) in Chromium at **1280 × 720, device pixel ratio 1**.
-Unlike the E2E suite, WebGL is not forced to software rendering: the browser uses the GPU when the machine has one.
+Unlike the E2E suite, WebGL is not forced to software rendering, and the browser is **headed by default**:
+headless Chromium usually falls back to the SwiftShader software rasteriser even on a machine with a GPU (seen in
+run B below). Every report records the WebGL renderer and `isGpuAccelerated`, and its file name says `-gpu` or
+`-software`.
 
 - **Frame profiler** (`src/game/runtime/FrameProfiler.ts`, enabled with `?test=1&profile=1`): records the
   interval between consecutive frames (what the player sees: FPS, p50/p95/p99), the **main-thread work of each
@@ -18,7 +22,7 @@ Unlike the E2E suite, WebGL is not forced to software rendering: the browser use
   left/right alternately every 12 s and keeps **Space + Q + E** held, so every cannon fires as soon as its cooldown
   allows. The player's health is raised to 10 000 (`playerHealth`, a value of the typed config) so the match
   always lasts the full 3 minutes and the arena keeps filling up; every other value is the default.
-- **Chrome trace:** 5 s recorded in the middle of the match (`match-3min-trace-<platform>.json`; open it in Chrome
+- **Chrome trace:** 5 s recorded in the middle of the match (`match-3min-trace-<platform>-<gpu|software>.json`; open it in Chrome
   DevTools › Performance › Load profile).
 - **Memory, 5 cycles:** Play → 20 s of real-time combat (all cannons) → pause → Main Menu. After each cycle three
   forced garbage collections (CDP `HeapProfiler.collectGarbage`), then the JS heap (`Runtime.getHeapUsage`), DOM
@@ -38,7 +42,7 @@ Unlike the E2E suite, WebGL is not forced to software rendering: the browser use
 | Resolution | 1280 × 720 @ DPR 1                                                 |
 | Match      | 180 s, spawn 3 s, seed 7, player health 10 000, all cannons firing |
 
-**3-minute match** ([match-3min-linux.json](reports/performance/match-3min-linux.json)):
+**3-minute match** ([match-3min-linux-software.json](reports/performance/match-3min-linux-software.json)):
 
 | Metric                                   | Value                                                                                                       |
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -55,23 +59,23 @@ software rasteriser drawing 1280 × 720 pixels on two virtual CPUs without a GPU
 uses a manual clock. In this environment the simulation clock caps long frames at 0.25 s, so the 180 s match took
 278 s of wall time. **This environment cannot show 60 FPS and is not the reference for that target.**
 
-**Memory, 5 cycles** ([memory-5-cycles-linux.json](reports/performance/memory-5-cycles-linux.json)):
+**Memory, 5 cycles** ([memory-5-cycles-linux-software.json](reports/performance/memory-5-cycles-linux-software.json)):
 
 | After               | JS heap (MB) | DOM nodes | JS listeners | Live runtimes | Canvases |
 | ------------------- | -----------: | --------: | -----------: | ------------: | -------: |
-| Menu (no match yet) |         4.32 |       107 |          158 |             0 |        0 |
-| Cycle 1             |         7.65 |       118 |          186 |             0 |        0 |
-| Cycle 2             |         7.95 |       118 |          185 |             0 |        0 |
-| Cycle 3             |         8.17 |       118 |          186 |             0 |        0 |
-| Cycle 4             |         8.27 |       118 |          185 |             0 |        0 |
-| Cycle 5             |         8.30 |       118 |          185 |             0 |        0 |
+| Menu (no match yet) |         3.21 |        26 |            6 |             0 |        0 |
+| Cycle 1             |         7.59 |       118 |          185 |             0 |        0 |
+| Cycle 2             |         7.86 |       118 |          185 |             0 |        0 |
+| Cycle 3             |         8.10 |       118 |          185 |             0 |        0 |
+| Cycle 4             |         8.18 |       118 |          185 |             0 |        0 |
+| Cycle 5             |         8.19 |       118 |          185 |             0 |        0 |
 
 - The first match loads the atlases, sounds and code (+4 MB): expected, and kept for later matches.
-- From cycle 1 to 5: **+0.65 MB**, flattening (+0.30, +0.22, +0.10, +0.03 MB); DOM nodes and listeners return to
+- From cycle 1 to 5: **+0.60 MB**, flattening (+0.27, +0.24, +0.08, +0.01 MB); DOM nodes and listeners return to
   the same level; no runtime or canvas survives a match. Native objects in the heap snapshots are identical after
   cycle 1 and cycle 5 (6 canvas and 7 WebGL context objects held by PixiJS's and the browser's capability checks
   and caches, 0 detached canvases, 2 resize observers) — nothing accumulates per match. A 10-cycle run
-  ([memory-10-cycles-linux.json](reports/performance/memory-10-cycles-linux.json)) goes from 7.49 MB after cycle 1
+  ([memory-10-cycles-linux-software.json](reports/performance/memory-10-cycles-linux-software.json)) goes from 7.49 MB after cycle 1
   to 8.80 MB after cycle 10 (about 0.15 MB per match, increments shrinking except one step at cycle 9), with the
   same DOM, listener and native-object counts throughout.
 
@@ -85,34 +89,91 @@ uses a manual clock. In this environment the simulation clock caps long frames a
 - **Remaining, PixiJS-internal:** one `BindGroup` plus its event listener per destroyed renderer stays subscribed
   to PixiJS's shared 1×1 texture source (a few hundred bytes per match). It is not reachable from the game code.
 
-### Environment B — reference machine with a GPU
+### Environment B — desktop, headless run (still software WebGL)
 
-_To be recorded with `npm run perf` on a desktop with a GPU (see below)._ The run writes
-`docs/reports/performance/match-3min-<platform>.json` and `memory-5-cycles-<platform>.json`; their numbers go
-in this table.
+The first run on the developer's desktop used headless Chromium, which did **not** use the GPU: the renderer is
+again SwiftShader. It is kept because it shows how the same software path behaves on a fast CPU.
 
-| Item / metric            | Value              |
-| ------------------------ | ------------------ |
-| Hardware (CPU, GPU, RAM) |                    |
-| OS / browser             |                    |
-| Resolution               | 1280 × 720 @ DPR 1 |
-| Average FPS              |                    |
-| Frame interval p95       |                    |
-| Main-thread work p95     |                    |
-| Peak entities            |                    |
-| Heap growth cycle 1 → 5  |                    |
+| Item       | Value                                                                |
+| ---------- | -------------------------------------------------------------------- |
+| Hardware   | AMD Ryzen 7 5700X (8 cores / 16 threads), 32 GB RAM                  |
+| OS         | Windows 11 (NT 10.0.26200, x64)                                      |
+| Browser    | Chromium 141.0.7390.37 **headless** (Playwright 1.56.1)              |
+| WebGL      | ANGLE / **SwiftShader** (software rasteriser — the GPU was not used) |
+| Resolution | 1280 × 720 @ DPR 1                                                   |
+
+| Metric                                   | Value                                                                                                        |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Average FPS                              | **21.7** (per-second samples 19–26)                                                                          |
+| Frame interval p50 / **p95** / p99 / max | 46 / **54** / 57.5 / 225 ms                                                                                  |
+| Main-thread work per frame avg / p95     | **0.6 / 1.0 ms** (max 31.7 ms)                                                                               |
+| Peak entities (per-second samples)       | 13 enemies · 13 projectiles · 15 effects · 730 display objects                                               |
+| Match totals                             | 112 enemies spawned (52 Chasers, 60 Shooters) · 1 160 player and 452 enemy projectiles · 63 kills · 37 rams  |
+| Memory, cycle 1 → 5                      | 7.74 → 8.34 MB (+0.60 MB, same flattening); DOM 118 nodes, 197 listeners, 0 runtimes and canvases each cycle |
+
+Evidence: [match-3min-win32-software.json](reports/performance/match-3min-win32-software.json),
+[trace](reports/performance/match-3min-trace-win32-software.json),
+[memory-5-cycles-win32-software.json](reports/performance/memory-5-cycles-win32-software.json).
+
+The game's own frame work is 1 ms at p95 — 6 % of the 16.7 ms budget; the frame rate is again set by the CPU
+rasteriser (46 ms per 1280 × 720 frame). The 180 s match took exactly 180 s of wall time here.
+
+### Environment C — desktop with the GPU (reference for 60 FPS) ✅
+
+| Item       | Value                                                                            |
+| ---------- | -------------------------------------------------------------------------------- |
+| Hardware   | AMD Ryzen 7 5700X (8 cores / 16 threads), 32 GB RAM, **NVIDIA GeForce RTX 5080** |
+| OS         | Windows 11 (NT 10.0.26200, x64)                                                  |
+| Browser    | Chromium 141.0.7390.37 **headed** (Playwright 1.56.1)                            |
+| WebGL      | ANGLE / Direct3D 11 on the GPU (`isGpuAccelerated: true`)                        |
+| Display    | 144 Hz refresh rate (inferred: frames are paced by vsync at a steady 144 FPS)    |
+| Resolution | 1280 × 720 @ DPR 1                                                               |
+| Match      | 180 s, spawn 3 s, seed 7, player health 10 000, all cannons firing               |
+
+**3-minute match** ([match-3min-win32-gpu.json](reports/performance/match-3min-win32-gpu.json),
+[trace](reports/performance/match-3min-trace-win32-gpu.json)):
+
+| Metric                                   | Value                                                                                                       |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Average FPS                              | **144.0** (every per-second sample between 143.9 and 145.1) — the display's refresh rate                    |
+| Frame interval p50 / **p95** / p99 / max | 6.9 / **7.1** / 7.1 / 11.8 ms                                                                               |
+| Frames longer than 33 ms                 | **0** of 26 032                                                                                             |
+| Main-thread work per frame avg / p95     | **0.22 / 0.4 ms** (max 2.4 ms)                                                                              |
+| Peak entities (per-second samples)       | 14 enemies · 16 projectiles · 16 effects · 749 display objects                                              |
+| Match totals                             | 109 enemies spawned (51 Chasers, 58 Shooters) · 1 160 player and 485 enemy projectiles · 60 kills · 35 rams |
+| JS heap at the end                       | 34 MB                                                                                                       |
+
+**Memory, 5 cycles** ([memory-5-cycles-win32-gpu.json](reports/performance/memory-5-cycles-win32-gpu.json)):
+
+| After               | JS heap (MB) | DOM nodes | JS listeners | Live runtimes | Canvases |
+| ------------------- | -----------: | --------: | -----------: | ------------: | -------: |
+| Menu (no match yet) |         3.43 |       107 |          153 |             0 |        0 |
+| Cycle 1             |         7.88 |       118 |          198 |             0 |        0 |
+| Cycle 2             |         8.17 |       118 |          195 |             0 |        0 |
+| Cycle 3             |         8.37 |       118 |          195 |             0 |        0 |
+| Cycle 4             |         8.32 |       118 |          195 |             0 |        0 |
+| Cycle 5             |         8.45 |       118 |          196 |             0 |        0 |
+
+Heap +0.57 MB from cycle 1 to 5 with the same flattening as the other runs; native objects in the heap snapshots
+are the same after cycle 1 and cycle 5 (6 canvas objects, 7 WebGL contexts, 2 resize observers, 0 detached
+canvases; audio nodes 16 → 14).
+
+**Verdict:** with a GPU the game runs at the display's refresh rate for the whole 3-minute match — 144 FPS,
+p95 7.1 ms between frames and no frame over 33 ms, well beyond the 60 FPS target (16.7 ms). The game's own
+main-thread work stays under 0.5 ms per frame at p95 even at the end of the match, when the arena is fullest.
+On a 60 Hz display the same build is paced at 60 FPS with a large margin.
 
 ## Reproducing
 
 ```bash
 npm ci
-npm run perf            # both runs (about 6 min with a GPU); PERF_HEADED=1 to watch
+npm run perf            # both runs, headed (about 6 min); PERF_HEADLESS=1 forces headless
 npm run perf:match      # only the 3-minute match
 npm run perf:memory     # only the memory cycles (PERF_MEMORY_CYCLES=10 for more)
 ```
 
-Close other heavy applications, keep the browser window visible when headed (a hidden tab pauses the match by
-design) and do not resize it during the run.
+Close other heavy applications, leave the browser window on screen (minimising it hides the tab, which pauses
+the match by design) and do not resize it during the run. A run whose renderer is software-only prints a warning.
 
 ## Design choices that keep frames cheap
 
@@ -129,8 +190,8 @@ design) and do not resize it during the run.
 
 ## Limitations
 
-- The numbers above were recorded in a CPU-only container; the 60 FPS target must be confirmed on a machine with
-  a GPU (Environment B).
+- Runs A and B rendered WebGL in software and are kept as worst cases; the 60 FPS target is confirmed by the GPU
+  run (Environment C) on one desktop; other GPUs and browsers were not measured.
 - Entity counts are sampled once per second, so very short peaks between samples are not reflected.
 - The memory method measures the JS heap and DOM; GPU memory is released through PixiJS/WebGL and verified
   indirectly (no surviving WebGL context or canvas).

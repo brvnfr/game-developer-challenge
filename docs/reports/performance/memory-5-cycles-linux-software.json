@@ -1,6 +1,6 @@
 {
   "environment": {
-    "recordedAt": "2026-10-14T16:48:59.651Z",
+    "recordedAt": "2026-10-14T17:37:02.285Z",
     "machine": {
       "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
       "cores": 2,
@@ -16,38 +16,69 @@
       "viewport": "1280×720",
       "devicePixelRatio": 1,
       "webglRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36"
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36",
+      "isGpuAccelerated": false
     }
   },
   "method": "5 cycles: Play → 20 s of real-time combat (all cannons) → pause → Main Menu; after each cycle three forced garbage collections (CDP HeapProfiler.collectGarbage), then JS heap (Runtime.getHeapUsage) and DOM counters (Memory.getDOMCounters).",
   "samples": [
     {
       "label": "menu before any match",
-      "jsHeapUsedMb": 4.32,
-      "domNodes": 107,
-      "jsEventListeners": 158,
+      "jsHeapUsedMb": 3.21,
+      "domNodes": 26,
+      "jsEventListeners": 6,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0
     },
     {
       "label": "after cycle 1",
-      "jsHeapUsedMb": 7.65,
+      "jsHeapUsedMb": 7.59,
       "domNodes": 118,
-      "jsEventListeners": 186,
+      "jsEventListeners": 185,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 3,
-        "projectiles": 8,
-        "pooledProjectiles": 2,
-        "effects": 3
+        "ships": 4,
+        "projectiles": 1,
+        "pooledProjectiles": 9,
+        "effects": 2
       }
     },
     {
       "label": "after cycle 2",
-      "jsHeapUsedMb": 7.95,
+      "jsHeapUsedMb": 7.86,
+      "domNodes": 118,
+      "jsEventListeners": 185,
+      "documents": 1,
+      "liveRuntimes": 0,
+      "canvases": 0,
+      "sceneDuringMatch": {
+        "ships": 4,
+        "projectiles": 7,
+        "pooledProjectiles": 3,
+        "effects": 0
+      }
+    },
+    {
+      "label": "after cycle 3",
+      "jsHeapUsedMb": 8.1,
+      "domNodes": 118,
+      "jsEventListeners": 185,
+      "documents": 1,
+      "liveRuntimes": 0,
+      "canvases": 0,
+      "sceneDuringMatch": {
+        "ships": 4,
+        "projectiles": 1,
+        "pooledProjectiles": 9,
+        "effects": 5
+      }
+    },
+    {
+      "label": "after cycle 4",
+      "jsHeapUsedMb": 8.18,
       "domNodes": 118,
       "jsEventListeners": 185,
       "documents": 1,
@@ -56,28 +87,13 @@
       "sceneDuringMatch": {
         "ships": 4,
         "projectiles": 2,
-        "pooledProjectiles": 8,
-        "effects": 6
+        "pooledProjectiles": 7,
+        "effects": 5
       }
     },
     {
-      "label": "after cycle 3",
-      "jsHeapUsedMb": 8.17,
-      "domNodes": 118,
-      "jsEventListeners": 186,
-      "documents": 1,
-      "liveRuntimes": 0,
-      "canvases": 0,
-      "sceneDuringMatch": {
-        "ships": 3,
-        "projectiles": 6,
-        "pooledProjectiles": 4,
-        "effects": 6
-      }
-    },
-    {
-      "label": "after cycle 4",
-      "jsHeapUsedMb": 8.27,
+      "label": "after cycle 5",
+      "jsHeapUsedMb": 8.19,
       "domNodes": 118,
       "jsEventListeners": 185,
       "documents": 1,
@@ -89,24 +105,9 @@
         "pooledProjectiles": 7,
         "effects": 0
       }
-    },
-    {
-      "label": "after cycle 5",
-      "jsHeapUsedMb": 8.3,
-      "domNodes": 118,
-      "jsEventListeners": 185,
-      "documents": 1,
-      "liveRuntimes": 0,
-      "canvases": 0,
-      "sceneDuringMatch": {
-        "ships": 4,
-        "projectiles": 5,
-        "pooledProjectiles": 5,
-        "effects": 6
-      }
     }
   ],
-  "heapGrowthFromCycle1ToLastMb": 0.65,
+  "heapGrowthFromCycle1ToLastMb": 0.6,
   "nativeObjectsInHeapSnapshots": {
     "after cycle 1": {
       "HTMLCanvasElement": 6,
@@ -114,8 +115,8 @@
       "WebGL2RenderingContext": 3,
       "WebGLRenderingContext": 4,
       "ResizeObserver": 2,
-      "AudioBufferSourceNode": 5,
-      "GainNode": 6
+      "AudioBufferSourceNode": 4,
+      "GainNode": 5
     },
     "after cycle 5": {
       "HTMLCanvasElement": 6,

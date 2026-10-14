@@ -295,5 +295,5 @@ scenarios** dialog or the URL and can be reset to the initial state (see README)
 - Matches are played in landscape on phones; portrait shows a "rotate your device" pause.
 - The broad phase is a pair loop, adequate for the configured alive cap; a much larger cap would call for a
   spatial grid.
-- Performance numbers recorded in this repository come from a CPU-only cloud machine (software WebGL); see
-  [docs/PERFORMANCE.md](docs/PERFORMANCE.md) for the reference environment and how to measure on other hardware.
+- Performance was measured on one desktop GPU (144 FPS, p95 7.1 ms) and, as worst cases, with software WebGL;
+  other GPUs and browsers were not measured (see [docs/PERFORMANCE.md](docs/PERFORMANCE.md)).

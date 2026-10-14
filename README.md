@@ -232,16 +232,17 @@ for titles and buttons, [Nunito](https://fonts.google.com/specimen/Nunito) for t
 ## Performance and memory
 
 `npm run perf` builds the production bundle, serves it on port 4175 and plays in **real time** with Chromium
-(using the machine's GPU when available; `PERF_HEADED=1` shows the browser):
+(headed by default so Chromium uses the GPU — headless Chromium usually renders WebGL in software;
+`PERF_HEADLESS=1` forces headless):
 
 - **3-minute match** (`?test=1&profile=1`, 180 s, spawn every 3 s, seed 7, all cannons firing while sailing in
   loops): average FPS, p50/p95/p99 frame interval, main-thread frame work, entity counts every second and a
-  5-second Chrome trace → `docs/reports/performance/match-3min-<platform>.json` and `…-trace-<platform>.json`
+  5-second Chrome trace → `docs/reports/performance/match-3min-<platform>-<gpu|software>.json` and the trace
   (open the trace in Chrome DevTools › Performance). The player's health is raised to 10 000 (`playerHealth`, a
   value of the typed config) so the match lasts the full 3 minutes; every other value is the default.
 - **Memory, 5 cycles** of Play → 20 s of combat → Main Menu, with forced garbage collection: JS heap, DOM nodes,
   event listeners, live runtimes, canvases and native objects (canvases, WebGL contexts, audio nodes) counted in
-  heap snapshots → `docs/reports/performance/memory-5-cycles-<platform>.json`. `PERF_MEMORY_CYCLES=10` runs more.
+  heap snapshots → `docs/reports/performance/memory-5-cycles-<platform>-<gpu|software>.json`. `PERF_MEMORY_CYCLES=10` runs more.
 
 Results, environment and limitations: [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
 
