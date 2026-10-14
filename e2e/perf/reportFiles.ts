@@ -10,6 +10,3 @@ export function writeReport(fileName: string, content: unknown): string {
   writeFileSync(filePath, typeof content === 'string' ? content : `${JSON.stringify(content, null, 2)}\n`);
   return filePath;
 }
-
-/** Short label of the current platform for file names (e.g. "linux", "win32"). */
-export const PLATFORM_LABEL = process.platform;

@@ -1,5 +1,6 @@
 import os from 'node:os';
 import type { Browser, Page } from '@playwright/test';
+import { IS_PERF_HEADLESS, isGpuRenderer } from './perfMode';
 
 export interface TestEnvironment {
   readonly recordedAt: string;
@@ -9,6 +10,8 @@ export interface TestEnvironment {
     readonly viewport: string;
     readonly devicePixelRatio: number;
     readonly webglRenderer: string;
+    /** False when WebGL is rasterised on the CPU (SwiftShader, llvmpipe…): frame rates then measure the CPU. */
+    readonly isGpuAccelerated: boolean;
     readonly userAgent: string;
   };
 }
@@ -37,7 +40,21 @@ export async function describeEnvironment(page: Page, browser: Browser): Promise
       memoryGb: Math.round(os.totalmem() / 1024 ** 3),
       os: `${os.type()} ${os.release()} (${os.arch()})`,
     },
-    browser: { name: 'Chromium', version: browser.version(), headless: process.env.PERF_HEADED !== '1' },
-    page: pageInfo,
+    browser: { name: 'Chromium', version: browser.version(), headless: IS_PERF_HEADLESS },
+    page: { ...pageInfo, isGpuAccelerated: isGpuRenderer(pageInfo.webglRenderer) },
   };
+}
+
+/** File-name label of a run, e.g. "win32-gpu" or "linux-software". */
+export function reportLabel(environment: TestEnvironment): string {
+  return `${process.platform}-${environment.page.isGpuAccelerated ? 'gpu' : 'software'}`;
+}
+
+/** Warns in the console when the run cannot measure GPU rendering. */
+export function warnIfSoftwareRendering(environment: TestEnvironment): void {
+  if (environment.page.isGpuAccelerated) return;
+  console.warn(
+    `WebGL is rendered in software (${environment.page.webglRenderer}); FPS will measure the CPU rasteriser. ` +
+      'Run headed on a machine with a GPU (the default; do not set PERF_HEADLESS=1).',
+  );
 }

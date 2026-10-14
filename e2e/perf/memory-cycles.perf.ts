@@ -1,7 +1,7 @@
 import { expect, test, type CDPSession, type Page } from '@playwright/test';
-import { describeEnvironment } from './environment';
+import { describeEnvironment, reportLabel, warnIfSoftwareRendering } from './environment';
 import { countHeapObjects } from './heapSnapshot';
-import { PLATFORM_LABEL, writeReport } from './reportFiles';
+import { writeReport } from './reportFiles';
 
 /** Five cycles as required; PERF_MEMORY_CYCLES can raise it to check that the heap levels off. */
 const CYCLES = Number(process.env.PERF_MEMORY_CYCLES ?? 5);
@@ -48,6 +48,8 @@ test(`${CYCLES} cycles of start, play and leave do not leak`, async ({ page, bro
   });
   await page.goto('/?test=1&seed=11&session=120&spawn=3&playerHealth=10000&latency=0');
   const environment = await describeEnvironment(page, browser);
+  warnIfSoftwareRendering(environment);
+  const label = reportLabel(environment);
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('HeapProfiler.enable');
   const samples: MemorySample[] = [await sample(page, cdp, 'menu before any match')];
@@ -84,7 +86,7 @@ test(`${CYCLES} cycles of start, play and leave do not leak`, async ({ page, bro
     heapGrowthFromCycle1ToLastMb: heapGrowthMb,
     nativeObjectsInHeapSnapshots: heapObjects,
   };
-  const file = writeReport(`memory-${CYCLES}-cycles-${PLATFORM_LABEL}.json`, report);
+  const file = writeReport(`memory-${CYCLES}-cycles-${label}.json`, report);
   console.log(`Memory report: ${file}`);
   console.table(
     samples.map(({ label, jsHeapUsedMb, domNodes, jsEventListeners, liveRuntimes, canvases }) => ({

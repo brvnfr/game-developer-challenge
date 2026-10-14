@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { ProfileReport } from '../../src/game/runtime/FrameProfiler';
-import { describeEnvironment } from './environment';
-import { PLATFORM_LABEL, writeReport } from './reportFiles';
+import { describeEnvironment, reportLabel, warnIfSoftwareRendering } from './environment';
+import { writeReport } from './reportFiles';
 
 const MATCH_SECONDS = 180;
 const SPAWN_SECONDS = 3;
@@ -28,6 +28,8 @@ test('3-minute match in the production build: frame rate, p95 frame time and ent
   });
   await page.goto(`/?${query.toString()}`);
   const environment = await describeEnvironment(page, browser);
+  warnIfSoftwareRendering(environment);
+  const label = reportLabel(environment);
   await page.getByRole('button', { name: 'Play' }).click();
   await page.waitForFunction(() => window.__PIRATE_BATTLE__?.state()?.status === 'running', null, { timeout: 30_000 });
   await page.evaluate(() => window.__PIRATE_BATTLE__?.resetProfile());
@@ -59,7 +61,7 @@ test('3-minute match in the production build: frame rate, p95 frame time and ent
       });
       await page.waitForTimeout(TRACE_SECONDS * 1000);
       const trace = await browser.stopTracing();
-      writeReport(`match-3min-trace-${PLATFORM_LABEL}.json`, trace.toString('utf8'));
+      writeReport(`match-3min-trace-${label}.json`, trace.toString('utf8'));
     }
     const snapshot = await page.evaluate(() => {
       const api = window.__PIRATE_BATTLE__;
@@ -97,7 +99,7 @@ test('3-minute match in the production build: frame rate, p95 frame time and ent
     usedJsHeapMbAtEnd: memory,
     profile,
   };
-  const file = writeReport(`match-3min-${PLATFORM_LABEL}.json`, report);
+  const file = writeReport(`match-3min-${label}.json`, report);
   console.log(`Performance report: ${file}`);
   console.log(
     `FPS ${profile.frames.averageFps} · p95 ${profile.frames.p95FrameMs} ms · p99 ${profile.frames.p99FrameMs} ms · ` +
