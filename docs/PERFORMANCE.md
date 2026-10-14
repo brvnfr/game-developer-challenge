@@ -1,13 +1,9 @@
 # Performance and memory
 
 Target: **60 FPS** during combat in the optimised production build — **met**: 144 FPS (the display's refresh rate),
-p95 7.1 ms, on a desktop GPU (Environment C). This page records how the game was
-measured, the results, and what limits them.
-
-> **Visual polish patch (2026-10-14, after Environment C was measured).** The patch added an animated sea, a
-> shallow-water band, autotiled islands with props, ship wakes and the player's aim lanes and reload arcs.
-> Environment A below was re-measured after it; the GPU reference (Environment C) predates it and should be
-> re-run with `npm run perf` on the reference desktop. Raw evidence is in [`docs/reports/performance/`](reports/performance/).
+p95 7.1 ms, on a desktop GPU (Environment C), measured again after the visual polish patch (animated sea, shallow
+water, autotiled islands with props, wakes, aim lanes and reload arcs). This page records how the game was
+measured, the results, and what limits them. Raw evidence is in [`docs/reports/performance/`](reports/performance/).
 
 ## How it is measured
 
@@ -71,9 +67,8 @@ The first version of the new terrain drew four full-arena layers (two sea layers
 cached as arena-sized textures) and took about 330 ms per frame in a 20-second sample, against 140 ms for the
 old terrain. Dropping the second (additive "glints") sea layer and caching each island and its shallows as their
 own small textures brought it to about 210 ms; the sea is now the only layer covering the whole arena. Wakes,
-aim lanes and reload arcs made no measurable difference. With a GPU these layers should be cheap (one quad for the sea,
-a few small quads for the islands; to be confirmed by the GPU re-run), and the reduction also helps weak mobile
-GPUs.
+aim lanes and reload arcs made no measurable difference here. With the GPU (Environment C) the patch did not change
+the frame rate; the reduction mainly helps weak mobile GPUs.
 
 **Memory, 5 cycles** ([memory-5-cycles-linux-software.json](reports/performance/memory-5-cycles-linux-software.json)),
 after the visual patch:
@@ -149,36 +144,42 @@ rasteriser (46 ms per 1280 × 720 frame). The 180 s match took exactly 180 s of 
 | Match      | 180 s, spawn 3 s, seed 7, player health 10 000, all cannons firing               |
 
 **3-minute match** ([match-3min-win32-gpu.json](reports/performance/match-3min-win32-gpu.json),
-[trace](reports/performance/match-3min-trace-win32-gpu.json)):
+[trace](reports/performance/match-3min-trace-win32-gpu.json)), after the visual patch, with the run made before it
+for comparison:
 
-| Metric                                   | Value                                                                                                       |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Average FPS                              | **144.0** (every per-second sample between 143.9 and 145.1) — the display's refresh rate                    |
-| Frame interval p50 / **p95** / p99 / max | 6.9 / **7.1** / 7.1 / 11.8 ms                                                                               |
-| Frames longer than 33 ms                 | **0** of 26 032                                                                                             |
-| Main-thread work per frame avg / p95     | **0.22 / 0.4 ms** (max 2.4 ms)                                                                              |
-| Peak entities (per-second samples)       | 14 enemies · 16 projectiles · 16 effects · 749 display objects                                              |
-| Match totals                             | 109 enemies spawned (51 Chasers, 58 Shooters) · 1 160 player and 485 enemy projectiles · 60 kills · 35 rams |
-| JS heap at the end                       | 34 MB                                                                                                       |
+| Metric                                   | After the patch                                                                                             | Before                           |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Average FPS                              | **144.0** (every per-second sample between 143.8 and 146) — the display's refresh rate                      | 144.0                            |
+| Frame interval p50 / **p95** / p99 / max | 6.9 / **7.1** / 7.2 / 9.2 ms                                                                                | 6.9 / 7.1 / 7.1 / 11.8 ms        |
+| Frames longer than 33 ms                 | **0** of 26 034                                                                                             | 0 of 26 032                      |
+| Main-thread work per frame avg / p95     | **0.47 / 1.0 ms** (max 3.4 ms)                                                                              | 0.22 / 0.4 ms (max 2.4 ms)       |
+| Peak entities (per-second samples)       | 14 enemies · 12 projectiles · 18 effects · 927 display objects                                              | 14 · 16 · 16 · 749               |
+| Match totals                             | 101 enemies spawned (44 Chasers, 57 Shooters) · 1 160 player and 524 enemy projectiles · 54 kills · 33 rams | 109 spawned · 60 kills · 35 rams |
+| JS heap at the end                       | 41 MB                                                                                                       | 34 MB                            |
 
-**Memory, 5 cycles** ([memory-5-cycles-win32-gpu.json](reports/performance/memory-5-cycles-win32-gpu.json)):
+The patch doubled the game's own work per frame (wakes, more display objects, the aim lanes and reload arcs), but
+it stays at 1 ms at p95 — 6 % of the 16.7 ms budget — and the frame rate did not move.
+
+**Memory, 5 cycles** ([memory-5-cycles-win32-gpu.json](reports/performance/memory-5-cycles-win32-gpu.json)),
+after the visual patch:
 
 | After               | JS heap (MB) | DOM nodes | JS listeners | Live runtimes | Canvases |
 | ------------------- | -----------: | --------: | -----------: | ------------: | -------: |
-| Menu (no match yet) |         3.43 |       107 |          153 |             0 |        0 |
-| Cycle 1             |         7.88 |       118 |          198 |             0 |        0 |
-| Cycle 2             |         8.17 |       118 |          195 |             0 |        0 |
-| Cycle 3             |         8.37 |       118 |          195 |             0 |        0 |
-| Cycle 4             |         8.32 |       118 |          195 |             0 |        0 |
-| Cycle 5             |         8.45 |       118 |          196 |             0 |        0 |
+| Menu (no match yet) |         3.51 |       107 |          153 |             0 |        0 |
+| Cycle 1             |         8.28 |       117 |          197 |             0 |        0 |
+| Cycle 2             |         8.54 |       117 |          197 |             0 |        0 |
+| Cycle 3             |         8.60 |       117 |          197 |             0 |        0 |
+| Cycle 4             |         8.64 |       117 |          198 |             0 |        0 |
+| Cycle 5             |         8.79 |       117 |          197 |             0 |        0 |
 
-Heap +0.57 MB from cycle 1 to 5 with the same flattening as the other runs; native objects in the heap snapshots
-are the same after cycle 1 and cycle 5 (6 canvas objects, 7 WebGL contexts, 2 resize observers, 0 detached
-canvases; audio nodes 16 → 14).
+Heap +0.51 MB from cycle 1 to 5 (+0.57 MB before the patch) with the same flattening as the other runs; native
+objects in the heap snapshots are identical after cycle 1 and cycle 5 (6 canvas objects, 7 WebGL contexts,
+2 resize observers, 0 detached canvases, 14 audio buffer sources, 15 gain nodes). About 100–130 wake puffs were
+alive during each match; their pool and texture go away with the match.
 
 **Verdict:** with a GPU the game runs at the display's refresh rate for the whole 3-minute match — 144 FPS,
 p95 7.1 ms between frames and no frame over 33 ms, well beyond the 60 FPS target (16.7 ms). The game's own
-main-thread work stays under 0.5 ms per frame at p95 even at the end of the match, when the arena is fullest.
+main-thread work stays at 1 ms per frame at p95 even at the end of the match, when the arena is fullest.
 On a 60 Hz display the same build is paced at 60 FPS with a large margin.
 
 ## Reproducing
@@ -212,8 +213,7 @@ the match by design) and do not resize it during the run. A run whose renderer i
 ## Limitations
 
 - Runs A and B rendered WebGL in software and are kept as worst cases; the 60 FPS target is confirmed by the GPU
-  run (Environment C) on one desktop, measured before the visual patch (re-run pending); other GPUs and browsers
-  were not measured.
+  run (Environment C) on one desktop, before and after the visual patch; other GPUs and browsers were not measured.
 - Entity counts are sampled once per second, so very short peaks between samples are not reflected.
 - The memory method measures the JS heap and DOM; GPU memory is released through PixiJS/WebGL and verified
   indirectly (no surviving WebGL context or canvas).
