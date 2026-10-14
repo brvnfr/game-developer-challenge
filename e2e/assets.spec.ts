@@ -3,6 +3,9 @@ import { GamePage } from './support/GamePage';
 
 test.describe('asset loading (E2E-02)', () => {
   test.use({ allowConsoleErrors: { patterns: [/Failed to load resource/, /net::ERR_FAILED/, /\[Assets\]/] } });
+  // page.route() does not see requests that pass through a service worker, and the mock API runs in one.
+  // These tests do not use the API, so service workers are blocked and the app runs without mocks.
+  test.use({ serviceWorkers: 'block' });
 
   test('shows progress while the atlases load', async ({ page }) => {
     await page.route('**/assets/game/tiles@*', async (route) => {

@@ -56,4 +56,39 @@ test.describe('accessibility audit (T-046)', () => {
     await page.keyboard.press('Enter');
     await expect(page.getByRole('textbox', { name: 'Game session time' })).toBeFocused();
   });
+
+  test("Captain's Log tabs, tables, errors and the network dialog have no WCAG A/AA violations", async ({ page }) => {
+    const game = new GamePage(page);
+    await game.open({ scenario: 'many-pages' });
+    await game.openCaptainsLog('Ranking');
+    await expect(game.rankingList()).toHaveAttribute('data-state', 'ready');
+    await expectNoViolations(page);
+    await page.getByRole('tab', { name: 'Match History' }).click();
+    await expect(game.historyList()).toHaveAttribute('data-state', 'ready');
+    await expectNoViolations(page);
+
+    await page.getByRole('button', { name: 'Main Menu' }).click();
+    await page.getByRole('button', { name: 'Network scenarios' }).click();
+    await expect(page.getByRole('dialog', { name: 'Network scenarios' })).toBeVisible();
+    await expectNoViolations(page);
+  });
+
+  test("Captain's Log tabs follow the keyboard pattern (arrows, Home, End)", async ({ page }) => {
+    const game = new GamePage(page);
+    await game.open();
+    await game.openCaptainsLog('Ranking');
+    const rankingTab = page.getByRole('tab', { name: 'Ranking' });
+    const historyTab = page.getByRole('tab', { name: 'Match History' });
+    await rankingTab.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(historyTab).toBeFocused();
+    await expect(historyTab).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: 'Match History' })).toBeVisible();
+    await page.keyboard.press('Home');
+    await expect(rankingTab).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(historyTab).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(historyTab).not.toBeFocused(); // only the selected tab is in the Tab order
+  });
 });
