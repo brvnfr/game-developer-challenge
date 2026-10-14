@@ -3,7 +3,7 @@ import { GamePage } from './support/GamePage';
 
 /**
  * Seeded scenarios (manual clock, real input):
- * - seed 5, 60 s, spawn 10 s, sailing in circles while firing every cannon → survives until time runs out;
+ * - seed 11, 60 s, spawn 10 s, sailing in circles while firing every cannon → survives until time runs out;
  * - seed 3, spawn 10 s, idle player → sunk by the enemies.
  */
 const FIGHTING_KEYS = ['KeyW', 'KeyA', 'Space', 'KeyQ', 'KeyE'] as const;
@@ -11,7 +11,7 @@ const FIGHTING_KEYS = ['KeyW', 'KeyA', 'Space', 'KeyQ', 'KeyE'] as const;
 test.describe('end of the match and restart (E2E-06)', () => {
   test('time running out ends the match, freezes the simulation and shows the result', async ({ page }) => {
     const game = new GamePage(page);
-    await game.open({ seed: 5, sessionSeconds: 60, spawnSeconds: 10 });
+    await game.open({ seed: 11, sessionSeconds: 60, spawnSeconds: 10 });
     await game.startMatch();
     for (const key of FIGHTING_KEYS) await page.keyboard.down(key);
     await game.advanceUntilEnded(65_000);
@@ -85,7 +85,7 @@ test.describe('end of the match and restart (E2E-06)', () => {
 
   test('Restart from the pause menu resets the match in place', async ({ page }) => {
     const game = new GamePage(page);
-    await game.open({ seed: 5, sessionSeconds: 60, spawnSeconds: 10 });
+    await game.open({ seed: 11, sessionSeconds: 60, spawnSeconds: 10 });
     await game.startMatch();
     await game.holdKeys(FIGHTING_KEYS, 15_000);
     const before = await game.state();

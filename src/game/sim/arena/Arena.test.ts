@@ -25,7 +25,7 @@ describe('Arena', () => {
     const landTileCount = DEFAULT_ARENA.tiles
       .join('')
       .split('')
-      .filter((tile) => tile === '#').length;
+      .filter((tile) => tile === '#' || tile === 's').length;
     const colliderArea = arena.islandColliders.reduce(
       (area, box) => area + (box.maxX - box.minX) * (box.maxY - box.minY),
       0,
@@ -41,6 +41,16 @@ describe('Arena', () => {
         expect(isInsideCollider).toBe(arena.isLandTile(column, row));
       }
     }
+  });
+
+  it('treats grass islands and sand islets as land and reports their terrain', () => {
+    const arena = new Arena({ ...TINY_ARENA, tiles: ['.....', '.##ss', '.##ss', '.....'] });
+    expect(arena.isLandTile(1, 1)).toBe(true);
+    expect(arena.isLandTile(4, 2)).toBe(true);
+    expect(arena.terrainAt(1, 1)).toBe('grassIsland');
+    expect(arena.terrainAt(3, 1)).toBe('sandIsland');
+    expect(arena.terrainAt(0, 0)).toBe('water');
+    expect(arena.terrainAt(-1, 99)).toBe('water');
   });
 
   it('rejects malformed definitions', () => {

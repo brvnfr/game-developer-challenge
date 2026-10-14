@@ -1,6 +1,6 @@
 import { circleBoxSeparation, circleOverlapsBox, segmentBoxEntry, type BoundingBox } from '@/game/core/math/geometry';
 import { Vector2 } from '@/game/core/math/Vector2';
-import { LAND_TILE, type ArenaDefinition } from './ArenaDefinition';
+import { isLand, terrainKindOf, type ArenaDefinition, type TerrainKind } from './ArenaDefinition';
 import { buildIslandColliders } from './islandColliders';
 
 export interface CircleResolution {
@@ -10,8 +10,6 @@ export interface CircleResolution {
 }
 
 const MAX_SEPARATION_PASSES = 4;
-/** Only water (".") and land ("#") characters are allowed. */
-const VALID_TILE_PATTERN = /^[.#]+$/;
 
 /** Static playfield: bounds and island colliders, with the spatial queries used by every system. */
 export class Arena {
@@ -21,6 +19,7 @@ export class Arena {
   readonly columns: number;
   readonly rows: number;
   readonly islandColliders: readonly BoundingBox[];
+  private readonly terrainGrid: readonly (readonly TerrainKind[])[];
   private readonly landGrid: readonly (readonly boolean[])[];
 
   constructor(readonly definition: ArenaDefinition) {
@@ -30,12 +29,16 @@ export class Arena {
     this.columns = tiles[0]?.length ?? 0;
     if (this.rows === 0 || this.columns === 0) throw new Error('Arena must have at least one tile');
     if (tiles.some((row) => row.length !== this.columns)) throw new Error('All arena rows must have the same length');
-    if (tiles.some((row) => !VALID_TILE_PATTERN.test(row))) throw new Error('Arena tiles must only contain "." or "#"');
     this.width = this.columns * tileSize;
     this.height = this.rows * tileSize;
-    this.landGrid = tiles.map((row) =>
-      Array.from({ length: row.length }, (_, column) => row.charAt(column) === LAND_TILE),
+    this.terrainGrid = tiles.map((row) =>
+      Array.from(row, (character) => {
+        const kind = terrainKindOf(character);
+        if (!kind) throw new Error(`Unknown arena tile "${character}" (use ".", "#" or "s")`);
+        return kind;
+      }),
     );
+    this.landGrid = this.terrainGrid.map((row) => row.map(isLand));
     this.islandColliders = buildIslandColliders(this.landGrid, tileSize);
   }
 
@@ -46,6 +49,11 @@ export class Arena {
 
   isLandTile(column: number, row: number): boolean {
     return this.landGrid[row]?.[column] ?? false;
+  }
+
+  /** Terrain of a tile; outside the arena is open water. */
+  terrainAt(column: number, row: number): TerrainKind {
+    return this.terrainGrid[row]?.[column] ?? 'water';
   }
 
   contains(point: Vector2, margin = 0): boolean {

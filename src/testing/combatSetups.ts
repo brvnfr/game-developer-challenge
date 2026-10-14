@@ -5,7 +5,7 @@ const WEST = Math.PI;
 
 /**
  * Named starting layouts for reproducible combat tests (`?test=1&setup=<name>`). The east of the arena
- * (x 1088–1920, y 384–768) is open water, so shots and ships there never meet an island.
+ * (x 1088–1920, y 384–704) is open water, so shots and ships there never meet an island.
  */
 export const COMBAT_SETUPS = {
   /** The player alone in open water, facing east. */
