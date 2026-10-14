@@ -1,4 +1,5 @@
 import { expect, type Page } from '@playwright/test';
+import type { MatchConfig } from '../../src/game/config/types';
 import type { ObservedState } from '../../src/testing/TestHarness';
 
 export interface GameUrlOptions {
@@ -19,6 +20,8 @@ export interface GameUrlOptions {
   readonly latencyMs?: number;
   /** Client timeout of the API in ms (test mode only). */
   readonly apiTimeoutMs?: number;
+  /** Named starting layout for combat tests (src/testing/combatSetups.ts). */
+  readonly setup?: 'open-water' | 'chaser-ahead' | 'shooter-far';
 }
 
 export type LogTab = 'Ranking' | 'Match History';
@@ -57,6 +60,7 @@ export class GamePage {
     if (options.spawnSeconds !== undefined) params.set('spawn', String(options.spawnSeconds));
     if (options.manualTime ?? true) params.set('time', 'manual');
     if (options.touch) params.set('touch', '1');
+    if (options.setup !== undefined) params.set('setup', options.setup);
     if (options.scenario !== undefined) params.set('scenario', options.scenario);
     if (options.networkSeed !== undefined) params.set('networkSeed', String(options.networkSeed));
     params.set('latency', String(options.latencyMs ?? 0));
@@ -93,9 +97,43 @@ export class GamePage {
     return state;
   }
 
-  /** Advances game time (manual clock). Rendering, input sampling and rules run for real. */
-  async advance(milliseconds: number): Promise<void> {
-    await this.page.evaluate((duration) => window.__PIRATE_BATTLE__?.advanceTime(duration), milliseconds);
+  /** Balancing values of the running match, so assertions follow the configuration instead of copies of it. */
+  async config(): Promise<MatchConfig> {
+    const config = await this.page.evaluate(() => window.__PIRATE_BATTLE__?.config() ?? null);
+    if (!config) throw new Error('No match is running');
+    return config;
+  }
+
+  /**
+   * Advances the manual clock in small chunks until `isDone(state)` holds; returns that state.
+   * Fails when it does not happen within `maximumMilliseconds` of game time.
+   */
+  async advanceUntil(
+    isDone: (state: ObservedState) => boolean,
+    maximumMilliseconds: number,
+    chunkMilliseconds = 50,
+  ): Promise<ObservedState> {
+    for (let elapsed = 0; elapsed <= maximumMilliseconds; elapsed += chunkMilliseconds) {
+      const state = await this.state();
+      if (isDone(state)) {
+        await this.advance(0); // draw the state the test is about to check
+        return state;
+      }
+      await this.advance(chunkMilliseconds, { shouldDraw: false });
+    }
+    throw new Error(`Condition not reached within ${maximumMilliseconds} ms of game time`);
+  }
+
+  /**
+   * Advances game time (manual clock). Rules, input sampling and scene updates run for real; the canvas is drawn
+   * at the end. `shouldDraw: false` skips that draw for intermediate steps of long loops: the test browsers draw
+   * WebGL in software, and hundreds of queued frames would stall the GPU process for seconds.
+   */
+  async advance(milliseconds: number, { shouldDraw = true }: { shouldDraw?: boolean } = {}): Promise<void> {
+    await this.page.evaluate(([duration, draw]) => window.__PIRATE_BATTLE__?.advanceTime(duration, draw), [
+      milliseconds,
+      shouldDraw,
+    ] as const);
   }
 
   async holdKeys(keys: readonly string[], milliseconds: number): Promise<void> {
@@ -130,9 +168,10 @@ export class GamePage {
   async advanceUntilEnded(maximumMilliseconds: number, chunkMilliseconds = 1_000): Promise<void> {
     for (let elapsed = 0; elapsed < maximumMilliseconds; elapsed += chunkMilliseconds) {
       const isRunning = await this.page.evaluate(() => window.__PIRATE_BATTLE__?.state()?.status === 'running');
-      if (!isRunning) return;
-      await this.advance(chunkMilliseconds);
+      if (!isRunning) break;
+      await this.advance(chunkMilliseconds, { shouldDraw: false });
     }
+    await this.advance(0); // draw the final state once
   }
 
   /** Opens the Captain's Log from the main menu on the given tab. */

@@ -23,6 +23,9 @@ const deterministicChromiumArgs = [
 export default defineConfig({
   testDir: './e2e',
   testIgnore: ['**/perf/**'],
+  // Visual baselines are versioned per project and platform (fonts and anti-aliasing differ between systems).
+  // The Linux ones are the reference (CI and the Playwright Docker image).
+  snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{arg}-{platform}{ext}',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -40,6 +43,8 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off',
+    locale: 'en-GB',
+    timezoneId: 'UTC',
     launchOptions: { args: deterministicChromiumArgs },
   },
   projects: [
