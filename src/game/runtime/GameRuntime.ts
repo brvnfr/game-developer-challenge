@@ -1,4 +1,4 @@
-import { Application, type Ticker } from 'pixi.js';
+import { Application, UPDATE_PRIORITY, type Ticker } from 'pixi.js';
 import type { UserSettings } from '@/game/config/types';
 import { SimulationClock } from '@/game/core/SimulationClock';
 import { MatchSoundDirector } from '@/game/audio/MatchSoundDirector';
@@ -14,6 +14,7 @@ import type { PauseReason } from '@/game/sim/events/GameEvent';
 import type { MatchSession } from '@/game/sim/match/MatchSession';
 import type { MatchResult } from '@/game/sim/match/types';
 import { AutoPauseController } from './AutoPauseController';
+import type { EntityCounts, FrameProfiler } from './FrameProfiler';
 import { MatchFactory, type MatchFactoryOptions } from './MatchFactory';
 
 export type TimeSource = 'realTime' | 'manual';
@@ -26,6 +27,8 @@ export interface GameRuntimeOptions extends MatchFactoryOptions {
   readonly timeSource?: TimeSource;
   /** Where sound effects go; the game is silent without it. */
   readonly sound?: SoundOutput | null;
+  /** Frame timing and entity counts for the performance report (real-time frames only). */
+  readonly profiler?: FrameProfiler | null;
 }
 
 const MANUAL_TIME_CHUNK_SECONDS = 0.1;
@@ -34,6 +37,17 @@ const RESULT_REVEAL_DELAY_SECONDS = 1.5;
 /** Below this speed (px/s) the ship is drifting and the sailing loop is silent. */
 const SAILING_SOUND_MIN_SPEED = 15;
 const WATER_BACKGROUND = 0x2c8fc9;
+/**
+ * Destroys a PixiJS application. When no other runtime is alive it also empties PixiJS's module-level pools
+ * (batches, render-texture pool, canvas caches): otherwise every destroyed renderer left its batcher and some
+ * texture styles referenced from those pools (found with heap snapshots over repeated matches). The pools are
+ * shared, so they are kept while another runtime exists (React Strict Mode mounts a second one at once).
+ * The loaded atlases are not in these pools and stay cached.
+ */
+function destroyApplication(application: Application): void {
+  const releaseGlobalResources = GameRuntime.liveInstanceCount === 0;
+  application.destroy({ removeView: true, releaseGlobalResources }, { children: true });
+}
 
 /**
  * Owns everything a match needs on screen: the PixiJS application and ticker, the fixed-step clock,
@@ -62,6 +76,8 @@ export class GameRuntime {
   private timeSource: TimeSource;
   private hasReportedResult = false;
   private secondsSinceEnd = 0;
+  /** Start of the frame being profiled (between handleTick and handleFrameEnd). */
+  private profiledFrameStart: number | null = null;
   private disposed = false;
 
   constructor(private readonly options: GameRuntimeOptions) {
@@ -95,6 +111,10 @@ export class GameRuntime {
     return this.scene?.statistics ?? null;
   }
 
+  get profiler(): FrameProfiler | null {
+    return this.options.profiler ?? null;
+  }
+
   get isDisposed(): boolean {
     return this.disposed;
   }
@@ -112,7 +132,7 @@ export class GameRuntime {
       height: Math.max(1, host.clientHeight),
     });
     if (this.disposed) {
-      application.destroy({ removeView: true }, { children: true });
+      destroyApplication(application);
       return;
     }
     this.application = application;
@@ -134,6 +154,8 @@ export class GameRuntime {
     this.autoPause.attach();
     this.session.start();
     application.ticker.add(this.handleTick);
+    // Runs after PixiJS's own render callback (LOW), so a profiled frame includes the draw submission.
+    if (this.options.profiler) application.ticker.add(this.handleFrameEnd, undefined, UPDATE_PRIORITY.UTILITY);
     this.applyTimeSource();
     this.publish();
   }
@@ -209,8 +231,9 @@ export class GameRuntime {
     this.resizeObserver = null;
     if (this.application) {
       this.application.ticker.remove(this.handleTick);
+      this.application.ticker.remove(this.handleFrameEnd);
       this.scene?.destroy();
-      this.application.destroy({ removeView: true }, { children: true });
+      destroyApplication(this.application);
     }
     this.scene = null;
     this.application = null;
@@ -232,8 +255,23 @@ export class GameRuntime {
   }
 
   private readonly handleTick = (ticker: Ticker): void => {
+    const profiler = this.timeSource === 'realTime' ? this.options.profiler : null;
+    this.profiledFrameStart = profiler ? profiler.beginFrame() : null;
     this.advanceFrame(this.timeSource === 'realTime' ? ticker.deltaMS / 1000 : 0);
   };
+
+  private readonly handleFrameEnd = (): void => {
+    if (this.profiledFrameStart === null || !this.options.profiler) return;
+    this.options.profiler.endFrame(this.profiledFrameStart, this.countEntities);
+    this.profiledFrameStart = null;
+  };
+
+  private readonly countEntities = (): EntityCounts => ({
+    enemies: this.session.world.livingEnemies().length,
+    projectiles: this.session.world.projectiles.length,
+    effects: this.scene?.statistics.effects ?? 0,
+    displayObjects: this.scene?.countDisplayObjects() ?? 0,
+  });
 
   private advanceFrame(frameSeconds: number): void {
     if (this.disposed) return;

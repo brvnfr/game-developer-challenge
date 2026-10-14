@@ -1,5 +1,5 @@
 import { createMatchConfig } from '@/game/config/matchConfig';
-import type { UserSettings } from '@/game/config/types';
+import type { GameConfig, UserSettings } from '@/game/config/types';
 import { SeededRandom } from '@/game/core/SeededRandom';
 import { Arena } from '@/game/sim/arena/Arena';
 import type { ArenaDefinition } from '@/game/sim/arena/ArenaDefinition';
@@ -15,6 +15,8 @@ export interface MatchFactoryOptions {
   readonly now?: () => Date;
   /** Starting layout of every match created (reproducible test scenarios). */
   readonly setup?: MatchSetup;
+  /** Balancing base of every match (defaults to DEFAULT_GAME_CONFIG). */
+  readonly baseConfig?: GameConfig;
 }
 
 /** Creates matches from the current settings. Each call takes a fresh configuration snapshot. */
@@ -27,7 +29,7 @@ export class MatchFactory {
 
   create(settings: UserSettings): MatchSession {
     return new MatchSession({
-      config: createMatchConfig(settings),
+      config: createMatchConfig(settings, this.options.baseConfig),
       arena: this.arena,
       seed: this.options.seed ?? SeededRandom.createSeed(),
       createMatchId: this.options.createMatchId ?? (() => crypto.randomUUID()),

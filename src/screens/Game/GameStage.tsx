@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { AudioEngine } from '@/game/audio/AudioEngine';
 import type { UserSettings } from '@/game/config/types';
 import type { GameTextures } from '@/game/render/assets/GameTextures';
+import { DEFAULT_GAME_CONFIG } from '@/game/config/defaults';
+import { FrameProfiler } from '@/game/runtime/FrameProfiler';
 import { GameRuntime } from '@/game/runtime/GameRuntime';
 import type { MatchResult } from '@/game/sim/match/types';
 import { useExternalStore } from '@/game/bridge/useExternalStore';
@@ -51,6 +53,15 @@ export function GameStage({
       settings,
       ...(testMode.seed === undefined ? {} : { seed: testMode.seed }),
       ...(testMode.setup === undefined ? {} : { setup: testMode.setup }),
+      ...(testMode.playerMaxHealth === undefined
+        ? {}
+        : {
+            baseConfig: {
+              ...DEFAULT_GAME_CONFIG,
+              player: { ...DEFAULT_GAME_CONFIG.player, maxHealth: testMode.playerMaxHealth },
+            },
+          }),
+      profiler: testMode.profile ? new FrameProfiler() : null,
       timeSource: testMode.manualTime ? 'manual' : 'realTime',
       sound: audio,
       onMatchEnded: (result) => onMatchEndedRef.current(result),

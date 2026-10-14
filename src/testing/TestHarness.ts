@@ -1,4 +1,5 @@
 import { Vector2 } from '@/game/core/math/Vector2';
+import type { ProfileReport } from '@/game/runtime/FrameProfiler';
 import { GameRuntime } from '@/game/runtime/GameRuntime';
 import type { AudioEngine } from '@/game/audio/AudioEngine';
 import type { MatchConfig } from '@/game/config/types';
@@ -56,6 +57,10 @@ export interface PirateBattleTestApi {
   readonly audio: () => ObservedAudio;
   /** Resolves once every sound file has been loaded and decoded (after the first gesture). */
   readonly whenAudioLoaded: () => Promise<void>;
+  /** Frame timing and entity counts of the current match (`profile=1`), or null. */
+  readonly profile: () => ProfileReport | null;
+  /** Restarts the profiling window (e.g. after warm-up). */
+  readonly resetProfile: () => void;
 }
 
 export interface ObservedAudio {
@@ -126,6 +131,8 @@ export function installTestHarness(audio: AudioEngine): void {
       };
     },
     config: () => currentRuntime()?.match.config ?? null,
+    profile: () => currentRuntime()?.profiler?.report() ?? null,
+    resetProfile: () => currentRuntime()?.profiler?.reset(),
     setManualTime: (isManual) => currentRuntime()?.setTimeSource(isManual ? 'manual' : 'realTime'),
     advanceTime: (milliseconds, shouldDraw = true) => currentRuntime()?.advanceTime(milliseconds, shouldDraw),
     isPlayerHullBlocked: () => {

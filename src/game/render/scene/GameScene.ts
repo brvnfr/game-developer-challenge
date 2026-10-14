@@ -65,6 +65,19 @@ export class GameScene {
     };
   }
 
+  /** Number of display objects under the scene root (profiling). */
+  countDisplayObjects(): number {
+    let count = 0;
+    const pending: Container[] = [this.root];
+    while (pending.length > 0) {
+      const node = pending.pop();
+      if (!node) break;
+      count++;
+      for (const child of node.children) pending.push(child);
+    }
+    return count;
+  }
+
   /** Switches to a new match (restart): drops every entity view and effect, keeps the terrain. */
   showMatch(session: MatchSession): void {
     this.session = session;

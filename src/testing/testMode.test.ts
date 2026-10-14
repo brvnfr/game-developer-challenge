@@ -20,6 +20,8 @@ describe('readTestMode', () => {
       manualTime: true,
       forceTouchControls: false,
       setup: undefined,
+      profile: false,
+      playerMaxHealth: undefined,
     });
   });
 
@@ -31,5 +33,14 @@ describe('readTestMode', () => {
     expect(readTestMode('?test=1&setup=chaser-ahead').setup).toBe(COMBAT_SETUPS['chaser-ahead']);
     expect(readTestMode('?setup=chaser-ahead').setup).toBeUndefined();
     expect(readTestMode('?test=1&setup=unknown').setup).toBeUndefined();
+  });
+
+  it('enables profiling and the player health override only in test mode', () => {
+    expect(readTestMode('?test=1&profile=1&playerHealth=10000')).toMatchObject({
+      profile: true,
+      playerMaxHealth: 10_000,
+    });
+    expect(readTestMode('?profile=1&playerHealth=10000')).toMatchObject({ profile: false, playerMaxHealth: undefined });
+    expect(readTestMode('?test=1&playerHealth=-5').playerMaxHealth).toBeUndefined();
   });
 });
