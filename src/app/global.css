@@ -1,13 +1,15 @@
 :root {
   color-scheme: dark;
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  background: #1b2a3a;
-  color: #f5ecd9;
+  --font-display: 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-sea-deep: #123a55;
+  --color-panel: #1b2a3a;
+  --color-parchment: #f8ecd2;
+  --color-gold: #f2b33d;
+  --color-focus: #ffd75e;
+  font-family: var(--font-body);
+  background: var(--color-sea-deep);
+  color: var(--color-parchment);
 }
 
 *,
@@ -21,4 +23,212 @@ body,
 #root {
   margin: 0;
   height: 100%;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.screen-center,
+.menu-screen {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.menu-screen {
+  background:
+    linear-gradient(rgb(10 30 45 / 35%), rgb(10 30 45 / 35%)),
+    url('@assets/ui_scene_background.png') center / cover no-repeat,
+    var(--color-sea-deep);
+}
+
+.panel {
+  padding: 40px 36px;
+  border: 32px solid transparent;
+  border-image: url('@assets/png/retina/ui/menu/panel_menu.png') 80 64 fill / 40px 32px stretch;
+  color: var(--color-parchment);
+  text-align: center;
+}
+
+.panel__title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 30px);
+  color: var(--color-gold);
+  text-shadow: 0 2px 0 rgb(0 0 0 / 50%);
+}
+
+.menu-panel {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  width: min(520px, 94vw);
+}
+
+.menu-panel__title {
+  margin: 0;
+}
+
+.menu-panel__title img {
+  width: min(360px, 70vw);
+}
+
+.menu-panel__tagline {
+  margin: 0;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.primary-button,
+.secondary-button {
+  min-width: 200px;
+  min-height: 52px;
+  padding: 10px 28px;
+  border: none;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: center / 100% 100% no-repeat;
+}
+
+.primary-button {
+  color: #4a2a08;
+  background-image: url('@assets/png/retina/ui/menu/button_primary_normal.png');
+}
+
+.primary-button:hover {
+  background-image: url('@assets/png/retina/ui/menu/button_primary_hover.png');
+}
+
+.primary-button:active {
+  background-image: url('@assets/png/retina/ui/menu/button_primary_pressed.png');
+}
+
+.secondary-button {
+  min-height: 46px;
+  font-size: 16px;
+  color: var(--color-parchment);
+  background-image: url('@assets/png/retina/ui/menu/button_secondary_normal.png');
+}
+
+.secondary-button:active {
+  background-image: url('@assets/png/retina/ui/menu/button_secondary_pressed.png');
+}
+
+.round-button {
+  --round-button-size: 48px;
+  width: var(--round-button-size);
+  height: var(--round-button-size);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background: url('@assets/png/retina/ui/controls/button_round_normal.png') center / 100% 100% no-repeat;
+}
+
+.round-button:hover {
+  background-image: url('@assets/png/retina/ui/controls/button_round_hover.png');
+}
+
+.round-button:active {
+  background-image: url('@assets/png/retina/ui/controls/button_round_pressed.png');
+}
+
+.round-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.round-button img {
+  width: 55%;
+  pointer-events: none;
+}
+
+.controls-help {
+  width: 100%;
+  text-align: left;
+}
+
+.controls-help__title {
+  margin: 8px 0 6px;
+  font-size: 16px;
+  color: var(--color-gold);
+}
+
+.controls-help__list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.controls-help__row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.controls-help__row dt {
+  display: flex;
+  gap: 4px;
+  min-width: 96px;
+}
+
+.controls-help__row dd {
+  margin: 0;
+}
+
+.controls-help__touch {
+  margin: 8px 0 0;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+kbd {
+  min-width: 26px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgb(248 236 210 / 60%);
+  font-family: var(--font-body);
+  font-size: 12px;
+  text-align: center;
+}
+
+.result-stats {
+  display: flex;
+  gap: 32px;
+  margin: 4px 0 8px;
+}
+
+.result-stats dt {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.result-stats dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 34px;
+  color: var(--color-gold);
 }

@@ -1,0 +1,39 @@
+.game-screen {
+  position: fixed;
+  inset: 0;
+  background: #1d6f9e;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.game-stage,
+.game-stage__canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.game-stage__canvas canvas {
+  display: block;
+}
+
+.loading-panel {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  width: min(420px, 90vw);
+  text-align: center;
+}
+
+.progress {
+  width: 100%;
+  height: 18px;
+  border-radius: 9px;
+  background: rgb(0 0 0 / 35%);
+  overflow: hidden;
+}
+
+.progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f2b33d, #f8d36b);
+  transition: width 120ms linear;
+}
