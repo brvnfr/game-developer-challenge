@@ -1,4 +1,5 @@
 import type { MatchConfig } from '@/game/config/types';
+import { Vector2 } from '@/game/core/math/Vector2';
 import { SeededRandom } from '@/game/core/SeededRandom';
 import type { Arena } from '../arena/Arena';
 import { DamageResolver } from '../DamageResolver';
@@ -17,6 +18,8 @@ import type { SimulationSystem } from '../systems/SimulationSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import { World } from '../World';
+import type { MatchSetup } from './MatchSetup';
+import { MatchStatistics, type MatchStatisticsSnapshot } from './MatchStatistics';
 import { ScoreKeeper } from './ScoreKeeper';
 import type { MatchResult, MatchSnapshot, MatchStatus } from './types';
 
@@ -28,6 +31,8 @@ export interface MatchSessionOptions {
   readonly createMatchId: () => string;
   /** Wall clock, used only for the result timestamp. */
   readonly now: () => Date;
+  /** Starting layout for reproducible test scenarios (default: arena start, no enemies). */
+  readonly setup?: MatchSetup | undefined;
 }
 
 /**
@@ -49,6 +54,7 @@ export class MatchSession {
   private readonly spawnSystem: SpawnSystem;
   private readonly systems: readonly SimulationSystem[];
   private readonly scoreKeeper = new ScoreKeeper();
+  private readonly statistics: MatchStatistics;
   private readonly totalSteps: number;
   private readonly createMatchId: () => string;
   private readonly now: () => Date;
@@ -86,7 +92,16 @@ export class MatchSession {
       new ProjectileSystem(),
       this.spawnSystem,
     ];
-    this.player = ships.createPlayer(this.arena.playerStart, this.arena.definition.playerStartHeading);
+    const playerStart = options.setup?.player;
+    this.player = playerStart
+      ? ships.createPlayer(new Vector2(playerStart.x, playerStart.y), playerStart.heading)
+      : ships.createPlayer(this.arena.playerStart, this.arena.definition.playerStartHeading);
+    this.statistics = new MatchStatistics(this.player.id);
+    for (const enemy of options.setup?.enemies ?? []) {
+      const position = new Vector2(enemy.x, enemy.y);
+      const ship = ships.createEnemy(enemy.kind, position, enemy.heading);
+      this.events.push({ type: 'enemySpawned', shipId: ship.id, kind: enemy.kind, position });
+    }
   }
 
   get status(): MatchStatus {
@@ -115,6 +130,11 @@ export class MatchSession {
 
   get enemiesSpawned(): number {
     return this.spawnSystem.spawnedCount;
+  }
+
+  /** Counters of shots, hits and destructions (observation only). */
+  get statisticsSnapshot(): MatchStatisticsSnapshot {
+    return this.statistics.snapshot();
   }
 
   /** Read-only access to the systems' shared context (factories, damage) for tests and tooling. */
@@ -155,6 +175,7 @@ export class MatchSession {
     this.applyPlayerCommands(commands);
     for (const system of this.systems) system.update(this.context, this.currentStep);
     this.scoreKeeper.collect(this.events, firstEventOfStep);
+    this.statistics.collect(this.events, firstEventOfStep);
     this.world.removeInactive();
 
     if (!this.player.isAlive) this.end('playerDestroyed');
