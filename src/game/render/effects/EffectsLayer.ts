@@ -3,8 +3,12 @@ import type { TimedEffect } from './TimedEffect';
 
 /** Owns the transient effects: adds them to the scene, advances them and frees them when finished. */
 export class EffectsLayer {
-  readonly container = new Container({ label: 'effects' });
+  readonly container: Container;
   private readonly effects: TimedEffect[] = [];
+
+  constructor(label = 'effects') {
+    this.container = new Container({ label });
+  }
 
   get activeCount(): number {
     return this.effects.length;

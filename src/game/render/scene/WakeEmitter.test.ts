@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { Vector2 } from '@/game/core/math/Vector2';
 import { createTestContext } from '@/game/sim/testing/fixtures';
 import { WakeEmitter } from './WakeEmitter';
-import type { WakeLayer } from './WakeLayer';
+import type { PuffLayer } from './PuffLayer';
 
 function setUp() {
   const ship = createTestContext().ships.createPlayer(new Vector2(400, 300), 0);
   const puffs: { position: Vector2; size: number }[] = [];
-  const layer = { emit: (position: Vector2, size: number) => puffs.push({ position, size }) } as unknown as WakeLayer;
+  const layer = { emit: (position: Vector2, size: number) => puffs.push({ position, size }) } as unknown as PuffLayer;
   return { ship, puffs, emitter: new WakeEmitter(ship, layer) };
 }
 

@@ -1,6 +1,6 @@
 import { Vector2 } from '@/game/core/math/Vector2';
 import type { Ship } from '@/game/sim/entities/Ship';
-import type { WakeLayer } from './WakeLayer';
+import type { PuffLayer } from './PuffLayer';
 
 /** Distance sailed between two pairs of wake puffs (px). */
 const PUFF_SPACING = 12;
@@ -14,7 +14,7 @@ export class WakeEmitter {
 
   constructor(
     private readonly ship: Ship,
-    private readonly wakes: WakeLayer,
+    private readonly wakes: PuffLayer,
   ) {}
 
   /** Called with the drawn (interpolated) pose; `deltaSeconds` is presentation time (0 while paused). */

@@ -1,10 +1,17 @@
 import { Container } from 'pixi.js';
+import { Vector2 } from '@/game/core/math/Vector2';
 import type { Ship } from '@/game/sim/entities/Ship';
 import type { GameEvent } from '@/game/sim/events/GameEvent';
 import type { MatchSession } from '@/game/sim/match/MatchSession';
 import type { GameTextures } from '../assets/GameTextures';
 import { EffectsLayer } from '../effects/EffectsLayer';
-import { ExplosionEffect, MuzzleFlashEffect, SinkingWreckEffect, SplashEffect } from '../effects/effects';
+import {
+  DamageNumberEffect,
+  ExplosionEffect,
+  MuzzleFlashEffect,
+  SinkingWreckEffect,
+  SplashEffect,
+} from '../effects/effects';
 import { EFFECT_FRAMES, SHIP_SPRITE_ROTATION_OFFSET, shipFrameFor, WRECK_STAGE } from '../spriteCatalog';
 import type { ViewportLayout } from '../Viewport';
 import { DamageFeedback } from './DamageFeedback';
@@ -13,10 +20,12 @@ import { PlayerGunneryView } from './PlayerGunneryView';
 import { ProjectileViews } from './ProjectileViews';
 import { ShipView } from './ShipView';
 import { TerrainView } from './terrain/TerrainView';
-import { WakeLayer } from './WakeLayer';
+import { PuffLayer, SMOKE_STYLE, WAKE_STYLE } from './PuffLayer';
 
 /** Extra sea drawn past the screen edges (world px), so the damage shake never uncovers the background. */
 const SCREEN_EDGE_MARGIN = 24;
+/** Damage numbers start this far above the ship's centre (world px): just over its health bar, never under it. */
+const DAMAGE_NUMBER_LIFT = 62;
 const WATER_SPLASH_COLOUR = 0xe8f8ff;
 const DUST_COLOUR = 0xf3dcab;
 
@@ -36,18 +45,21 @@ export interface SceneStatistics {
   readonly pooledProjectiles: number;
   readonly effects: number;
   readonly wakePuffs: number;
+  readonly smokePuffs: number;
   readonly overlays: SceneOverlays;
 }
 
 /**
  * PixiJS presentation of a match. Reads the simulation (never writes to it), keeps one view per entity,
  * and turns domain events into effects. Layers, bottom to top: terrain, wakes, aim lanes (developer overlay),
- * ships, projectiles, effects, health bars and reload arcs, hitboxes (developer overlay), damage flash.
+ * ships, smoke, projectiles, effects, health bars and reload arcs, damage numbers, hitboxes (developer overlay),
+ * damage flash.
  */
 export class GameScene {
   readonly root = new Container({ label: 'world' });
   private readonly terrain: TerrainView;
-  private readonly wakes = new WakeLayer();
+  private readonly wakes = new PuffLayer(WAKE_STYLE);
+  private readonly smoke = new PuffLayer(SMOKE_STYLE);
   private readonly aimGuideLayer = new Container({ label: 'aim-guide' });
   private gunnery: PlayerGunneryView;
   private readonly hitboxes: HitboxOverlayView | null;
@@ -55,9 +67,12 @@ export class GameScene {
   private readonly overlayLayer = new Container({ label: 'health-bars' });
   private readonly projectiles: ProjectileViews;
   private readonly effects = new EffectsLayer();
+  /** Damage numbers, above the health bars so a bar never hides them. */
+  private readonly floatingText = new EffectsLayer('floating-text');
   private readonly damageFeedback: DamageFeedback;
   private readonly shipViews = new Map<number, ShipView>();
   private layout: ViewportLayout = { scale: 1, offsetX: 0, offsetY: 0 };
+  private damageNumberSide = 1;
 
   constructor(
     private session: MatchSession,
@@ -76,9 +91,11 @@ export class GameScene {
       this.wakes.container,
       this.aimGuideLayer,
       this.shipLayer,
+      this.smoke.container,
       this.projectiles.container,
       this.effects.container,
       this.overlayLayer,
+      this.floatingText.container,
       ...(this.hitboxes ? [this.hitboxes.container] : []),
       this.damageFeedback.overlay,
     );
@@ -89,8 +106,9 @@ export class GameScene {
       ships: this.shipViews.size,
       projectiles: this.projectiles.activeCount,
       pooledProjectiles: this.projectiles.pooledCount,
-      effects: this.effects.activeCount,
+      effects: this.effects.activeCount + this.floatingText.activeCount,
       wakePuffs: this.wakes.activeCount,
+      smokePuffs: this.smoke.activeCount,
       overlays: this.overlays,
     };
   }
@@ -115,7 +133,9 @@ export class GameScene {
     this.shipViews.clear();
     this.projectiles.clear();
     this.effects.clear();
+    this.floatingText.clear();
     this.wakes.clear();
+    this.smoke.clear();
     this.gunnery.destroy();
     this.gunnery = this.createGunnery();
     this.damageFeedback.reset();
@@ -140,11 +160,13 @@ export class GameScene {
   render(interpolation: number, deltaSeconds: number): void {
     this.terrain.update(deltaSeconds);
     this.wakes.update(deltaSeconds);
+    this.smoke.update(deltaSeconds);
     this.syncShips(interpolation, deltaSeconds);
     this.gunnery.update(interpolation);
     this.hitboxes?.update(this.session.world);
     this.projectiles.sync(this.session.world.projectiles, interpolation);
     this.effects.update(deltaSeconds);
+    this.floatingText.update(deltaSeconds);
     const shake = this.damageFeedback.update(deltaSeconds);
     this.root.position.set(
       this.layout.offsetX + shake.x * this.layout.scale,
@@ -157,9 +179,11 @@ export class GameScene {
     this.shipViews.clear();
     this.projectiles.destroy();
     this.effects.destroy();
+    this.floatingText.destroy();
     this.gunnery.destroy();
     this.hitboxes?.destroy();
     this.wakes.destroy();
+    this.smoke.destroy();
     this.terrain.destroy();
     this.root.destroy({ children: true });
   }
@@ -184,6 +208,7 @@ export class GameScene {
         ships: this.shipLayer,
         overlay: this.overlayLayer,
         wakes: this.wakes,
+        smoke: this.smoke,
       });
       this.shipViews.set(ship.id, view);
     }
@@ -219,10 +244,15 @@ export class GameScene {
           this.effects.add(new SplashEffect(event.position, DUST_COLOUR, 10));
         }
         return;
-      case 'shipDamaged':
+      case 'shipDamaged': {
         this.shipViews.get(event.shipId)?.flashHit();
+        // Numbers of consecutive hits lean left and right so they do not stack into one blob.
+        this.damageNumberSide = -this.damageNumberSide;
+        const origin = event.position.add(new Vector2(this.damageNumberSide * 14, -DAMAGE_NUMBER_LIFT));
+        this.floatingText.add(new DamageNumberEffect(origin, event.damage, event.kind === 'player'));
         if (event.kind === 'player') this.damageFeedback.trigger();
         return;
+      }
       case 'shipDestroyed': {
         const view = this.shipViews.get(event.shipId);
         const rotation = view?.body.rotation ?? SHIP_SPRITE_ROTATION_OFFSET;

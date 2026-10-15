@@ -1,4 +1,4 @@
-import { Graphics, Sprite, type Texture } from 'pixi.js';
+import { BitmapText, Graphics, Sprite, type Texture } from 'pixi.js';
 import type { Vector2 } from '@/game/core/math/Vector2';
 import { TimedEffect } from './TimedEffect';
 
@@ -81,5 +81,36 @@ export class SinkingWreckEffect extends TimedEffect {
     const sprite = this.displayObject as Sprite;
     sprite.scale.set(1 - 0.35 * progress);
     sprite.alpha = 1 - progress;
+  }
+}
+
+/** Floating number that rises from a ship when it takes damage ("-20"): red for the player, gold for enemies. */
+export class DamageNumberEffect extends TimedEffect {
+  private static readonly RISE = 34;
+
+  constructor(
+    private readonly origin: Vector2,
+    amount: number,
+    isPlayer: boolean,
+  ) {
+    const label = new BitmapText({
+      text: `-${Math.round(amount)}`,
+      anchor: 0.5,
+      style: {
+        fontFamily: 'Lilita One, sans-serif',
+        fontSize: 30,
+        fill: isPlayer ? 0xff6b5b : 0xffe08a,
+        stroke: { color: 0x2b1406, width: 6 },
+      },
+    });
+    super(label, 0.9);
+    this.render(0);
+  }
+
+  protected render(progress: number): void {
+    const label = this.displayObject as BitmapText;
+    label.position.set(this.origin.x, this.origin.y - DamageNumberEffect.RISE * easeOut(progress));
+    label.scale.set(progress < 0.15 ? 1.35 - (0.35 * progress) / 0.15 : 1);
+    label.alpha = progress < 0.55 ? 1 : 1 - (progress - 0.55) / 0.45;
   }
 }

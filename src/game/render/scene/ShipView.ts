@@ -10,7 +10,8 @@ import {
 } from '../spriteCatalog';
 import { ENEMY_HEALTH_BAR, HealthBarView, PLAYER_HEALTH_BAR } from './HealthBarView';
 import { WakeEmitter } from './WakeEmitter';
-import type { WakeLayer } from './WakeLayer';
+import type { PuffLayer } from './PuffLayer';
+import { SmokeEmitter } from './SmokeEmitter';
 
 /** Scene layers a ship view draws into. */
 export interface ShipViewLayers {
@@ -18,7 +19,9 @@ export interface ShipViewLayers {
   /** Above every ship: health bars. */
   readonly overlay: Container;
   /** Under every ship: foam. */
-  readonly wakes: WakeLayer;
+  readonly wakes: PuffLayer;
+  /** Above every ship: smoke of damaged ships. */
+  readonly smoke: PuffLayer;
 }
 
 const HIT_FLASH_SECONDS = 0.18;
@@ -28,7 +31,8 @@ const FIRE_FLICKER_SPEED = 9;
 
 /**
  * Visual of one ship: hull sprite whose art deteriorates with the health ratio, flames when damaged,
- * a red flash when hit, a health bar that stays upright above the ship and a foam wake while it sails.
+ * a red flash when hit, a health bar that stays upright above the ship, a foam wake while it sails and smoke
+ * that thickens as it gets damaged.
  */
 export class ShipView {
   /** Rotated body holding the hull art and the flames. */
@@ -37,6 +41,7 @@ export class ShipView {
   readonly healthBar: HealthBarView;
   private readonly fire: Sprite;
   private readonly wake: WakeEmitter;
+  private readonly smoke: SmokeEmitter;
   private shownStage: DamageStage | null = null;
   private hitFlashSeconds = 0;
   private elapsedSeconds = 0;
@@ -52,6 +57,7 @@ export class ShipView {
     this.body.addChild(this.hull, this.fire);
     this.healthBar = new HealthBarView(textures, ship.kind === 'player' ? PLAYER_HEALTH_BAR : ENEMY_HEALTH_BAR);
     this.wake = new WakeEmitter(ship, layers.wakes);
+    this.smoke = new SmokeEmitter(ship, layers.smoke);
     layers.ships.addChild(this.body);
     layers.overlay.addChild(this.healthBar.container);
     this.syncArt();
@@ -73,6 +79,7 @@ export class ShipView {
     this.healthBar.setRatio(ship.health / ship.maxHealth);
     this.syncArt();
     this.wake.update(position, heading, deltaSeconds);
+    if (this.shownStage !== null) this.smoke.update(position, heading, this.shownStage, deltaSeconds);
 
     this.elapsedSeconds += deltaSeconds;
     this.hitFlashSeconds = Math.max(0, this.hitFlashSeconds - deltaSeconds);
