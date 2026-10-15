@@ -32,27 +32,45 @@ flowchart LR
 
 ## Module map
 
-| Folder                             | Responsibility                                                                             |
-| ---------------------------------- | ------------------------------------------------------------------------------------------ |
-| `src/game/core`                    | Fixed-step clock, seeded RNG (mulberry32), immutable `Vector2`, angles and geometry        |
-| `src/game/config`                  | Typed balancing config, Options validation, per-match frozen snapshot, configuration keys  |
-| `src/game/sim`                     | Rules: world, entities, systems, AI, spawning, damage, match lifecycle, events, statistics |
-| `src/game/input`                   | Key bindings (single source for input and instructions), `InputState`, keyboard source     |
-| `src/game/render`                  | PixiJS: asset loading, scene, ship/projectile/health views, effects, letterboxing viewport |
-| `src/game/audio`                   | Web Audio engine and the director that turns game events into sounds                       |
-| `src/game/runtime`                 | `GameRuntime` (Pixi app + ticker + match), auto-pause, match factory, frame profiler       |
-| `src/game/bridge`                  | `ExternalStore` and the `MatchView` the UI subscribes to                                   |
-| `src/api`                          | REST contracts (zod), ranking rules, `ApiError`, Axios client                              |
-| `src/remote`                       | Query client, query keys, hooks, persistent outbox and match registrar                     |
-| `src/mocks`                        | MSW handlers, mock database, fixtures, network scenarios (browser and Node)                |
-| `src/storage`, `src/profile`       | Versioned local stores (zod-validated) and repositories; captain name rules                |
-| `src/screens`, `src/ui`, `src/app` | React screens, UI kit, HUD, app flow and service wiring                                    |
-| `src/testing`                      | Test mode (`?test=1`), combat setups and the read-only test harness                        |
+| Folder                             | Responsibility                                                                                |
+| ---------------------------------- | --------------------------------------------------------------------------------------------- |
+| `src/game/core`                    | Fixed-step clock, seeded RNG (mulberry32), immutable `Vector2`, angles and geometry           |
+| `src/game/config`                  | Typed balancing config, Options validation, per-match frozen snapshot, configuration keys     |
+| `src/game/sim`                     | Rules: world, entities, systems, AI, spawning, damage, match lifecycle, events, statistics    |
+| `src/game/input`                   | Key bindings (single source for input and instructions), `InputState`, keyboard source        |
+| `src/game/render`                  | PixiJS: asset loading, scene, ship/projectile/health views, effects, letterboxing viewport    |
+| `src/game/audio`                   | Web Audio engine and the director that turns game events into sounds                          |
+| `src/game/runtime`                 | `GameRuntime` (Pixi app + ticker + match), auto-pause, match factory, frame profiler          |
+| `src/game/bridge`                  | `ExternalStore` and the `MatchView` the UI subscribes to                                      |
+| `src/api`                          | REST contracts (zod), ranking rules, `ApiError`, Axios client                                 |
+| `src/remote`                       | Query client, query keys, hooks, persistent outbox and match registrar                        |
+| `src/mocks`                        | MSW handlers, mock database, fixtures, network scenarios (browser and Node)                   |
+| `src/storage`, `src/profile`       | Versioned local stores (zod-validated) and repositories; captain name rules                   |
+| `src/screens`, `src/ui`, `src/app` | React screens, UI kit, HUD, app flow and service wiring                                       |
+| `src/styles`                       | Styles shared by every screen (tokens, buttons, panels, forms, dialogs), in cascade order     |
+| `src/shared`                       | Framework-free helpers used across layers (`Listeners`, the subscribe/notify half of a store) |
+| `src/testing`                      | Test mode (`?test=1`), combat setups and the read-only test harness                           |
 
 ESLint enforces the main boundary: `src/game/{sim,core,config}` cannot import React, PixiJS or browser
 globals (`window`, `document`, `localStorage`, `performance`, `requestAnimationFrame`). The rules can therefore
-run and be unit-tested in Node, deterministically. Coding conventions are in
-[`docs/CODING_STANDARDS.md`](docs/CODING_STANDARDS.md).
+run and be unit-tested in Node, deterministically.
+
+### Code conventions
+
+- **Names are full words** (`context`, `position`, `deltaSeconds`, never `ctx`, `pos`, `dt`); times carry their
+  unit (`cooldownSeconds`, `durationMs`); booleans read as questions (`isAlive`, `hasLineOfSight`); functions
+  start with a verb; files are named after their main export (`Ship.ts`, `geometry.ts`).
+- **Classes** where there is state with invariants (`Ship`, `Weapon`, `MatchSession`, `InputState`), a lifecycle
+  (`KeyboardInputSource`, `AutoPauseController`, `GameRuntime`) or polymorphism (`SimulationSystem`,
+  `EnemyBehavior`); **pure functions** for stateless work (geometry, validation, formatting). No classes made only
+  of static members.
+- **SOLID where it pays:** one job per class (the match delegates the player's commands to `PlayerHelm`, the scene
+  delegates event effects to `CombatEffects`); a new enemy kind is a new `EnemyBehavior`; the simulation receives
+  its config, randomness and arena instead of reaching for globals. Composition over inheritance; the only
+  hierarchy is `TimedEffect` (template method for short-lived effects).
+- **No magic numbers in systems:** balancing values live in `GameConfig`; anything else is a named constant.
+- **Tests sit next to the code** (`*.test.ts` unit, `*.int.test.ts(x)` integration), are named as sentences and
+  check observable behaviour, not private details. Comments explain why, not what.
 
 ## React ⇄ PixiJS integration
 
@@ -123,9 +141,12 @@ sequenceDiagram
   same seed and the same inputs give the same match. Tests use a manual clock (`time=manual`) that advances
   exactly the requested time through the same code path.
 - **Domain events** (`weaponFired`, `projectileHit`, `shipDamaged`, `shipDestroyed`, `enemySpawned`, …) are
-  produced by the systems and drained once per frame by the runtime: the scene turns them into effects, the
-  sound director into sounds, `ScoreKeeper` and `MatchStatistics` count them. Presentation never writes to the
-  simulation.
+  produced by the systems and drained once per frame by the runtime: the scene's `CombatEffects` turns them into
+  effects, the sound director into sounds, `ScoreKeeper` and `MatchStatistics` count them. Presentation never
+  writes to the simulation.
+- **Wiring:** `createSimulationContext` builds the world, event queue, seeded RNG, damage resolver, ship factory
+  and hull placement that every system receives; the match and the systems' unit tests use the same factory.
+  Before the systems run, `PlayerHelm` turns the step's `PlayerCommands` into the player ship's controls.
 
 ### Systems (in order)
 
@@ -138,7 +159,7 @@ sequenceDiagram
 | `ProjectileSystem`    | Swept movement; first contact wins; damage once; removed on hit, island, range or arena exit  |
 | `SpawnSystem`         | A wave every configured interval; opening sequence Chaser → Shooter; difficulty curve         |
 
-## Ship handling (ADR-020)
+## Ship handling
 
 The first version turned at a constant rate the moment a key was pressed and stopped turning the moment it was
 released, and the ship always moved exactly along its bow. It felt rigid. Ships now keep momentum on water:
@@ -147,15 +168,15 @@ released, and the ship always moved exactly along its bow. It felt rigid. Ships 
   both when starting and when stopping a turn. The player reaches full turn rate in 0.2 s; enemies in about
   0.15 s. The AI (`SteeringNavigator.turnInputFor`) brakes ahead of its target heading
   using the same limit (`√(2 · turnAcceleration · error)`), so enemies do not overshoot.
-- **Velocity and drift.** Each ship has a world-space `velocity`. Thrust only acts along the bow (no reverse:
-  JOG-01); the component along the bow accelerates or glides towards `throttle × maxSpeed`, and the sideways
+- **Velocity and drift.** Each ship has a world-space `velocity`. Thrust only acts along the bow (the challenge
+  asks for forward movement only, so there is no reverse); the component along the bow accelerates or glides towards `throttle × maxSpeed`, and the sideways
   component (drift after a turn) fades with `exp(−lateralGrip · dt)`. The player drifts a little
   (`lateralGrip` 3.5/s, `deceleration` 140 px/s²: about 1.2 s of glide); enemies grip harder (5/s).
 - **Shots carry the ship's speed.** A projectile's velocity is its muzzle velocity plus
   `velocityInheritance × ship.velocity` (1 for every weapon), so broadsides fired while sailing travel with the
   ship instead of falling behind it, and front shots never get overtaken by their own ship.
-- **Joystick steering (ADR-023).** Touch players steer with a helm joystick that gives a target heading and a throttle
-  (`PlayerCommands.steering`). The session turns it into the same rudder input the AI uses (`turnInputFor`,
+- **Joystick steering.** Touch players steer with a helm joystick that gives a target heading and a throttle
+  (`PlayerCommands.steering`). `PlayerHelm` turns it into the same rudder input the AI uses (`turnInputFor`,
   braking before the heading), so the ship obeys the same physics as with keys; held keys take precedence.
 - All these numbers live in the typed config (`turnAcceleration`, `lateralGrip`, `velocityInheritance`) and the
   integration stays time-based: the same inputs give the same path at any frame rate.
@@ -189,10 +210,11 @@ released, and the ship always moved exactly along its bow. It felt rigid. Ships 
 - Atlases are generated by `npm run assets` from the provided sheets (`public/assets/game/`, 1× and 2×).
 - `GameScene` layers: terrain, wakes, aim lanes, ships, smoke, projectiles, effects, health bars, damage numbers,
   hitboxes, damage flash. One view per entity; projectile sprites, wake and smoke puffs are
-  pooled; effects are short-lived `TimedEffect` objects (muzzle flash, splash, explosion, sinking wreck, damage
-  number) removed when they finish. Damage numbers have their own layer above the health bars, so a bar never
-  hides them; consecutive numbers lean left and right.
-- **Terrain** (`render/scene/terrain`, ADR-021, ADR-022) is drawn from the same arena definition as the colliders:
+  pooled. `CombatEffects` turns the events into short-lived `TimedEffect` objects (muzzle flash, splash,
+  explosion, sinking wreck, damage number) that are removed when they finish, plus the hit flash and the screen
+  flash when the player is hit. Damage numbers have their own layer above the health bars, so a bar never hides
+  them; consecutive numbers lean left and right.
+- **Terrain** (`render/scene/terrain`) is drawn from the same arena definition as the colliders:
   - the sea is one `TilingSprite` of the provided water texture (`water.png`, a standalone copy of tile 73 so it
     can repeat on the GPU) that drifts and sways — a single quad. It covers the whole screen, not only the arena:
     on screens of another shape the extra sea is shaded and an edge line marks the arena bounds, so there are
@@ -227,12 +249,14 @@ released, and the ship always moved exactly along its bow. It felt rigid. Ships 
   rectangles, hull circles, projectile radii, redrawn every frame from the simulation). They are switched on in
   the _Developer tools_ dialog behind the gear button of the main menu (README › Developer tools), stored by `DeveloperToolsRepository`, and passed
   to the runtime when a match starts, like the settings snapshot.
-- Ship damage stages swap the hull texture and add flames as health drops; health bars above every ship use the UI atlas frame
-  and a mask clipped to its fill area.
+- Ship damage stages swap the hull texture and add flames as health drops; health bars above every ship use the
+  UI atlas frame and a mask clipped to its fill area. `healthBarStyles.ts` (no PixiJS) describes the bars once —
+  fill colours by health band and the fill area of the frame — so the player's bar over the ship and the one in
+  the React HUD always change colour at the same health.
 - **Viewport**: the world (1920 × 1088) is letterboxed into the available area with its proportions preserved
   (the sea fills the bars); the renderer resolution follows the device pixel ratio (capped at 2). Resizing never
   changes the world, the rules or the arena bounds. With the manual clock (tests) a resize redraws the scene at
-  once. Touch devices held upright pause behind a full-screen notice (`RotateDeviceNotice`, ADR-025); short
+  once. Touch devices held upright pause behind a full-screen notice (`RotateDeviceNotice`); short
   screens get a compact HUD (one ribbon, sound toggle in the pause dialog) — CSS only, no game change.
 - **On-screen controls** (`GameControls`, DOM): on keyboard devices, six buttons with their key on a brass plate
   (taken from `KEY_BINDINGS`); on touch screens, the helm joystick and the three cannon buttons. Every button
@@ -246,6 +270,8 @@ released, and the ship always moved exactly along its bow. It felt rigid. Ships 
   (cannonballs fired, hits, damage dealt and taken) from `MatchStatistics`, stored with the last result.
 - Sounds: an `AudioEngine` (Web Audio) is created on the first gesture (autoplay policy), loads the converted
   files in the background and is muted with a persisted toggle; loops stop on pause, end, restart and dispose.
+- Stores that React reads with `useSyncExternalStore` (the match store, the input state, the mute choice and the
+  outbox) share one `Listeners` helper for `subscribe`/`notify`.
 
 ## Input
 
@@ -262,7 +288,7 @@ ranges and aim tolerance, and the difficulty curve. Systems receive the config; 
 constants. `createMatchConfig()` merges the player's Options into a deep-frozen copy at the start of each match,
 so changes made later only affect new matches.
 
-Balancing decisions (ADR-007):
+Balancing decisions:
 
 - The configured spawn interval is honoured exactly; difficulty grows on other axes, interpolated over the
   match time: enemies per wave 1 → 1 → 2, alive cap 5 → 6 → 8, Shooter share 30 % → 40 % → 50 %, enemy speed
@@ -272,7 +298,7 @@ Balancing decisions (ADR-007):
 - The first two waves are a Chaser and a Shooter, so both kinds always appear.
 - The player is faster (170 px/s) and turns quicker (2.6 rad/s) than both enemies, so kiting is possible.
   Its rudder (13 rad/s²) is close to the enemies' (12–14) so it answers quickly, but it drifts more after a
-  turn (ADR-020), which reads as a heavier ship without slowing it;
+  turn, which reads as a heavier ship without slowing it;
   the front cannon (20 dmg, 0.45 s) rewards aiming, broadsides (3 × 15 dmg, 1.4 s) reward positioning.
 - A Chaser (30 HP) dies to two front shots; a Shooter (50 HP) to three. A ram costs 25 HP; a Shooter ball 10 HP.
 - Options limits: session 60–180 s (1 s steps), spawn interval 1–10 s (0.5 s steps), both validated on input
@@ -315,13 +341,13 @@ mock handlers (to validate requests):
 A record holds match id, player id and name, end date, score, effective duration (pauses excluded), end reason
 and the settings used; the server adds `configKey` (e.g. `s120-i3`) and `recordedAt`. The ranking compares only
 matches with the same `configKey` and orders them by **points desc → duration asc → end date asc → match id**,
-so ties always resolve the same way (ADR-011).
+so ties always resolve the same way.
 
 ### Client and cache
 
 - `PirateBattleApi` (Axios) validates every response and throws only `ApiError` (`timeout`, `network`, `http`,
   `invalidResponse`, `cancelled`, with `isRetryable`). Its deadline is an `AbortSignal`, not Axios' `timeout`,
-  so timeouts and cancellations are always told apart, in the browser and in Node (ADR-014).
+  so timeouts and cancellations are always told apart, in the browser and in Node.
 - TanStack Query: keys `['remote', 'ranking', configKey, page]`, `['remote', 'history', playerId, page]`,
   `['remote', 'ranking-configurations']`; data fresh for 15 s, cached 5 min; retryable errors retried twice
   with backoff (0.5 s, 1 s), 4xx never; refetch on window focus and reconnect.
@@ -334,7 +360,7 @@ so ties always resolve the same way (ADR-011).
   (`role=alert`), a notice when a refresh fails while old data stays, empty message, and the previous page kept
   visible while the next one loads.
 
-### Registration and pending records (ADR-005, ADR-015)
+### Registration and pending records
 
 ```mermaid
 stateDiagram-v2
@@ -380,6 +406,30 @@ scenarios** dialog or the URL and can be reset to the initial state (see README)
   baselines; axe accessibility audits.
 - **Performance and memory (`npm run perf`):** real-time runs on the production build — see
   [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
+
+## Key decisions
+
+Each decision below was recorded while building the game, with the alternatives that were weighed.
+
+| Decision                                                                                            | Why                                                                                                                                                                         | Alternatives considered                                                                                           |
+| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Vite** as the build tool                                                                          | Native TypeScript, fast dev server, `vite preview` to test the optimised build, static output for Vercel.                                                                   | Next.js (server rendering not needed), Webpack (more configuration).                                              |
+| **Fixed 1/60 s simulation step** with an accumulator, a 0.25 s frame cap and interpolated rendering | Frame-rate independence and deterministic, reproducible tests.                                                                                                              | Variable delta: simpler, but not deterministic and prone to tunnelling.                                           |
+| **Island colliders from the tile map** (merged rectangles; rocks inset 18 %)                        | One source for art and collisions; a handful of boxes instead of hundreds of tiles.                                                                                         | Hand-drawn polygons (more work), pixel masks (expensive).                                                         |
+| **External store between game and React** (`useSyncExternalStore`, notify only on change)           | No React render per frame; no extra state library.                                                                                                                          | Zustand (dependency without gain), context with per-frame `setState` (re-renders).                                |
+| **Idempotent `PUT /matches/:matchId` from a persistent outbox**                                     | A retry after a timeout returns the stored record: one record per match, recoverable after failures or a refresh.                                                           | `POST` with an idempotency key: equivalent, but `PUT` by id states the idempotency in the API itself.             |
+| **Registration through a TanStack Query `MutationObserver`** in a service                           | Sending must outlive the result screen and resume on start, on reconnect and on timers, while still using Query's retry and mutation state.                                 | `useMutation` inside the screen: stops when the screen unmounts.                                                  |
+| **Request deadline as an `AbortSignal`** combined with the caller's signal                          | Timeouts and cancellations are told apart, identically in the browser and in Node.                                                                                          | Axios `timeout`: not honoured by the intercepted XHR in jsdom + `msw/node`.                                       |
+| **Landscape on phones**; held upright, the match pauses behind a full-screen notice                 | The arena is wide and the controls sit on both sides; the notice keeps the rules unchanged.                                                                                 | Rotating the arena 90° in portrait (tried, then dropped in favour of the notice).                                 |
+| **The configured spawn interval is exact; difficulty grows on other axes**                          | The challenge asks for spawns at the configured interval; wave size, alive cap, Shooter share and enemy speed follow a typed curve instead.                                 | Shortening the interval over time (would contradict the configured value).                                        |
+| **Ranking per configuration**, ordered by points, then shorter match, earlier end, match id         | Fair comparison between matches with the same settings and a deterministic tie-break.                                                                                       | —                                                                                                                 |
+| **Ships with momentum** (rudder acceleration, sideways drift, shots that carry the ship's speed)    | Constant-rate turning felt rigid; momentum reads as a ship on water and shots no longer fall behind a moving ship.                                                          | Speed-dependent turning, shorter cooldowns.                                                                       |
+| **Helm joystick as a target heading** (`PlayerHelm` + `turnInputFor`)                               | Steering with three buttons and momentum required precise timing; a heading with braking never overshoots and obeys the same physics.                                       | Joystick as virtual left/right keys (same overshoot), moving the ship straight to the finger (ignores the rules). |
+| **Islands as nine-slices of whole blocks** from the tile sheet                                      | The provided pieces only join seamlessly in the arrangement they were painted in; stretching a complete block respects its borders.                                         | Autotiling single tiles (tried: visible seams), blending seams (blurs the art).                                   |
+| **Web Audio** with converted sounds (MP3 effects, WAV loops)                                        | Low latency and polyphony for simultaneous cannons; 5.8 MB → 1.2 MB; loops without gaps.                                                                                    | `<audio>` elements (latency), Howler or @pixi/sound (extra dependency).                                           |
+| **Visual baselines per platform**, Linux as the reference                                           | Fonts and anti-aliasing differ between systems; Linux matches CI and the Playwright Docker image.                                                                           | One baseline for every platform (false positives).                                                                |
+| **Release PixiJS's global pools** when the last runtime is destroyed                                | Heap snapshots over repeated matches showed a batcher and texture styles retained by destroyed renderers; under Strict Mode the pools are kept while another runtime lives. | Always releasing (could free resources of the runtime Strict Mode just mounted).                                  |
+| **60 FPS checked on a desktop GPU**, software rendering kept as the worst case                      | Headless Chromium falls back to software WebGL, which cannot show what a player sees.                                                                                       | Measuring only in the CI container.                                                                               |
 
 ## Limitations
 

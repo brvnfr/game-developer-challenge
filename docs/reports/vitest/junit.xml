@@ -1,781 +1,809 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="338" failures="0" errors="0" time="17.385117783">
-    <testsuite name="src/api/ApiError.test.ts" timestamp="2026-10-15T15:29:07.530Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.007279409">
-        <testcase classname="src/api/ApiError.test.ts" name="ApiError.from &gt; maps an Axios timeout to a retryable timeout error" time="0.001977917">
+<testsuites name="vitest tests" tests="347" failures="0" errors="0" time="16.946219376">
+    <testsuite name="src/api/ApiError.test.ts" timestamp="2026-10-15T17:20:08.371Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.006523532">
+        <testcase classname="src/api/ApiError.test.ts" name="ApiError.from &gt; maps an Axios timeout to a retryable timeout error" time="0.001727919">
         </testcase>
-        <testcase classname="src/api/ApiError.test.ts" name="ApiError.from &gt; maps a request without response to a retryable network error" time="0.000329709">
+        <testcase classname="src/api/ApiError.test.ts" name="ApiError.from &gt; maps a request without response to a retryable network error" time="0.0002206">
         </testcase>
-        <testcase classname="src/api/ApiError.test.ts" name="ApiError.from &gt; keeps the status and the server message of HTTP errors" time="0.00307286">
+        <testcase classname="src/api/ApiError.test.ts" name="ApiError.from &gt; keeps the status and the server message of HTTP errors" time="0.002885016">
         </testcase>
-        <testcase classname="src/api/ApiError.test.ts" name="ApiError.from &gt; recognises cancellations and passes ApiError through unchanged" time="0.000247137">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/api/rankingRules.test.ts" timestamp="2026-10-15T15:29:07.533Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.006302121">
-        <testcase classname="src/api/rankingRules.test.ts" name="ranking order &gt; puts more points first" time="0.002196172">
-        </testcase>
-        <testcase classname="src/api/rankingRules.test.ts" name="ranking order &gt; breaks ties by shorter duration, then earlier end, then match id" time="0.000411217">
-        </testcase>
-        <testcase classname="src/api/rankingRules.test.ts" name="ranking order &gt; gives the same order whatever the input order" time="0.000269708">
-        </testcase>
-        <testcase classname="src/api/rankingRules.test.ts" name="history order &gt; shows the newest match first" time="0.000230124">
-        </testcase>
-        <testcase classname="src/api/rankingRules.test.ts" name="paginate &gt; returns the requested 1-based page with the totals" time="0.000686018">
-        </testcase>
-        <testcase classname="src/api/rankingRules.test.ts" name="paginate &gt; returns an empty page past the end and zero pages for an empty list" time="0.000922345">
+        <testcase classname="src/api/ApiError.test.ts" name="ApiError.from &gt; recognises cancellations and passes ApiError through unchanged" time="0.00022467">
         </testcase>
     </testsuite>
-    <testsuite name="src/mocks/MockDatabase.test.ts" timestamp="2026-10-15T15:29:07.534Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.018414687">
-        <testcase classname="src/mocks/MockDatabase.test.ts" name="fixtures &gt; are deterministic and spread over several configurations" time="0.005069095">
+    <testsuite name="src/api/rankingRules.test.ts" timestamp="2026-10-15T17:20:08.373Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.005708888">
+        <testcase classname="src/api/rankingRules.test.ts" name="ranking order &gt; puts more points first" time="0.002117563">
         </testcase>
-        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; starts with the fixtures: three pages of five for the default configuration" time="0.002576641">
+        <testcase classname="src/api/rankingRules.test.ts" name="ranking order &gt; breaks ties by shorter duration, then earlier end, then match id" time="0.000325112">
         </testcase>
-        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; stores a match once: the same match again returns the stored record" time="0.001016541">
+        <testcase classname="src/api/rankingRules.test.ts" name="ranking order &gt; gives the same order whatever the input order" time="0.000289965">
         </testcase>
-        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; rejects a different match under an existing id" time="0.00057005">
+        <testcase classname="src/api/rankingRules.test.ts" name="history order &gt; shows the newest match first" time="0.000185054">
         </testcase>
-        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; shows a confirmed match in both the ranking and the player history" time="0.00075128">
+        <testcase classname="src/api/rankingRules.test.ts" name="paginate &gt; returns the requested 1-based page with the totals" time="0.000521004">
         </testcase>
-        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; keeps confirmed matches across instances (refresh) and reset restores the fixtures" time="0.006508786">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/mocks/scenarios.test.ts" timestamp="2026-10-15T15:29:07.535Z" hostname="vm" tests="8" failures="0" errors="0" skipped="0" time="0.008665646">
-        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; starts on the success scenario and remembers the selection" time="0.004448547">
-        </testcase>
-        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; URL/test overrides win over the stored selection" time="0.000234908">
-        </testcase>
-        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; produces the same delays for the same seed" time="0.0011926">
-        </testcase>
-        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; out-of-order makes odd requests slow and even requests fast" time="0.000209754">
-        </testcase>
-        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; unavailable-then-recover fails the first three requests per endpoint, and selecting restarts the count" time="0.000357341">
-        </testcase>
-        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; register-timeout-after-commit stores the first save of each match but never answers it" time="0.000274346">
-        </testcase>
-        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; only the targeted endpoint fails in ranking-fail and history-fail" time="0.000213075">
-        </testcase>
-        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; reset goes back to the default scenario and notifies listeners" time="0.00020868">
+        <testcase classname="src/api/rankingRules.test.ts" name="paginate &gt; returns an empty page past the end and zero pages for an empty list" time="0.000814164">
         </testcase>
     </testsuite>
-    <testsuite name="src/remote/MatchOutbox.test.ts" timestamp="2026-10-15T15:29:07.536Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.011309984">
-        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; adds a match once and persists it" time="0.006483428">
+    <testsuite name="src/mocks/MockDatabase.test.ts" timestamp="2026-10-15T17:20:08.375Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.014448153">
+        <testcase classname="src/mocks/MockDatabase.test.ts" name="fixtures &gt; are deterministic and spread over several configurations" time="0.004109075">
         </testcase>
-        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; counts failed attempts and keeps the last failure" time="0.00136478">
+        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; starts with the fixtures: three pages of five for the default configuration" time="0.001803645">
         </testcase>
-        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; moves a confirmed match out of the pending list and never re-adds it" time="0.000272038">
+        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; stores a match once: the same match again returns the stored record" time="0.000905235">
         </testcase>
-        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; notifies subscribers with a new snapshot on every change" time="0.000488271">
+        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; rejects a different match under an existing id" time="0.0004778">
         </testcase>
-        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; ignores corrupted storage" time="0.000784599">
+        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; shows a confirmed match in both the ranking and the player history" time="0.000589754">
         </testcase>
-    </testsuite>
-    <testsuite name="src/remote/apiConfig.test.ts" timestamp="2026-10-15T15:29:07.537Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.007103033">
-        <testcase classname="src/remote/apiConfig.test.ts" name="readApiConfig &gt; defaults to the mocked /api with an 8 s timeout" time="0.003056007">
-        </testcase>
-        <testcase classname="src/remote/apiConfig.test.ts" name="readApiConfig &gt; reads the environment" time="0.001181642">
-        </testcase>
-        <testcase classname="src/remote/apiConfig.test.ts" name="readApiConfig &gt; takes the network scenario from the URL and ignores invalid values" time="0.000543839">
-        </testcase>
-        <testcase classname="src/remote/apiConfig.test.ts" name="readApiConfig &gt; honours apiTimeout only in test mode" time="0.000655">
+        <testcase classname="src/mocks/MockDatabase.test.ts" name="MockDatabase &gt; keeps confirmed matches across instances (refresh) and reset restores the fixtures" time="0.00489862">
         </testcase>
     </testsuite>
-    <testsuite name="src/storage/storage.test.ts" timestamp="2026-10-15T15:29:07.538Z" hostname="vm" tests="17" failures="0" errors="0" skipped="0" time="0.011719599">
-        <testcase classname="src/storage/storage.test.ts" name="LocalStore &gt; round-trips valid values and discards corrupted ones" time="0.003783444">
+    <testsuite name="src/mocks/scenarios.test.ts" timestamp="2026-10-15T17:20:08.376Z" hostname="vm" tests="8" failures="0" errors="0" skipped="0" time="0.010136251">
+        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; starts on the success scenario and remembers the selection" time="0.004408219">
         </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="LocalStore &gt; behaves as empty when the storage is unavailable or throws" time="0.000392527">
+        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; URL/test overrides win over the stored selection" time="0.000710258">
         </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="SettingsRepository &gt; returns defaults first, then the saved settings" time="0.000723449">
+        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; produces the same delays for the same seed" time="0.001420264">
         </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="SettingsRepository &gt; ignores stored settings outside the documented limits" time="0.000153687">
+        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; out-of-order makes odd requests slow and even requests fast" time="0.000265517">
         </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="PlayerProfileRepository &gt; creates a persistent profile with a suggested name on first use" time="0.002026896">
+        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; unavailable-then-recover fails the first three requests per endpoint, and selecting restarts the count" time="0.000683832">
         </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="PlayerProfileRepository &gt; renames with validation and remembers that a name was chosen" time="0.000727424">
+        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; register-timeout-after-commit stores the first save of each match but never answers it" time="0.000459588">
         </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates Jack → true" time="0.000117953">
+        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; only the targeted endpoint fails in ranking-fail and history-fail" time="0.00031295">
         </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates Zé Pirata → true" time="0.000064938">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates O&apos;Malley-2 → true" time="0.000057188">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates -dash → false" time="0.000055977">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates &lt;script&gt; → false" time="0.00005345">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates AAAAAAAAAAAAAAAAAAAAA → false" time="0.000158056">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="player names &gt; suggests valid names" time="0.000103448">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="LastResultRepository and ScreenMemory &gt; persists the last completed result" time="0.000741901">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="LastResultRepository and ScreenMemory &gt; remembers whether the result screen was open in this tab" time="0.000219686">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="DeveloperToolsRepository &gt; starts with every overlay off, then keeps what was saved" time="0.000479854">
-        </testcase>
-        <testcase classname="src/storage/storage.test.ts" name="DeveloperToolsRepository &gt; falls back to the defaults when the stored value is malformed" time="0.000246148">
+        <testcase classname="src/mocks/scenarios.test.ts" name="ScenarioController &gt; reset goes back to the default scenario and keeps it after a reload" time="0.000354448">
         </testcase>
     </testsuite>
-    <testsuite name="src/testing/combatSetups.test.ts" timestamp="2026-10-15T15:29:07.540Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.013577391">
-        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; open-water places every ship in open water" time="0.007318133">
+    <testsuite name="src/remote/MatchOutbox.test.ts" timestamp="2026-10-15T17:20:08.377Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.011666676">
+        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; adds a match once and persists it" time="0.006693821">
         </testcase>
-        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; chaser-ahead places every ship in open water" time="0.001003435">
+        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; counts failed attempts and keeps the last failure" time="0.00172097">
         </testcase>
-        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; shooter-far places every ship in open water" time="0.000801706">
+        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; moves a confirmed match out of the pending list and never re-adds it" time="0.000424775">
         </testcase>
-        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; keeps the line of fire east of the player clear of islands for a full shot" time="0.001946705">
+        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; notifies subscribers with a new snapshot on every change" time="0.000515983">
         </testcase>
-        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; starts the Shooter beyond its attack range" time="0.000727483">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/testing/testMode.test.ts" timestamp="2026-10-15T15:29:07.540Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.006341044">
-        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; is disabled by default and ignores test parameters" time="0.003150884">
-        </testcase>
-        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; reads the seed, settings and clock mode in test mode" time="0.000528968">
-        </testcase>
-        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; ignores invalid settings" time="0.000163952">
-        </testcase>
-        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; reads a named combat setup only in test mode" time="0.000431093">
-        </testcase>
-        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; enables profiling and the player health override only in test mode" time="0.000360307">
+        <testcase classname="src/remote/MatchOutbox.test.ts" name="MatchOutbox &gt; ignores corrupted storage" time="0.000803605">
         </testcase>
     </testsuite>
-    <testsuite name="src/ui/formatDate.test.ts" timestamp="2026-10-15T15:29:07.541Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.005516868">
-        <testcase classname="src/ui/formatDate.test.ts" name="date and duration formatting &gt; formats day, month and time in local time" time="0.002638473">
+    <testsuite name="src/remote/apiConfig.test.ts" timestamp="2026-10-15T17:20:08.378Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.00662621">
+        <testcase classname="src/remote/apiConfig.test.ts" name="readApiConfig &gt; defaults to the mocked /api with an 8 s timeout" time="0.003017002">
         </testcase>
-        <testcase classname="src/ui/formatDate.test.ts" name="date and duration formatting &gt; formats durations as mm:ss" time="0.000396798">
+        <testcase classname="src/remote/apiConfig.test.ts" name="readApiConfig &gt; reads the environment" time="0.001150114">
         </testcase>
-        <testcase classname="src/ui/formatDate.test.ts" name="date and duration formatting &gt; describes battle settings" time="0.000271623">
+        <testcase classname="src/remote/apiConfig.test.ts" name="readApiConfig &gt; takes the network scenario from the URL and ignores invalid values" time="0.000361442">
         </testcase>
-    </testsuite>
-    <testsuite name="src/game/audio/AudioEngine.test.ts" timestamp="2026-10-15T15:29:07.542Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.01007093">
-        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; stays silent until unlocked by a gesture, then loads every sound" time="0.004654357">
-        </testcase>
-        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; unlocks on the first pointer or key press" time="0.000469329">
-        </testcase>
-        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; mutes everything, stops the loops and remembers the choice" time="0.002227711">
-        </testcase>
-        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; starts a loop once however often it is requested" time="0.00041854">
-        </testcase>
-        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; is a silent no-op without Web Audio" time="0.000282582">
+        <testcase classname="src/remote/apiConfig.test.ts" name="readApiConfig &gt; honours apiTimeout only in test mode" time="0.00038905">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/audio/MatchSoundDirector.test.ts" timestamp="2026-10-15T15:29:07.542Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.00742596">
-        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; plays a cannon for the front gun and the broadside sound for side volleys" time="0.002932227">
-        </testcase>
-        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; plays each sound at most once per frame" time="0.001305952">
-        </testcase>
-        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; distinguishes rams, kills and the player sinking" time="0.000309949">
-        </testcase>
-        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; ends with game_complete on time up and game_over on destruction" time="0.000299189">
-        </testcase>
-        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; keeps the ocean loop while running and the sailing loop only while sailing" time="0.000501292">
-        </testcase>
-        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; warns once for low health and once for the last ten seconds" time="0.000305156">
+    <testsuite name="src/shared/Listeners.test.ts" timestamp="2026-10-15T17:20:08.379Z" hostname="vm" tests="1" failures="0" errors="0" skipped="0" time="0.003745719">
+        <testcase classname="src/shared/Listeners.test.ts" name="Listeners &gt; notifies every subscriber until it unsubscribes" time="0.002424224">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/bridge/ExternalStore.test.ts" timestamp="2026-10-15T15:29:07.544Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.008539287">
-        <testcase classname="src/game/bridge/ExternalStore.test.ts" name="ExternalStore &gt; notifies listeners only when a field actually changes" time="0.005790826">
+    <testsuite name="src/storage/storage.test.ts" timestamp="2026-10-15T17:20:08.380Z" hostname="vm" tests="17" failures="0" errors="0" skipped="0" time="0.01183942">
+        <testcase classname="src/storage/storage.test.ts" name="LocalStore &gt; round-trips valid values and discards corrupted ones" time="0.00388751">
         </testcase>
-        <testcase classname="src/game/bridge/ExternalStore.test.ts" name="ExternalStore &gt; stops notifying after unsubscribing" time="0.000577004">
+        <testcase classname="src/storage/storage.test.ts" name="LocalStore &gt; behaves as empty when the storage is unavailable or throws" time="0.000349079">
         </testcase>
-    </testsuite>
-    <testsuite name="src/game/config/matchConfig.test.ts" timestamp="2026-10-15T15:29:07.544Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.009250861">
-        <testcase classname="src/game/config/matchConfig.test.ts" name="createMatchConfig &gt; applies the player settings to the snapshot" time="0.003818674">
+        <testcase classname="src/storage/storage.test.ts" name="SettingsRepository &gt; returns defaults first, then the saved settings" time="0.000700064">
         </testcase>
-        <testcase classname="src/game/config/matchConfig.test.ts" name="createMatchConfig &gt; returns a deeply frozen snapshot that later changes cannot affect" time="0.000885928">
+        <testcase classname="src/storage/storage.test.ts" name="SettingsRepository &gt; ignores stored settings outside the documented limits" time="0.000152264">
         </testcase>
-        <testcase classname="src/game/config/matchConfig.test.ts" name="createMatchConfig &gt; refuses invalid settings" time="0.001256496">
+        <testcase classname="src/storage/storage.test.ts" name="PlayerProfileRepository &gt; creates a persistent profile with a suggested name on first use" time="0.00200608">
         </testcase>
-        <testcase classname="src/game/config/matchConfig.test.ts" name="createConfigKey &gt; identifies comparable configurations" time="0.000233314">
+        <testcase classname="src/storage/storage.test.ts" name="PlayerProfileRepository &gt; renames with validation and remembers that a name was chosen" time="0.000657105">
         </testcase>
-        <testcase classname="src/game/config/matchConfig.test.ts" name="parseConfigKey &gt; reads back the settings of a configuration key" time="0.000428103">
+        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates Jack → true" time="0.000108799">
         </testcase>
-        <testcase classname="src/game/config/matchConfig.test.ts" name="parseConfigKey &gt; rejects anything else" time="0.000306576">
+        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates Zé Pirata → true" time="0.000059327">
         </testcase>
-    </testsuite>
-    <testsuite name="src/game/config/settingsValidation.test.ts" timestamp="2026-10-15T15:29:07.545Z" hostname="vm" tests="14" failures="0" errors="0" skipped="0" time="0.007368921">
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; accepts the defaults and the documented limits" time="0.001737797">
+        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates O&apos;Malley-2 → true" time="0.000054898">
         </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; parses numeric strings, including a decimal comma" time="0.002005948">
+        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates -dash → false" time="0.000066102">
         </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=59 and spawn=3 with an error on sessionTimeSeconds" time="0.000285443">
+        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates &lt;script&gt; → false" time="0.000107555">
         </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=181 and spawn=3 with an error on sessionTimeSeconds" time="0.000124228">
+        <testcase classname="src/storage/storage.test.ts" name="player names &gt; validates AAAAAAAAAAAAAAAAAAAAA → false" time="0.000085465">
         </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=90.5 and spawn=3 with an error on sessionTimeSeconds" time="0.000133237">
+        <testcase classname="src/storage/storage.test.ts" name="player names &gt; suggests valid names" time="0.000101517">
         </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session= and spawn=3 with an error on sessionTimeSeconds" time="0.00017184">
+        <testcase classname="src/storage/storage.test.ts" name="LastResultRepository and ScreenMemory &gt; persists the last completed result" time="0.000776733">
         </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=abc and spawn=3 with an error on sessionTimeSeconds" time="0.000121555">
+        <testcase classname="src/storage/storage.test.ts" name="LastResultRepository and ScreenMemory &gt; remembers whether the result screen was open in this tab" time="0.00025663">
         </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=NaN and spawn=3 with an error on sessionTimeSeconds" time="0.000110321">
+        <testcase classname="src/storage/storage.test.ts" name="DeveloperToolsRepository &gt; starts with every overlay off, then keeps what was saved" time="0.00043633">
         </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=0 with an error on spawnIntervalSeconds" time="0.000147838">
-        </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=-1 with an error on spawnIntervalSeconds" time="0.000094481">
-        </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=10.5 with an error on spawnIntervalSeconds" time="0.000090646">
-        </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=2.3 with an error on spawnIntervalSeconds" time="0.000315732">
-        </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=null with an error on spawnIntervalSeconds" time="0.000099506">
-        </testcase>
-        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; documents a positive spawn interval" time="0.00025261">
+        <testcase classname="src/storage/storage.test.ts" name="DeveloperToolsRepository &gt; falls back to the defaults when the stored value is malformed" time="0.000309868">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/core/SeededRandom.test.ts" timestamp="2026-10-15T15:29:07.547Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.124682739">
-        <testcase classname="src/game/core/SeededRandom.test.ts" name="SeededRandom &gt; produces the same sequence for the same seed" time="0.002546797">
+    <testsuite name="src/testing/combatSetups.test.ts" timestamp="2026-10-15T17:20:08.383Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.011591041">
+        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; open-water places every ship in open water" time="0.004895364">
         </testcase>
-        <testcase classname="src/game/core/SeededRandom.test.ts" name="SeededRandom &gt; produces different sequences for different seeds" time="0.000459935">
+        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; chaser-ahead places every ship in open water" time="0.000893721">
         </testcase>
-        <testcase classname="src/game/core/SeededRandom.test.ts" name="SeededRandom &gt; keeps every value within the requested range" time="0.118364794">
+        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; shooter-far places every ship in open water" time="0.000549859">
         </testcase>
-        <testcase classname="src/game/core/SeededRandom.test.ts" name="SeededRandom &gt; shuffles without losing items and picks from the list" time="0.001351882">
+        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; keeps the line of fire east of the player clear of islands for a full shot" time="0.002063072">
         </testcase>
-    </testsuite>
-    <testsuite name="src/game/core/SimulationClock.test.ts" timestamp="2026-10-15T15:29:07.548Z" hostname="vm" tests="8" failures="0" errors="0" skipped="0" time="0.010481855">
-        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; runs the same number of steps at 30 FPS" time="0.002646723">
-        </testcase>
-        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; runs the same number of steps at 60 FPS" time="0.000584856">
-        </testcase>
-        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; runs the same number of steps at 144 FPS" time="0.001009283">
-        </testcase>
-        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; runs the same number of steps at 240 FPS" time="0.001526354">
-        </testcase>
-        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; caps a very long frame so a hidden-tab gap is never simulated" time="0.000388437">
-        </testcase>
-        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; discards pending time on request (used when resuming from pause)" time="0.000434106">
-        </testcase>
-        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; ignores invalid frame durations" time="0.000292521">
-        </testcase>
-        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; rejects a non-positive step" time="0.001471842">
+        <testcase classname="src/testing/combatSetups.test.ts" name="combat setups &gt; starts the Shooter beyond its attack range" time="0.000591588">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/input/InputState.test.ts" timestamp="2026-10-15T15:29:07.549Z" hostname="vm" tests="14" failures="0" errors="0" skipped="0" time="0.00780206">
-        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; turns held actions into commands, allowing sailing and firing together" time="0.00225004">
+    <testsuite name="src/testing/testMode.test.ts" timestamp="2026-10-15T17:20:08.384Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.006507764">
+        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; is disabled by default and ignores test parameters" time="0.003034155">
         </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; cancels opposite turns" time="0.000336541">
+        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; reads the seed, settings and clock mode in test mode" time="0.000552666">
         </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; keeps an action active while any source still holds it" time="0.000185226">
+        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; ignores invalid settings" time="0.00018063">
         </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; drops everything on clear (pause and focus loss)" time="0.000173393">
+        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; reads a named combat setup only in test mode" time="0.000309048">
         </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; tells subscribers when the held actions change, not on repeats" time="0.000384312">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; passes the joystick steering on until that touch lets go" time="0.000335622">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; binds every action to at least one key with a label" time="0.001723959">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps KeyW to sailForward" time="0.000166192">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps ArrowLeft to turnLeft" time="0.000081481">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps Space to fireFront" time="0.000108154">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps KeyQ to fireLeft" time="0.000076061">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps KeyE to fireRight" time="0.000081472">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps Escape to togglePause" time="0.000269028">
-        </testcase>
-        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps KeyZ to undefined" time="0.00006569">
+        <testcase classname="src/testing/testMode.test.ts" name="readTestMode &gt; enables profiling and the player health override only in test mode" time="0.000419825">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/render/render.test.ts" timestamp="2026-10-15T15:29:07.551Z" hostname="vm" tests="12" failures="0" errors="0" skipped="0" time="0.006847394">
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 1 (destroyed: false) shows stage 0" time="0.001535856">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.67 (destroyed: false) shows stage 0" time="0.000135628">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.66 (destroyed: false) shows stage 1" time="0.000083988">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.34 (destroyed: false) shows stage 1" time="0.000073133">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.33 (destroyed: false) shows stage 2" time="0.000064723">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.01 (destroyed: false) shows stage 2" time="0.000061536">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0 (destroyed: false) shows stage 3" time="0.000061104">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.5 (destroyed: true) shows stage 3" time="0.000060016">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; maps every kind and stage to an existing ship frame, with distinct colours per kind" time="0.001524864">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="Viewport &gt; fits the world with letterbox bars and preserves its aspect ratio" time="0.001045991">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="Viewport &gt; converts between screen and world coordinates" time="0.000269373">
-        </testcase>
-        <testcase classname="src/game/render/render.test.ts" name="Viewport &gt; caps the render resolution" time="0.000188897">
+    <testsuite name="src/ui/classNames.test.ts" timestamp="2026-10-15T17:20:08.386Z" hostname="vm" tests="1" failures="0" errors="0" skipped="0" time="0.002991345">
+        <testcase classname="src/ui/classNames.test.ts" name="classNames &gt; keeps the names that apply, in order" time="0.001480054">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/runtime/FrameProfiler.test.ts" timestamp="2026-10-15T15:29:07.552Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.008929373">
-        <testcase classname="src/game/runtime/FrameProfiler.test.ts" name="FrameProfiler &gt; measures frame intervals, frame work and one entity sample per second" time="0.004496118">
+    <testsuite name="src/ui/formatDate.test.ts" timestamp="2026-10-15T17:20:08.386Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.004899605">
+        <testcase classname="src/ui/formatDate.test.ts" name="date formatting &gt; formats day, month and time in local time" time="0.002735409">
         </testcase>
-        <testcase classname="src/game/runtime/FrameProfiler.test.ts" name="FrameProfiler &gt; starts over after reset" time="0.002293982">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/game/runtime/frameStatistics.test.ts" timestamp="2026-10-15T15:29:07.552Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.005194136">
-        <testcase classname="src/game/runtime/frameStatistics.test.ts" name="percentile &gt; uses the nearest rank" time="0.001675534">
-        </testcase>
-        <testcase classname="src/game/runtime/frameStatistics.test.ts" name="summarizeFrameTimes &gt; reports FPS, percentiles and long frames" time="0.000653451">
-        </testcase>
-        <testcase classname="src/game/runtime/frameStatistics.test.ts" name="summarizeFrameTimes &gt; handles an empty run" time="0.001341827">
+        <testcase classname="src/ui/formatDate.test.ts" name="date formatting &gt; describes battle settings" time="0.000258231">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/sim/DifficultyCurve.test.ts" timestamp="2026-10-15T15:29:07.553Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.016006843">
-        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; starts at the first keyframe" time="0.002203503">
+    <testsuite name="src/ui/formatTime.test.ts" timestamp="2026-10-15T17:20:08.386Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.004151389">
+        <testcase classname="src/ui/formatTime.test.ts" name="time formatting &gt; formats 120 seconds as 2:00" time="0.001654653">
         </testcase>
-        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; interpolates between keyframes and rounds counts down" time="0.000450672">
+        <testcase classname="src/ui/formatTime.test.ts" name="time formatting &gt; formats 102 seconds as 1:42" time="0.000225636">
         </testcase>
-        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; holds the last keyframe afterwards and never gets easier over time" time="0.011037927">
+        <testcase classname="src/ui/formatTime.test.ts" name="time formatting &gt; formats 9 seconds as 0:09" time="0.000093711">
         </testcase>
-        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; requires at least one keyframe" time="0.000954008">
+        <testcase classname="src/ui/formatTime.test.ts" name="time formatting &gt; formats -3 seconds as 0:00" time="0.00007343">
         </testcase>
-    </testsuite>
-    <testsuite name="src/screens/Options/settingsStepping.test.ts" timestamp="2026-10-15T15:29:07.553Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.004932101">
-        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; moves one increment in the pressed direction" time="0.002411492">
+        <testcase classname="src/ui/formatTime.test.ts" name="time formatting &gt; formats match durations as mm:ss, rounded to the second" time="0.000188823">
         </testcase>
-        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; never leaves the documented limits" time="0.00029135">
-        </testcase>
-        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; snaps off-grid values back onto the grid" time="0.000130285">
-        </testcase>
-        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; restarts from a limit when the text is not a number" time="0.000114875">
-        </testcase>
-        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; disables a direction only at its limit" time="0.000200654">
-        </testcase>
-        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; formats whole and half seconds without noise" time="0.000147541">
+        <testcase classname="src/ui/formatTime.test.ts" name="time formatting &gt; describes durations in words for screen readers" time="0.000368141">
         </testcase>
     </testsuite>
-    <testsuite name="src/ui/hud/hud.test.ts" timestamp="2026-10-15T15:29:07.554Z" hostname="vm" tests="9" failures="0" errors="0" skipped="0" time="0.005967481">
-        <testcase classname="src/ui/hud/hud.test.ts" name="time formatting &gt; formats 120 seconds as 2:00" time="0.001877262">
+    <testsuite name="src/game/audio/AudioEngine.test.ts" timestamp="2026-10-15T17:20:08.388Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.011659225">
+        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; stays silent until unlocked by a gesture, then loads every sound" time="0.006042725">
         </testcase>
-        <testcase classname="src/ui/hud/hud.test.ts" name="time formatting &gt; formats 102 seconds as 1:42" time="0.00014211">
+        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; unlocks on the first pointer or key press" time="0.000686682">
         </testcase>
-        <testcase classname="src/ui/hud/hud.test.ts" name="time formatting &gt; formats 9 seconds as 0:09" time="0.000125029">
+        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; mutes everything, stops the loops and remembers the choice" time="0.002168788">
         </testcase>
-        <testcase classname="src/ui/hud/hud.test.ts" name="time formatting &gt; formats -3 seconds as 0:00" time="0.00007839">
+        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; starts a loop once however often it is requested" time="0.000516445">
         </testcase>
-        <testcase classname="src/ui/hud/hud.test.ts" name="time formatting &gt; describes durations in words for screen readers" time="0.000211122">
-        </testcase>
-        <testcase classname="src/ui/hud/hud.test.ts" name="MatchAnnouncer &gt; announces status changes" time="0.000463248">
-        </testcase>
-        <testcase classname="src/ui/hud/hud.test.ts" name="MatchAnnouncer &gt; announces only the remaining-time marks, not every second" time="0.000833653">
-        </testcase>
-        <testcase classname="src/ui/hud/hud.test.ts" name="MatchAnnouncer &gt; throttles score announcements and warns about low health once" time="0.000425735">
-        </testcase>
-        <testcase classname="src/ui/hud/hud.test.ts" name="MatchAnnouncer &gt; says nothing on the first snapshot" time="0.000112396">
+        <testcase classname="src/game/audio/AudioEngine.test.ts" name="AudioEngine &gt; is a silent no-op without Web Audio" time="0.000247132">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/core/math/geometry.test.ts" timestamp="2026-10-15T15:29:07.556Z" hostname="vm" tests="11" failures="0" errors="0" skipped="0" time="0.007075615">
-        <testcase classname="src/game/core/math/geometry.test.ts" name="Vector2 &gt; supports the basic vector operations without mutating" time="0.002715587">
+    <testsuite name="src/game/audio/MatchSoundDirector.test.ts" timestamp="2026-10-15T17:20:08.388Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.008816521">
+        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; plays a cannon for the front gun and the broadside sound for side volleys" time="0.001975253">
         </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="Vector2 &gt; converts between headings and directions (y axis pointing down)" time="0.000327188">
+        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; plays each sound at most once per frame" time="0.00103907">
         </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="circle against box &gt; detects overlap and treats exact tangency as no overlap" time="0.000260631">
+        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; distinguishes rams, kills and the player sinking" time="0.001522657">
         </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="circle against box &gt; separates a circle through the nearest side, even from inside the box" time="0.000291416">
+        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; ends with game_complete on time up and game_over on destruction" time="0.000215415">
         </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="circle against box &gt; separates diagonally from a corner" time="0.00029505">
+        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; keeps the ocean loop while running and the sailing loop only while sailing" time="0.000279491">
         </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="segment entry &gt; finds where a segment enters a circle" time="0.000233867">
-        </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="segment entry &gt; catches a fast segment crossing a small circle (no tunnelling)" time="0.000208902">
-        </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="segment entry &gt; finds where a segment enters a box" time="0.000312851">
-        </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="angles &gt; wraps angles to (-PI, PI]" time="0.00024923">
-        </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="angles &gt; computes the shortest signed rotation" time="0.000198057">
-        </testcase>
-        <testcase classname="src/game/core/math/geometry.test.ts" name="angles &gt; clamps values" time="0.000131529">
+        <testcase classname="src/game/audio/MatchSoundDirector.test.ts" name="MatchSoundDirector &gt; warns once for low health and once for the last ten seconds" time="0.002262399">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/render/scene/SmokeEmitter.test.ts" timestamp="2026-10-15T15:29:07.557Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.01112095">
-        <testcase classname="src/game/render/scene/SmokeEmitter.test.ts" name="SmokeEmitter &gt; gives off no smoke while the ship is intact" time="0.005417719">
+    <testsuite name="src/game/bridge/ExternalStore.test.ts" timestamp="2026-10-15T17:20:08.389Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.006146867">
+        <testcase classname="src/game/bridge/ExternalStore.test.ts" name="ExternalStore &gt; notifies listeners only when a field actually changes" time="0.004254818">
         </testcase>
-        <testcase classname="src/game/render/scene/SmokeEmitter.test.ts" name="SmokeEmitter &gt; smokes more, and in larger puffs, the worse the damage" time="0.002518332">
-        </testcase>
-        <testcase classname="src/game/render/scene/SmokeEmitter.test.ts" name="SmokeEmitter &gt; stops while paused and once the ship has sunk" time="0.001372152">
+        <testcase classname="src/game/bridge/ExternalStore.test.ts" name="ExternalStore &gt; stops notifying after unsubscribing" time="0.000486307">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/render/scene/WakeEmitter.test.ts" timestamp="2026-10-15T15:29:07.558Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.008225743">
-        <testcase classname="src/game/render/scene/WakeEmitter.test.ts" name="WakeEmitter &gt; drops a pair of puffs behind the stern every few pixels sailed" time="0.004594325">
+    <testsuite name="src/game/config/matchConfig.test.ts" timestamp="2026-10-15T17:20:08.390Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.00677178">
+        <testcase classname="src/game/config/matchConfig.test.ts" name="createMatchConfig &gt; applies the player settings to the snapshot" time="0.002628265">
         </testcase>
-        <testcase classname="src/game/render/scene/WakeEmitter.test.ts" name="WakeEmitter &gt; leaves no wake when the ship is nearly still, paused or sunk" time="0.002124759">
+        <testcase classname="src/game/config/matchConfig.test.ts" name="createMatchConfig &gt; returns a deeply frozen snapshot that later changes cannot affect" time="0.000666332">
         </testcase>
-    </testsuite>
-    <testsuite name="src/game/render/assets/manifest.test.ts" timestamp="2026-10-15T15:29:07.558Z" hostname="vm" tests="12" failures="0" errors="0" skipped="0" time="0.035615051">
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ships @1x contains exactly the typed frame names and every frame fits the image" time="0.011225209">
+        <testcase classname="src/game/config/matchConfig.test.ts" name="createMatchConfig &gt; refuses invalid settings" time="0.000902361">
         </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ships @2x contains exactly the typed frame names and every frame fits the image" time="0.005302767">
+        <testcase classname="src/game/config/matchConfig.test.ts" name="createConfigKey &gt; identifies comparable configurations" time="0.000210809">
         </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; tiles @1x contains exactly the typed frame names and every frame fits the image" time="0.005005372">
+        <testcase classname="src/game/config/matchConfig.test.ts" name="parseConfigKey &gt; reads back the settings of a configuration key" time="0.000388092">
         </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; tiles @2x contains exactly the typed frame names and every frame fits the image" time="0.004714306">
-        </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; terrain @1x contains exactly the typed frame names and every frame fits the image" time="0.000386256">
-        </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; terrain @2x contains exactly the typed frame names and every frame fits the image" time="0.000308076">
-        </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ui @1x contains exactly the typed frame names and every frame fits the image" time="0.002443724">
-        </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ui @2x contains exactly the typed frame names and every frame fits the image" time="0.0019387">
-        </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ships the water texture as a square power-of-two PNG (it repeats on the GPU)" time="0.001607604">
-        </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; uses the 1× ships atlas for every resolution (no retina variant exists)" time="0.000166902">
-        </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; picks the 2× atlas only on high-density screens" time="0.00016757">
-        </testcase>
-        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; builds a bundle with one asset per atlas under the base URL" time="0.000308646">
+        <testcase classname="src/game/config/matchConfig.test.ts" name="parseConfigKey &gt; rejects anything else" time="0.000232919">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/sim/entities/entities.test.ts" timestamp="2026-10-15T15:29:07.560Z" hostname="vm" tests="9" failures="0" errors="0" skipped="0" time="0.009066765">
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship &gt; takes damage once per call, never below zero, and is destroyed at zero health" time="0.003193392">
+    <testsuite name="src/game/config/settingsValidation.test.ts" timestamp="2026-10-15T17:20:08.391Z" hostname="vm" tests="14" failures="0" errors="0" skipped="0" time="0.005596129">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; accepts the defaults and the documented limits" time="0.001760657">
         </testcase>
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship &gt; clamps control inputs and drops them when stopped" time="0.000368453">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; parses numeric strings, including a decimal comma" time="0.000786622">
         </testcase>
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship &gt; applies the difficulty speed multiplier to speed and turn rate" time="0.000346349">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=59 and spawn=3 with an error on sessionTimeSeconds" time="0.000306496">
         </testcase>
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship hull &gt; models the hull as three circles along the keel, covering bow to stern" time="0.001132721">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=181 and spawn=3 with an error on sessionTimeSeconds" time="0.00011921">
         </testcase>
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship hull &gt; finds the deepest contact between two hulls" time="0.000445052">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=90.5 and spawn=3 with an error on sessionTimeSeconds" time="0.000097024">
         </testcase>
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Weapon &gt; fires only when the trigger is held and the cooldown has elapsed" time="0.00032243">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session= and spawn=3 with an error on sessionTimeSeconds" time="0.000101506">
         </testcase>
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Weapon &gt; reports how far the reload has progressed" time="0.000326145">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=abc and spawn=3 with an error on sessionTimeSeconds" time="0.000089333">
         </testcase>
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Weapon &gt; scales the cooldown by its multiplier" time="0.000128063">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=NaN and spawn=3 with an error on sessionTimeSeconds" time="0.000088536">
         </testcase>
-        <testcase classname="src/game/sim/entities/entities.test.ts" name="Projectile &gt; consumes range while travelling and deactivates when stopped" time="0.000416064">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=0 with an error on spawnIntervalSeconds" time="0.000094428">
         </testcase>
-    </testsuite>
-    <testsuite name="src/game/sim/match/MatchSession.test.ts" timestamp="2026-10-15T15:29:07.561Z" hostname="vm" tests="12" failures="0" errors="0" skipped="0" time="1.779580817">
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; does nothing before it is started" time="0.005155381">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=-1 with an error on spawnIntervalSeconds" time="0.000087412">
         </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; ends by time after exactly the configured active duration" time="0.206416133">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=10.5 with an error on spawnIntervalSeconds" time="0.000127475">
         </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; ends when the player is destroyed, and a ram never scores" time="0.000959865">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=2.3 with an error on spawnIntervalSeconds" time="0.000218988">
         </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; freezes the whole simulation once ended" time="0.548461926">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; rejects session=120 and spawn=null with an error on spawnIntervalSeconds" time="0.000091002">
         </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; suspends time, cooldowns, spawns and movement while paused" time="0.004621196">
-        </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; scores one point per enemy destroyed by the player, without duplicates" time="0.001113947">
-        </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; exposes a discrete snapshot for the HUD" time="0.002251155">
-        </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession joystick steering &gt; turns the ship towards the joystick heading without overshooting, and sails at its throttle" time="0.001913412">
-        </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession joystick steering &gt; gives keys and buttons priority over the joystick" time="0.000955376">
-        </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession determinism &gt; replays identically with the same seed and inputs" time="0.334164488">
-        </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession determinism &gt; plays differently with another seed" time="0.287940265">
-        </testcase>
-        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="Headless full match &gt; plays a standard match where both enemy kinds appear, nobody enters an island and the match ends" time="0.382065609">
+        <testcase classname="src/game/config/settingsValidation.test.ts" name="validateSettings &gt; documents a positive spawn interval" time="0.000181833">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/sim/match/MatchSetup.test.ts" timestamp="2026-10-15T15:29:07.563Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.023820714">
-        <testcase classname="src/game/sim/match/MatchSetup.test.ts" name="match setup &gt; starts the player at the arena start without a setup" time="0.005064803">
+    <testsuite name="src/game/core/SeededRandom.test.ts" timestamp="2026-10-15T17:20:08.393Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.129719174">
+        <testcase classname="src/game/core/SeededRandom.test.ts" name="SeededRandom &gt; produces the same sequence for the same seed" time="0.002241397">
         </testcase>
-        <testcase classname="src/game/sim/match/MatchSetup.test.ts" name="match setup &gt; places the player and the initial enemies, which then follow the normal rules" time="0.006358116">
+        <testcase classname="src/game/core/SeededRandom.test.ts" name="SeededRandom &gt; produces different sequences for different seeds" time="0.000439981">
         </testcase>
-        <testcase classname="src/game/sim/match/MatchSetup.test.ts" name="match statistics &gt; counts the player volleys per weapon and the projectiles they fire" time="0.003528469">
+        <testcase classname="src/game/core/SeededRandom.test.ts" name="SeededRandom &gt; keeps every value within the requested range" time="0.121295643">
         </testcase>
-        <testcase classname="src/game/sim/match/MatchSetup.test.ts" name="match statistics &gt; counts hits, kills and rams separately" time="0.00704531">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/game/sim/systems/EnemyAiSystem.test.ts" timestamp="2026-10-15T15:29:07.564Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.114371804">
-        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Chaser behaviour &gt; reaches and rams the player in open water" time="0.01805697">
-        </testcase>
-        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Chaser behaviour &gt; sails around an island to reach the player without ever entering it" time="0.037930877">
-        </testcase>
-        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Shooter behaviour &gt; approaches and only fires within attack range" time="0.029475883">
-        </testcase>
-        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Shooter behaviour &gt; keeps its distance instead of ramming" time="0.025212968">
-        </testcase>
-        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Shooter behaviour &gt; holds fire without line of sight" time="0.000763051">
-        </testcase>
-        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Shooter behaviour &gt; stops attacking once the player is destroyed" time="0.000376782">
+        <testcase classname="src/game/core/SeededRandom.test.ts" name="SeededRandom &gt; picks from the list" time="0.003998156">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/sim/systems/MovementSystem.test.ts" timestamp="2026-10-15T15:29:07.565Z" hostname="vm" tests="14" failures="0" errors="0" skipped="0" time="0.128581833">
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; sails forward along the heading, accelerating up to max speed" time="0.006072197">
+    <testsuite name="src/game/core/SimulationClock.test.ts" timestamp="2026-10-15T17:20:08.394Z" hostname="vm" tests="8" failures="0" errors="0" skipped="0" time="0.011871411">
+        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; runs the same number of steps at 30 FPS" time="0.003369333">
         </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; turns both ways, easing in and out of the configured turn speed" time="0.002755137">
+        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; runs the same number of steps at 60 FPS" time="0.000491006">
         </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; drifts sideways after a turn and the drift fades with the lateral grip" time="0.001298736">
+        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; runs the same number of steps at 144 FPS" time="0.000897578">
         </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never sails backwards: thrust is forward only" time="0.001273354">
+        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; runs the same number of steps at 240 FPS" time="0.0014275">
         </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; glides to a stop without throttle and then stays still" time="0.002533786">
+        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; caps a very long frame so a hidden-tab gap is never simulated" time="0.000172767">
         </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading 0" time="0.027208778">
+        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; discards pending time on request (used when resuming from pause)" time="0.000341376">
         </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading 0.3" time="0.021676941">
+        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; ignores invalid frame durations" time="0.00033398">
         </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading -0.3" time="0.020924941">
-        </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading 0.7853981633974483" time="0.013757147">
-        </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading -0.7853981633974483" time="0.01478458">
-        </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; stays inside the arena bounds" time="0.005655699">
-        </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; keeps the bow out of the island when sailing straight at it" time="0.004117916">
-        </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; remembers the previous state for render interpolation" time="0.000562056">
-        </testcase>
-        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; slides along a coast instead of stopping dead" time="0.002068757">
+        <testcase classname="src/game/core/SimulationClock.test.ts" name="SimulationClock &gt; rejects a non-positive step" time="0.002813288">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/sim/systems/ProjectileSystem.test.ts" timestamp="2026-10-15T15:29:07.566Z" hostname="vm" tests="7" failures="0" errors="0" skipped="0" time="0.011808122">
-        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; expires a projectile once its range is travelled" time="0.004694124">
+    <testsuite name="src/game/input/InputState.test.ts" timestamp="2026-10-15T17:20:08.395Z" hostname="vm" tests="14" failures="0" errors="0" skipped="0" time="0.010682425">
+        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; turns held actions into commands, allowing sailing and firing together" time="0.002996023">
         </testcase>
-        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; removes a projectile that leaves the arena" time="0.000496688">
+        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; cancels opposite turns" time="0.000470262">
         </testcase>
-        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; stops a projectile at the island coast" time="0.001246142">
+        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; keeps an action active while any source still holds it" time="0.000321886">
         </testcase>
-        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; damages an enemy exactly once and disappears" time="0.001578441">
+        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; drops everything on clear (pause and focus loss)" time="0.000266991">
         </testcase>
-        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; never hits ships of the same faction" time="0.000793313">
+        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; tells subscribers when the held actions change, not on repeats" time="0.000426074">
         </testcase>
-        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; does not tunnel through a target at very high speed" time="0.000612703">
+        <testcase classname="src/game/input/InputState.test.ts" name="InputState &gt; passes the joystick steering on until that touch lets go" time="0.000596054">
         </testcase>
-        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; ignores destroyed ships" time="0.00069931">
+        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; binds every action to at least one key with a label" time="0.002556476">
         </testcase>
-    </testsuite>
-    <testsuite name="src/game/sim/systems/ShipCollisionSystem.test.ts" timestamp="2026-10-15T15:29:07.568Z" hostname="vm" tests="7" failures="0" errors="0" skipped="0" time="0.016200589">
-        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; makes a Chaser that rams the player explode and damage the player" time="0.006780323">
+        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps KeyW to sailForward" time="0.000219114">
         </testcase>
-        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; ignores a destroyed Chaser" time="0.000687194">
+        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps ArrowLeft to turnLeft" time="0.000119937">
         </testcase>
-        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; separates other overlapping ships side by side in one step" time="0.001289699">
+        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps Space to fireFront" time="0.000095636">
         </testcase>
-        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; separates ships overlapping bow to stern within a few steps" time="0.000753116">
+        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps KeyQ to fireLeft" time="0.000091605">
         </testcase>
-        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; detects a ram on the bow even when the ship centres are far apart" time="0.001029746">
+        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps KeyE to fireRight" time="0.000186637">
         </testcase>
-        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="DamageResolver &gt; reports damage and a single destruction" time="0.002010321">
+        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps Escape to togglePause" time="0.000101774">
         </testcase>
-        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="DamageResolver &gt; removes the projectiles in flight of a destroyed enemy" time="0.001198027">
+        <testcase classname="src/game/input/InputState.test.ts" name="key bindings &gt; maps KeyZ to undefined" time="0.000097023">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/sim/systems/SpawnSystem.test.ts" timestamp="2026-10-15T15:29:07.569Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.022956549">
-        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; spawns exactly at every configured interval" time="0.006289752">
+    <testsuite name="src/game/render/render.test.ts" timestamp="2026-10-15T17:20:08.397Z" hostname="vm" tests="12" failures="0" errors="0" skipped="0" time="0.007390441">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 1 (destroyed: false) shows stage 0" time="0.001479132">
         </testcase>
-        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; opens with a Chaser and then a Shooter, so both kinds always appear" time="0.001057634">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.67 (destroyed: false) shows stage 0" time="0.000146794">
         </testcase>
-        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; only spawns on free water, far enough from the player" time="0.001694597">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.66 (destroyed: false) shows stage 1" time="0.000079021">
         </testcase>
-        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; respects the alive cap of the difficulty curve" time="0.000741154">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.34 (destroyed: false) shows stage 1" time="0.000064768">
         </testcase>
-        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; spawns larger waves as the match goes on" time="0.010724077">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.33 (destroyed: false) shows stage 2" time="0.000119473">
         </testcase>
-        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; turns new enemies towards the player" time="0.000766493">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.01 (destroyed: false) shows stage 2" time="0.000072964">
         </testcase>
-    </testsuite>
-    <testsuite name="src/game/sim/systems/WeaponSystem.test.ts" timestamp="2026-10-15T15:29:07.570Z" hostname="vm" tests="7" failures="0" errors="0" skipped="0" time="0.012173844">
-        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; fires one front projectile from the bow along the heading" time="0.004850124">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0 (destroyed: false) shows stage 3" time="0.00006641">
         </testcase>
-        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; fires the left broadside as three parallel projectiles to that side" time="0.001206037">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; health ratio 0.5 (destroyed: true) shows stage 3" time="0.000082706">
         </testcase>
-        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; fires the right broadside as three parallel projectiles to that side" time="0.000838141">
+        <testcase classname="src/game/render/render.test.ts" name="ship damage stages &gt; maps every kind and stage to an existing ship frame, with distinct colours per kind" time="0.001672043">
         </testcase>
-        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; respects the cooldown while the trigger is held" time="0.00083754">
+        <testcase classname="src/game/render/render.test.ts" name="Viewport &gt; fits the world with letterbox bars and preserves its aspect ratio" time="0.001125343">
         </testcase>
-        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; keeps an independent cooldown per weapon" time="0.001434314">
+        <testcase classname="src/game/render/render.test.ts" name="Viewport &gt; converts between screen and world coordinates" time="0.000270085">
         </testcase>
-        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; never fires from a destroyed ship" time="0.000644474">
-        </testcase>
-        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; adds the ship velocity to its projectiles, so moving broadsides keep the ship momentum" time="0.0006984">
+        <testcase classname="src/game/render/render.test.ts" name="Viewport &gt; caps the render resolution" time="0.000218907">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/sim/arena/Arena.test.ts" timestamp="2026-10-15T15:29:07.571Z" hostname="vm" tests="10" failures="0" errors="0" skipped="0" time="0.020655259">
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; merges land tiles into rectangular colliders" time="0.003128904">
+    <testsuite name="src/game/runtime/FrameProfiler.test.ts" timestamp="2026-10-15T17:20:08.399Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.006432888">
+        <testcase classname="src/game/runtime/FrameProfiler.test.ts" name="FrameProfiler &gt; measures frame intervals, frame work and one entity sample per second" time="0.003457559">
         </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; builds colliders that cover exactly the land tiles of the default arena" time="0.011785766">
-        </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; treats grass islands and sand islets as land and reports their terrain" time="0.000297492">
-        </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; gives a reef rock a collider smaller than its tile" time="0.000407154">
-        </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; rejects malformed definitions" time="0.001221442">
-        </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; reports circles blocked by land or by the arena edge" time="0.000178689">
-        </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; pushes a circle out of an island and back inside the bounds" time="0.000580648">
-        </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; measures free distance against land and bounds" time="0.000673077">
-        </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; computes line of sight across islands" time="0.000230536">
-        </testcase>
-        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; starts the player on open water, away from islands" time="0.000361871">
+        <testcase classname="src/game/runtime/FrameProfiler.test.ts" name="FrameProfiler &gt; starts over after reset" time="0.001529437">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/render/scene/terrain/terrain.test.ts" timestamp="2026-10-15T15:29:07.572Z" hostname="vm" tests="7" failures="0" errors="0" skipped="0" time="0.080295437">
-        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="island layout &gt; reads each island as a rectangle of one kind, and the reef rocks" time="0.00243878">
+    <testsuite name="src/game/runtime/frameStatistics.test.ts" timestamp="2026-10-15T17:20:08.399Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.005363905">
+        <testcase classname="src/game/runtime/frameStatistics.test.ts" name="percentile &gt; uses the nearest rank" time="0.001785293">
         </testcase>
-        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="island layout &gt; reports islands the nine-slice art cannot draw" time="0.000532556">
+        <testcase classname="src/game/runtime/frameStatistics.test.ts" name="summarizeFrameTimes &gt; reports FPS, percentiles and long frames" time="0.000747684">
         </testcase>
-        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; can draw every island (rectangles of one kind, at least 2 × 2)" time="0.001181304">
-        </testcase>
-        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; keeps channels of at least three tiles between islands and two around rocks" time="0.069353548">
-        </testcase>
-        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; keeps every island two tiles or more from the edges, so no strip of water is a dead end" time="0.00051822">
-        </testcase>
-        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; starts the player in open water" time="0.000360424">
-        </testcase>
-        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; places every prop on an island (only floating planks may sit on the water), with existing art" time="0.002337533">
+        <testcase classname="src/game/runtime/frameStatistics.test.ts" name="summarizeFrameTimes &gt; handles an empty run" time="0.001196883">
         </testcase>
     </testsuite>
-    <testsuite name="src/app/App.int.test.tsx" timestamp="2026-10-15T15:29:07.573Z" hostname="vm" tests="19" failures="0" errors="0" skipped="0" time="6.715345905">
-        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; opens on the main menu with Play, Options and the control instructions" time="0.244689222">
+    <testsuite name="src/game/sim/DifficultyCurve.test.ts" timestamp="2026-10-15T17:20:08.400Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.01964312">
+        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; starts at the first keyframe" time="0.002250659">
         </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; opens the control instructions in a dialog from the Controls button (small screens) and returns focus" time="0.158919275">
+        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; interpolates between keyframes and rounds counts down" time="0.000382857">
         </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; asks for a captain name on the first Play only" time="0.383396783">
+        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; holds the last keyframe afterwards and never gets easier over time" time="0.011068664">
         </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; keeps the name dialog open with an accessible error for an invalid name, and Escape cancels it" time="0.212465911">
+        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; stays gentle: single waves until the last half minute, at most eight enemies alive" time="0.00320169">
         </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; abandoning a match records nothing" time="0.241462002">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; shows and persists the result of a completed match, also after a refresh" time="0.359897093">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; a refresh during a match goes back to the menu" time="0.295879542">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Developer tools &gt; stay out of the way: only a small gear button on the menu, network scenarios inside, every overlay off" time="0.270463616">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Developer tools &gt; switch overlays on for the next match and remember them after a refresh" time="0.671504523">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Developer tools &gt; opens the network scenarios from the developer tools and returns to them" time="0.217015887">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Developer tools &gt; &quot;Turn overlays off&quot; switches every overlay off" time="0.507184352">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Options &gt; steps, saves and restores the options, and new matches use them" time="0.672823225">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Options &gt; rejects out-of-range values with an accessible message and keeps the saved options" time="0.275973384">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Options &gt; disables the stepper buttons at the limits and resets to the defaults" time="0.265032778">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Options &gt; renames the captain from Options" time="0.448150618">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Captain&apos;s Log &gt; opens on the chosen tab, lists the ranking of the current settings and switches tabs with the keyboard" time="0.349907394">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Captain&apos;s Log &gt; a completed match is saved and appears in Match History and the ranking, marked as yours" time="0.428245505">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Captain&apos;s Log &gt; shows an accessible error with Retry when the ranking fails, and recovers" time="0.217531551">
-        </testcase>
-        <testcase classname="src/app/App.int.test.tsx" name="Captain&apos;s Log &gt; keeps a match pending while the server is down, without blocking a new match" time="0.489271787">
+        <testcase classname="src/game/sim/DifficultyCurve.test.ts" name="DifficultyCurve &gt; requires at least one keyframe" time="0.001084443">
         </testcase>
     </testsuite>
-    <testsuite name="src/mocks/mockApi.int.test.ts" timestamp="2026-10-15T15:29:07.576Z" hostname="vm" tests="11" failures="0" errors="0" skipped="0" time="0.855110121">
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; reads paginated, validated ranking pages and the configurations" time="0.069906824">
+    <testsuite name="src/game/sim/PlayerHelm.test.ts" timestamp="2026-10-15T17:20:08.401Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.007302502">
+        <testcase classname="src/game/sim/PlayerHelm.test.ts" name="PlayerHelm &gt; drives the sails and the rudder directly from keys and buttons" time="0.003135904">
         </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; registers a match idempotently and shows it in history and ranking" time="0.04403993">
+        <testcase classname="src/game/sim/PlayerHelm.test.ts" name="PlayerHelm &gt; steers towards the helm heading at the helm throttle" time="0.000649634">
         </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; rejects invalid requests with 400 and conflicting matches with 409, without retry" time="0.031282675">
+        <testcase classname="src/game/sim/PlayerHelm.test.ts" name="PlayerHelm &gt; lets a held key win over the helm" time="0.000401385">
         </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; scenario timeout fails requests as timeout" time="0.302914954">
+        <testcase classname="src/game/sim/PlayerHelm.test.ts" name="PlayerHelm &gt; holds each cannon trigger from its own command" time="0.001101223">
         </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; scenario network-error fails requests as network" time="0.009014911">
-        </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; scenario http-5xx fails requests as http" time="0.009396493">
-        </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; scenario http-4xx fails requests as http" time="0.01005783">
-        </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; empty and many-pages change the lists without touching the stored matches" time="0.041470011">
-        </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; a timeout after saving is recovered by retrying, with exactly one stored record" time="0.311453364">
-        </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; only the ranking fails in ranking-fail" time="0.014422881">
-        </testcase>
-        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; cancels a request through its AbortSignal" time="0.004999267">
+        <testcase classname="src/game/sim/PlayerHelm.test.ts" name="PlayerHelm &gt; ignores commands once the ship is destroyed" time="0.000477992">
         </testcase>
     </testsuite>
-    <testsuite name="src/remote/MatchRegistrar.int.test.ts" timestamp="2026-10-15T15:29:07.578Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.995353128">
-        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; stores the match, confirms it and invalidates the lists" time="0.063436728">
+    <testsuite name="src/screens/Options/settingsStepping.test.ts" timestamp="2026-10-15T17:20:08.403Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.003993401">
+        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; moves one increment in the pressed direction" time="0.001694559">
         </testcase>
-        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; keeps the match pending while the server is unavailable and saves it once it recovers" time="0.157269631">
+        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; never leaves the documented limits" time="0.000236668">
         </testcase>
-        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; recovers from a timeout after the server stored the match, without a duplicate" time="0.25667469">
+        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; snaps off-grid values back onto the grid" time="0.000129372">
         </testcase>
-        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; sends one request at a time however often Retry is pressed" time="0.153569767">
+        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; restarts from a limit when the text is not a number" time="0.000110253">
         </testcase>
-        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; does not retry automatically after a client error, but Retry can still be pressed" time="0.253979046">
+        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; disables a direction only at its limit" time="0.000288367">
         </testcase>
-        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; a pending match survives a refresh and is sent when the app starts again" time="0.106046285">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/remote/hooks.int.test.tsx" timestamp="2026-10-15T15:29:07.581Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="5.330809414">
-        <testcase classname="src/remote/hooks.int.test.tsx" name="ranking and history queries &gt; a late answer for page 1 never replaces page 2 on screen: the obsolete request is aborted" time="2.572920748">
-        </testcase>
-        <testcase classname="src/remote/hooks.int.test.tsx" name="ranking and history queries &gt; keeps the previous page visible while the next one loads" time="2.578665585">
-        </testcase>
-        <testcase classname="src/remote/hooks.int.test.tsx" name="ranking and history queries &gt; retries a failing list and then reports the error" time="0.060006507">
-        </testcase>
-        <testcase classname="src/remote/hooks.int.test.tsx" name="ranking and history queries &gt; registering a match refreshes the history on screen and reports Saved" time="0.114799345">
+        <testcase classname="src/screens/Options/settingsStepping.test.ts" name="settings stepping &gt; formats whole and half seconds without noise" time="0.000149289">
         </testcase>
     </testsuite>
-    <testsuite name="src/ui/focusModality.int.test.ts" timestamp="2026-10-15T15:29:07.581Z" hostname="vm" tests="1" failures="0" errors="0" skipped="0" time="0.015041909">
-        <testcase classname="src/ui/focusModality.int.test.ts" name="focus modality &gt; shows the ring for Tab and for arrows inside widgets, never for game keys or after a pointer press" time="0.013695377">
+    <testsuite name="src/ui/hud/hud.test.ts" timestamp="2026-10-15T17:20:08.404Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.007634597">
+        <testcase classname="src/ui/hud/hud.test.ts" name="MatchAnnouncer &gt; announces status changes" time="0.002777588">
+        </testcase>
+        <testcase classname="src/ui/hud/hud.test.ts" name="MatchAnnouncer &gt; announces only the remaining-time marks, not every second" time="0.001602298">
+        </testcase>
+        <testcase classname="src/ui/hud/hud.test.ts" name="MatchAnnouncer &gt; throttles score announcements and warns about low health once" time="0.000625347">
+        </testcase>
+        <testcase classname="src/ui/hud/hud.test.ts" name="MatchAnnouncer &gt; says nothing on the first snapshot" time="0.000258131">
         </testcase>
     </testsuite>
-    <testsuite name="src/app/boot/boot.int.test.ts" timestamp="2026-10-15T15:29:07.582Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.032821661">
-        <testcase classname="src/app/boot/boot.int.test.ts" name="preloadUi &gt; loads every interface image and font, reports progress up to 1, and never fails on a broken file" time="0.004826948">
+    <testsuite name="src/game/core/math/geometry.test.ts" timestamp="2026-10-15T17:20:08.405Z" hostname="vm" tests="10" failures="0" errors="0" skipped="0" time="0.006514154">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="Vector2 &gt; supports the basic vector operations without mutating" time="0.002426957">
         </testcase>
-        <testcase classname="src/app/boot/boot.int.test.ts" name="preloadUi &gt; gives up waiting after ten seconds so a stalled file cannot keep the player out" time="0.00373333">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="Vector2 &gt; converts between headings and directions (y axis pointing down)" time="0.000422624">
         </testcase>
-        <testcase classname="src/app/boot/boot.int.test.ts" name="BootSplash &gt; shows the progress and removes itself after fading out" time="0.02103793">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="circle against box &gt; detects overlap and treats exact tangency as no overlap" time="0.000254699">
         </testcase>
-        <testcase classname="src/app/boot/boot.int.test.ts" name="BootSplash &gt; goes at once when motion is off (frozen test clock or reduced motion)" time="0.001207832">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="circle against box &gt; separates a circle through the nearest side, even from inside the box" time="0.000321117">
         </testcase>
-        <testcase classname="src/app/boot/boot.int.test.ts" name="BootSplash &gt; does nothing when the page has no splash" time="0.000205858">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="circle against box &gt; separates diagonally from a corner" time="0.000310939">
         </testcase>
-    </testsuite>
-    <testsuite name="src/screens/Game/GameStage.int.test.tsx" timestamp="2026-10-15T15:29:07.582Z" hostname="vm" tests="1" failures="0" errors="0" skipped="0" time="0.061524829">
-        <testcase classname="src/screens/Game/GameStage.int.test.tsx" name="GameStage lifecycle &gt; keeps exactly one live runtime under Strict Mode and disposes it on unmount" time="0.060183391">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="segment entry &gt; finds where a segment enters a circle" time="0.000220477">
         </testcase>
-    </testsuite>
-    <testsuite name="src/ui/components/Dialog.int.test.tsx" timestamp="2026-10-15T15:29:07.583Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.413471768">
-        <testcase classname="src/ui/components/Dialog.int.test.tsx" name="Dialog &gt; is a labelled modal that focuses its main action and wraps Tab inside" time="0.258881595">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="segment entry &gt; catches a fast segment crossing a small circle (no tunnelling)" time="0.000100948">
         </testcase>
-        <testcase classname="src/ui/components/Dialog.int.test.tsx" name="Dialog &gt; gives focus back to the opener when it closes" time="0.122415795">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="segment entry &gt; finds where a segment enters a box" time="0.000363187">
         </testcase>
-        <testcase classname="src/ui/components/Dialog.int.test.tsx" name="Dialog &gt; calls onEscape when Escape is pressed inside" time="0.030597654">
+        <testcase classname="src/game/core/math/geometry.test.ts" name="angles &gt; wraps angles to (-PI, PI]" time="0.000189606">
+        </testcase>
+        <testcase classname="src/game/core/math/geometry.test.ts" name="angles &gt; computes the shortest signed rotation" time="0.000154158">
         </testcase>
     </testsuite>
-    <testsuite name="src/ui/hud/Hud.int.test.tsx" timestamp="2026-10-15T15:29:07.583Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.28775912">
-        <testcase classname="src/ui/hud/Hud.int.test.tsx" name="Hud &gt; re-renders only when a displayed value changes, not on every frame" time="0.060191054">
+    <testsuite name="src/game/core/math/numbers.test.ts" timestamp="2026-10-15T17:20:08.406Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.003461937">
+        <testcase classname="src/game/core/math/numbers.test.ts" name="number helpers &gt; clamps to a range" time="0.001696199">
         </testcase>
-        <testcase classname="src/ui/hud/Hud.int.test.tsx" name="Hud &gt; exposes score, time and status to assistive technology and announces changes politely" time="0.186770697">
-        </testcase>
-        <testcase classname="src/ui/hud/Hud.int.test.tsx" name="Hud &gt; calls onPause from the pause button" time="0.038935874">
+        <testcase classname="src/game/core/math/numbers.test.ts" name="number helpers &gt; approaches a target by at most the given step, never past it" time="0.000280851">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/input/KeyboardInputSource.int.test.ts" timestamp="2026-10-15T15:29:07.584Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.012742738">
-        <testcase classname="src/game/input/KeyboardInputSource.int.test.ts" name="KeyboardInputSource &gt; captures bound keys only while attached" time="0.00620487">
+    <testsuite name="src/game/render/assets/manifest.test.ts" timestamp="2026-10-15T17:20:08.407Z" hostname="vm" tests="12" failures="0" errors="0" skipped="0" time="0.036419679">
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ships @1x contains exactly the typed frame names and every frame fits the image" time="0.012160937">
         </testcase>
-        <testcase classname="src/game/input/KeyboardInputSource.int.test.ts" name="KeyboardInputSource &gt; leaves unbound keys alone and ignores typing in form fields" time="0.002781463">
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ships @2x contains exactly the typed frame names and every frame fits the image" time="0.005261113">
         </testcase>
-        <testcase classname="src/game/input/KeyboardInputSource.int.test.ts" name="KeyboardInputSource &gt; toggles pause once per key press and ignores actions while not accepting them" time="0.001085606">
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; tiles @1x contains exactly the typed frame names and every frame fits the image" time="0.004752165">
         </testcase>
-        <testcase classname="src/game/input/KeyboardInputSource.int.test.ts" name="KeyboardInputSource &gt; releases its keys when detached" time="0.000609569">
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; tiles @2x contains exactly the typed frame names and every frame fits the image" time="0.004449807">
+        </testcase>
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; terrain @1x contains exactly the typed frame names and every frame fits the image" time="0.000429398">
+        </testcase>
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; terrain @2x contains exactly the typed frame names and every frame fits the image" time="0.000310968">
+        </testcase>
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ui @1x contains exactly the typed frame names and every frame fits the image" time="0.001969463">
+        </testcase>
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ui @2x contains exactly the typed frame names and every frame fits the image" time="0.001969626">
+        </testcase>
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; ships the water texture as a square power-of-two PNG (it repeats on the GPU)" time="0.000703499">
+        </testcase>
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; uses the 1× ships atlas for every resolution (no retina variant exists)" time="0.000155763">
+        </testcase>
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; picks the 2× atlas only on high-density screens" time="0.000234341">
+        </testcase>
+        <testcase classname="src/game/render/assets/manifest.test.ts" name="game asset manifest &gt; builds a bundle with one asset per atlas under the base URL" time="0.000568145">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/runtime/AutoPauseController.int.test.ts" timestamp="2026-10-15T15:29:07.585Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.006967424">
-        <testcase classname="src/game/runtime/AutoPauseController.int.test.ts" name="AutoPauseController &gt; pauses on window blur and when the tab is hidden, never resuming by itself" time="0.004338539">
+    <testsuite name="src/game/render/scene/SmokeEmitter.test.ts" timestamp="2026-10-15T17:20:08.408Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.011461607">
+        <testcase classname="src/game/render/scene/SmokeEmitter.test.ts" name="SmokeEmitter &gt; gives off no smoke while the ship is intact" time="0.005482835">
         </testcase>
-        <testcase classname="src/game/runtime/AutoPauseController.int.test.ts" name="AutoPauseController &gt; stops listening once detached" time="0.001113483">
+        <testcase classname="src/game/render/scene/SmokeEmitter.test.ts" name="SmokeEmitter &gt; smokes more, and in larger puffs, the worse the damage" time="0.002624606">
+        </testcase>
+        <testcase classname="src/game/render/scene/SmokeEmitter.test.ts" name="SmokeEmitter &gt; stops while paused and once the ship has sunk" time="0.001206214">
         </testcase>
     </testsuite>
-    <testsuite name="src/game/render/assets/GameAssetLoader.int.test.ts" timestamp="2026-10-15T15:29:07.585Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.046890951">
-        <testcase classname="src/game/render/assets/GameAssetLoader.int.test.ts" name="GameAssetLoader &gt; reports progress, then reuses the loaded textures without downloading again" time="0.033003265">
+    <testsuite name="src/game/render/scene/WakeEmitter.test.ts" timestamp="2026-10-15T17:20:08.409Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.007615335">
+        <testcase classname="src/game/render/scene/WakeEmitter.test.ts" name="WakeEmitter &gt; drops a pair of puffs behind the stern every few pixels sailed" time="0.00396291">
         </testcase>
-        <testcase classname="src/game/render/assets/GameAssetLoader.int.test.ts" name="GameAssetLoader &gt; fails with a readable error, clears the partial load and succeeds on retry" time="0.004755815">
+        <testcase classname="src/game/render/scene/WakeEmitter.test.ts" name="WakeEmitter &gt; leaves no wake when the ship is nearly still, paused or sunk" time="0.002116689">
         </testcase>
-        <testcase classname="src/game/render/assets/GameAssetLoader.int.test.ts" name="GameAssetLoader &gt; times out a load that never finishes" time="0.004744205">
+    </testsuite>
+    <testsuite name="src/game/sim/arena/Arena.test.ts" timestamp="2026-10-15T17:20:08.409Z" hostname="vm" tests="10" failures="0" errors="0" skipped="0" time="0.022105125">
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; merges land tiles into rectangular colliders" time="0.002802564">
         </testcase>
-        <testcase classname="src/game/render/assets/GameAssetLoader.int.test.ts" name="GameAssetLoader &gt; shares one request between concurrent callers" time="0.00211024">
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; builds colliders that cover exactly the land tiles of the default arena" time="0.012856797">
+        </testcase>
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; treats grass islands and sand islets as land and reports their terrain" time="0.00049172">
+        </testcase>
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; gives a reef rock a collider smaller than its tile" time="0.000454409">
+        </testcase>
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; rejects malformed definitions" time="0.001334978">
+        </testcase>
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; reports circles blocked by land or by the arena edge" time="0.00028169">
+        </testcase>
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; pushes a circle out of an island and back inside the bounds" time="0.00082995">
+        </testcase>
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; measures free distance against land and bounds" time="0.000499213">
+        </testcase>
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; computes line of sight across islands" time="0.000286614">
+        </testcase>
+        <testcase classname="src/game/sim/arena/Arena.test.ts" name="Arena &gt; starts the player on open water, away from islands" time="0.000297701">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/entities/entities.test.ts" timestamp="2026-10-15T17:20:08.411Z" hostname="vm" tests="9" failures="0" errors="0" skipped="0" time="0.012132488">
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship &gt; takes damage once per call, never below zero, and is destroyed at zero health" time="0.003861346">
+        </testcase>
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship &gt; clamps control inputs and drops them when stopped" time="0.000482811">
+        </testcase>
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship &gt; applies the difficulty speed multiplier to speed and turn rate" time="0.000436901">
+        </testcase>
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship hull &gt; models the hull as three circles along the keel, covering bow to stern" time="0.001357637">
+        </testcase>
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Ship hull &gt; finds the deepest contact between two hulls" time="0.000557031">
+        </testcase>
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Weapon &gt; fires only when the trigger is held and the cooldown has elapsed" time="0.000584218">
+        </testcase>
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Weapon &gt; reports how far the reload has progressed" time="0.000437044">
+        </testcase>
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Weapon &gt; scales the cooldown by its multiplier" time="0.000167699">
+        </testcase>
+        <testcase classname="src/game/sim/entities/entities.test.ts" name="Projectile &gt; consumes range while travelling and deactivates when stopped" time="0.00048943">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/match/MatchSession.test.ts" timestamp="2026-10-15T17:20:08.412Z" hostname="vm" tests="12" failures="0" errors="0" skipped="0" time="1.643447581">
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; does nothing before it is started" time="0.004405372">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; ends by time after exactly the configured active duration" time="0.21328574">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; ends when the player is destroyed, and a ram never scores" time="0.001050648">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; freezes the whole simulation once ended" time="0.378538479">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; suspends time, cooldowns, spawns and movement while paused" time="0.005395285">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; scores one point per enemy destroyed by the player, without duplicates" time="0.000904844">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession lifecycle &gt; exposes a discrete snapshot for the HUD" time="0.001249019">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession joystick steering &gt; turns the ship towards the joystick heading without overshooting, and sails at its throttle" time="0.002016039">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession joystick steering &gt; gives keys and buttons priority over the joystick" time="0.001682015">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession determinism &gt; replays identically with the same seed and inputs" time="0.338247852">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="MatchSession determinism &gt; plays differently with another seed" time="0.308785452">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSession.test.ts" name="Headless full match &gt; plays a standard match where both enemy kinds appear, nobody enters an island and the match ends" time="0.383484189">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/match/MatchSetup.test.ts" timestamp="2026-10-15T17:20:08.414Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.022253929">
+        <testcase classname="src/game/sim/match/MatchSetup.test.ts" name="match setup &gt; starts the player at the arena start without a setup" time="0.004381245">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSetup.test.ts" name="match setup &gt; places the player and the initial enemies, which then follow the normal rules" time="0.005717241">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSetup.test.ts" name="match statistics &gt; counts the player volleys per weapon and the projectiles they fire" time="0.003246159">
+        </testcase>
+        <testcase classname="src/game/sim/match/MatchSetup.test.ts" name="match statistics &gt; counts hits, kills and rams separately" time="0.007336659">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/systems/EnemyAiSystem.test.ts" timestamp="2026-10-15T17:20:08.415Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.115983268">
+        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Chaser behaviour &gt; reaches and rams the player in open water" time="0.020774611">
+        </testcase>
+        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Chaser behaviour &gt; sails around an island to reach the player without ever entering it" time="0.032888507">
+        </testcase>
+        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Shooter behaviour &gt; approaches and only fires within attack range" time="0.026488526">
+        </testcase>
+        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Shooter behaviour &gt; keeps its distance instead of ramming" time="0.032824955">
+        </testcase>
+        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Shooter behaviour &gt; holds fire without line of sight" time="0.000682818">
+        </testcase>
+        <testcase classname="src/game/sim/systems/EnemyAiSystem.test.ts" name="Shooter behaviour &gt; stops attacking once the player is destroyed" time="0.00036908">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/systems/MovementSystem.test.ts" timestamp="2026-10-15T17:20:08.416Z" hostname="vm" tests="14" failures="0" errors="0" skipped="0" time="0.120067353">
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; sails forward along the heading, accelerating up to max speed" time="0.004692753">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; turns both ways, easing in and out of the configured turn speed" time="0.001995259">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; drifts sideways after a turn and the drift fades with the lateral grip" time="0.001184177">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never sails backwards: thrust is forward only" time="0.000976013">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; glides to a stop without throttle and then stays still" time="0.002180851">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading 0" time="0.028766257">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading 0.3" time="0.028146583">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading -0.3" time="0.014809167">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading 0.7853981633974483" time="0.009532987">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; never enters an island when approaching at heading -0.7853981633974483" time="0.01484554">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; stays inside the arena bounds" time="0.004343157">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; keeps the bow out of the island when sailing straight at it" time="0.002872474">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; remembers the previous state for render interpolation" time="0.000910535">
+        </testcase>
+        <testcase classname="src/game/sim/systems/MovementSystem.test.ts" name="MovementSystem &gt; slides along a coast instead of stopping dead" time="0.002196118">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/systems/ProjectileSystem.test.ts" timestamp="2026-10-15T17:20:08.418Z" hostname="vm" tests="7" failures="0" errors="0" skipped="0" time="0.010834114">
+        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; expires a projectile once its range is travelled" time="0.004330929">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; removes a projectile that leaves the arena" time="0.000519991">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; stops a projectile at the island coast" time="0.001213422">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; damages an enemy exactly once and disappears" time="0.001658217">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; never hits ships of the same faction" time="0.000607233">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; does not tunnel through a target at very high speed" time="0.000465408">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ProjectileSystem.test.ts" name="ProjectileSystem &gt; ignores destroyed ships" time="0.000567366">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/systems/ShipCollisionSystem.test.ts" timestamp="2026-10-15T17:20:08.419Z" hostname="vm" tests="7" failures="0" errors="0" skipped="0" time="0.015066133">
+        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; makes a Chaser that rams the player explode and damage the player" time="0.004906751">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; ignores a destroyed Chaser" time="0.000492151">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; separates other overlapping ships side by side in one step" time="0.00085124">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; separates ships overlapping bow to stern within a few steps" time="0.000444251">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="ShipCollisionSystem &gt; detects a ram on the bow even when the ship centres are far apart" time="0.000592072">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="DamageResolver &gt; reports damage and a single destruction" time="0.001304647">
+        </testcase>
+        <testcase classname="src/game/sim/systems/ShipCollisionSystem.test.ts" name="DamageResolver &gt; removes the projectiles in flight of a destroyed enemy" time="0.00089739">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/systems/SpawnSystem.test.ts" timestamp="2026-10-15T17:20:08.420Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="0.031025477">
+        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; spawns exactly at every configured interval" time="0.00498949">
+        </testcase>
+        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; opens with a Chaser and then a Shooter, so both kinds always appear" time="0.00084042">
+        </testcase>
+        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; only spawns on free water, far enough from the player" time="0.001334962">
+        </testcase>
+        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; respects the alive cap of the difficulty curve" time="0.000654892">
+        </testcase>
+        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; only sends waves of two in the last stretch of a long match" time="0.020891167">
+        </testcase>
+        <testcase classname="src/game/sim/systems/SpawnSystem.test.ts" name="SpawnSystem &gt; turns new enemies towards the player" time="0.000743079">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/sim/systems/WeaponSystem.test.ts" timestamp="2026-10-15T17:20:08.421Z" hostname="vm" tests="7" failures="0" errors="0" skipped="0" time="0.013521332">
+        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; fires one front projectile from the bow along the heading" time="0.004537551">
+        </testcase>
+        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; fires the left broadside as three parallel projectiles to that side" time="0.003167205">
+        </testcase>
+        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; fires the right broadside as three parallel projectiles to that side" time="0.000857318">
+        </testcase>
+        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; respects the cooldown while the trigger is held" time="0.000695581">
+        </testcase>
+        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; keeps an independent cooldown per weapon" time="0.00122054">
+        </testcase>
+        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; never fires from a destroyed ship" time="0.000548099">
+        </testcase>
+        <testcase classname="src/game/sim/systems/WeaponSystem.test.ts" name="WeaponSystem &gt; adds the ship velocity to its projectiles, so moving broadsides keep the ship momentum" time="0.000793657">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/render/scene/terrain/terrain.test.ts" timestamp="2026-10-15T17:20:08.422Z" hostname="vm" tests="7" failures="0" errors="0" skipped="0" time="0.077481138">
+        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="island layout &gt; reads each island as a rectangle of one kind, and the reef rocks" time="0.002472992">
+        </testcase>
+        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="island layout &gt; reports islands the nine-slice art cannot draw" time="0.000692739">
+        </testcase>
+        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; can draw every island (rectangles of one kind, at least 2 × 2)" time="0.001118228">
+        </testcase>
+        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; keeps channels of at least three tiles between islands and two around rocks" time="0.065804303">
+        </testcase>
+        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; keeps every island two tiles or more from the edges, so no strip of water is a dead end" time="0.000689707">
+        </testcase>
+        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; starts the player in open water" time="0.000972614">
+        </testcase>
+        <testcase classname="src/game/render/scene/terrain/terrain.test.ts" name="default arena layout &gt; places every prop on an island (only floating planks may sit on the water), with existing art" time="0.003975039">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/app/App.int.test.tsx" timestamp="2026-10-15T17:20:08.424Z" hostname="vm" tests="19" failures="0" errors="0" skipped="0" time="6.403225923">
+        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; opens on the main menu with Play, Options and the control instructions" time="0.28360294">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; opens the control instructions in a dialog from the Controls button (small screens) and returns focus" time="0.187657737">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; asks for a captain name on the first Play only" time="0.314844872">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; keeps the name dialog open with an accessible error for an invalid name, and Escape cancels it" time="0.184869705">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; abandoning a match records nothing" time="0.274889653">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; shows and persists the result of a completed match, also after a refresh" time="0.509012234">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="App screen flow &gt; a refresh during a match goes back to the menu" time="0.356507325">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Developer tools &gt; stay out of the way: only a small gear button on the menu, network scenarios inside, every overlay off" time="0.281403791">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Developer tools &gt; switch overlays on for the next match and remember them after a refresh" time="0.604014038">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Developer tools &gt; opens the network scenarios from the developer tools and returns to them" time="0.240735468">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Developer tools &gt; &quot;Turn overlays off&quot; switches every overlay off" time="0.486522178">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Options &gt; steps, saves and restores the options, and new matches use them" time="0.471494363">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Options &gt; rejects out-of-range values with an accessible message and keeps the saved options" time="0.219257561">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Options &gt; disables the stepper buttons at the limits and resets to the defaults" time="0.176937987">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Options &gt; renames the captain from Options" time="0.476020018">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Captain&apos;s Log &gt; opens on the chosen tab, lists the ranking of the current settings and switches tabs with the keyboard" time="0.398353075">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Captain&apos;s Log &gt; a completed match is saved and appears in Match History and the ranking, marked as yours" time="0.345812225">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Captain&apos;s Log &gt; shows an accessible error with Retry when the ranking fails, and recovers" time="0.1619647">
+        </testcase>
+        <testcase classname="src/app/App.int.test.tsx" name="Captain&apos;s Log &gt; keeps a match pending while the server is down, without blocking a new match" time="0.42413946">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/mocks/mockApi.int.test.ts" timestamp="2026-10-15T17:20:08.426Z" hostname="vm" tests="11" failures="0" errors="0" skipped="0" time="0.878958598">
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; reads paginated, validated ranking pages and the configurations" time="0.088857968">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; registers a match idempotently and shows it in history and ranking" time="0.035786128">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; rejects invalid requests with 400 and conflicting matches with 409, without retry" time="0.039237212">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; scenario timeout fails requests as timeout" time="0.303446359">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; scenario network-error fails requests as network" time="0.006418957">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; scenario http-5xx fails requests as http" time="0.008482023">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; scenario http-4xx fails requests as http" time="0.012716996">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; empty and many-pages change the lists without touching the stored matches" time="0.038195972">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; a timeout after saving is recovered by retrying, with exactly one stored record" time="0.311329188">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; only the ranking fails in ranking-fail" time="0.022737709">
+        </testcase>
+        <testcase classname="src/mocks/mockApi.int.test.ts" name="API client against the mock server (Axios + MSW) &gt; cancels a request through its AbortSignal" time="0.006441129">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/remote/MatchRegistrar.int.test.ts" timestamp="2026-10-15T17:20:08.428Z" hostname="vm" tests="6" failures="0" errors="0" skipped="0" time="1.009084413">
+        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; stores the match, confirms it and invalidates the lists" time="0.071635988">
+        </testcase>
+        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; keeps the match pending while the server is unavailable and saves it once it recovers" time="0.162156106">
+        </testcase>
+        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; recovers from a timeout after the server stored the match, without a duplicate" time="0.254736797">
+        </testcase>
+        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; sends one request at a time however often Retry is pressed" time="0.152152003">
+        </testcase>
+        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; does not retry automatically after a client error, but Retry can still be pressed" time="0.253281321">
+        </testcase>
+        <testcase classname="src/remote/MatchRegistrar.int.test.ts" name="MatchRegistrar (TanStack Query mutation + persistent outbox + MSW) &gt; a pending match survives a refresh and is sent when the app starts again" time="0.109443182">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/remote/hooks.int.test.tsx" timestamp="2026-10-15T17:20:08.429Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="5.339931067">
+        <testcase classname="src/remote/hooks.int.test.tsx" name="ranking and history queries &gt; a late answer for page 1 never replaces page 2 on screen: the obsolete request is aborted" time="2.577592543">
+        </testcase>
+        <testcase classname="src/remote/hooks.int.test.tsx" name="ranking and history queries &gt; keeps the previous page visible while the next one loads" time="2.583326198">
+        </testcase>
+        <testcase classname="src/remote/hooks.int.test.tsx" name="ranking and history queries &gt; retries a failing list and then reports the error" time="0.058233972">
+        </testcase>
+        <testcase classname="src/remote/hooks.int.test.tsx" name="ranking and history queries &gt; registering a match refreshes the history on screen and reports Saved" time="0.115524544">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/ui/focusModality.int.test.ts" timestamp="2026-10-15T17:20:08.429Z" hostname="vm" tests="1" failures="0" errors="0" skipped="0" time="0.020799754">
+        <testcase classname="src/ui/focusModality.int.test.ts" name="focus modality &gt; shows the ring for Tab and for arrows inside widgets, never for game keys or after a pointer press" time="0.019078357">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/app/boot/boot.int.test.ts" timestamp="2026-10-15T17:20:08.430Z" hostname="vm" tests="5" failures="0" errors="0" skipped="0" time="0.030967778">
+        <testcase classname="src/app/boot/boot.int.test.ts" name="preloadUi &gt; loads every interface image and font, reports progress up to 1, and never fails on a broken file" time="0.004653641">
+        </testcase>
+        <testcase classname="src/app/boot/boot.int.test.ts" name="preloadUi &gt; gives up waiting after ten seconds so a stalled file cannot keep the player out" time="0.003451884">
+        </testcase>
+        <testcase classname="src/app/boot/boot.int.test.ts" name="BootSplash &gt; shows the progress and removes itself after fading out" time="0.020026711">
+        </testcase>
+        <testcase classname="src/app/boot/boot.int.test.ts" name="BootSplash &gt; goes at once when motion is off (frozen test clock or reduced motion)" time="0.001155166">
+        </testcase>
+        <testcase classname="src/app/boot/boot.int.test.ts" name="BootSplash &gt; does nothing when the page has no splash" time="0.000203875">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/input/KeyboardInputSource.int.test.ts" timestamp="2026-10-15T17:20:08.430Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.010176472">
+        <testcase classname="src/game/input/KeyboardInputSource.int.test.ts" name="KeyboardInputSource &gt; captures bound keys only while attached" time="0.004911589">
+        </testcase>
+        <testcase classname="src/game/input/KeyboardInputSource.int.test.ts" name="KeyboardInputSource &gt; leaves unbound keys alone and ignores typing in form fields" time="0.002485257">
+        </testcase>
+        <testcase classname="src/game/input/KeyboardInputSource.int.test.ts" name="KeyboardInputSource &gt; toggles pause once per key press and ignores actions while not accepting them" time="0.000846276">
+        </testcase>
+        <testcase classname="src/game/input/KeyboardInputSource.int.test.ts" name="KeyboardInputSource &gt; releases its keys when detached" time="0.000519711">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/runtime/AutoPauseController.int.test.ts" timestamp="2026-10-15T17:20:08.431Z" hostname="vm" tests="2" failures="0" errors="0" skipped="0" time="0.008626871">
+        <testcase classname="src/game/runtime/AutoPauseController.int.test.ts" name="AutoPauseController &gt; pauses on window blur and when the tab is hidden, never resuming by itself" time="0.005502633">
+        </testcase>
+        <testcase classname="src/game/runtime/AutoPauseController.int.test.ts" name="AutoPauseController &gt; stops listening once detached" time="0.001263788">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/screens/Game/GameStage.int.test.tsx" timestamp="2026-10-15T17:20:08.432Z" hostname="vm" tests="1" failures="0" errors="0" skipped="0" time="0.05136605">
+        <testcase classname="src/screens/Game/GameStage.int.test.tsx" name="GameStage lifecycle &gt; keeps exactly one live runtime under Strict Mode and disposes it on unmount" time="0.049836285">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/ui/components/Dialog.int.test.tsx" timestamp="2026-10-15T17:20:08.432Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.426673446">
+        <testcase classname="src/ui/components/Dialog.int.test.tsx" name="Dialog &gt; is a labelled modal that focuses its main action and wraps Tab inside" time="0.306654407">
+        </testcase>
+        <testcase classname="src/ui/components/Dialog.int.test.tsx" name="Dialog &gt; gives focus back to the opener when it closes" time="0.087657519">
+        </testcase>
+        <testcase classname="src/ui/components/Dialog.int.test.tsx" name="Dialog &gt; calls onEscape when Escape is pressed inside" time="0.030670509">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/ui/hud/Hud.int.test.tsx" timestamp="2026-10-15T17:20:08.432Z" hostname="vm" tests="3" failures="0" errors="0" skipped="0" time="0.211258479">
+        <testcase classname="src/ui/hud/Hud.int.test.tsx" name="Hud &gt; re-renders only when a displayed value changes, not on every frame" time="0.056059858">
+        </testcase>
+        <testcase classname="src/ui/hud/Hud.int.test.tsx" name="Hud &gt; exposes score, time and status to assistive technology and announces changes politely" time="0.130938095">
+        </testcase>
+        <testcase classname="src/ui/hud/Hud.int.test.tsx" name="Hud &gt; calls onPause from the pause button" time="0.02255964">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/game/render/assets/GameAssetLoader.int.test.ts" timestamp="2026-10-15T17:20:08.433Z" hostname="vm" tests="4" failures="0" errors="0" skipped="0" time="0.055899496">
+        <testcase classname="src/game/render/assets/GameAssetLoader.int.test.ts" name="GameAssetLoader &gt; reports progress, then reuses the loaded textures without downloading again" time="0.041738407">
+        </testcase>
+        <testcase classname="src/game/render/assets/GameAssetLoader.int.test.ts" name="GameAssetLoader &gt; fails with a readable error, clears the partial load and succeeds on retry" time="0.004395152">
+        </testcase>
+        <testcase classname="src/game/render/assets/GameAssetLoader.int.test.ts" name="GameAssetLoader &gt; times out a load that never finishes" time="0.005698128">
+        </testcase>
+        <testcase classname="src/game/render/assets/GameAssetLoader.int.test.ts" name="GameAssetLoader &gt; shares one request between concurrent callers" time="0.002348462">
         </testcase>
     </testsuite>
 </testsuites>
