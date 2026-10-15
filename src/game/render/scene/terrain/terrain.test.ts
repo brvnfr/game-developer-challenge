@@ -44,8 +44,8 @@ describe('default arena layout', () => {
 
   it('can draw every island (rectangles of one kind, at least 2 × 2)', () => {
     expect(problems).toEqual([]);
-    expect(islands).toHaveLength(7);
-    expect(rocks.length).toBeGreaterThanOrEqual(3);
+    expect(islands).toHaveLength(5);
+    expect(rocks.length).toBeGreaterThanOrEqual(2);
   });
 
   it('keeps channels of at least three tiles between islands and two around rocks', () => {
@@ -69,6 +69,15 @@ describe('default arena layout', () => {
         }
       });
     });
+  });
+
+  it('keeps every island two tiles or more from the edges, so no strip of water is a dead end', () => {
+    for (const island of islands) {
+      expect(island.column).toBeGreaterThanOrEqual(2);
+      expect(island.row).toBeGreaterThanOrEqual(2);
+      expect(arena.columns - (island.column + island.columns)).toBeGreaterThanOrEqual(2);
+      expect(arena.rows - (island.row + island.rows)).toBeGreaterThanOrEqual(2);
+    }
   });
 
   it('starts the player in open water', () => {

@@ -51,7 +51,8 @@ test.describe('visual regression @visual', () => {
     const game = new GamePage(page);
     await game.open({ setup: 'chaser-ahead', seed: 1, spawnSeconds: 10 });
     await game.startMatch();
-    await game.advance(500); // fixed seed and manual clock: the same frame on every run
+    // Fixed seed and manual clock: the same frame on every run (past the 2 s "Battle stations!" banner).
+    await game.advance(2_500);
     await settle(page);
     await expect(page).toHaveScreenshot('arena.png', { maxDiffPixelRatio: 0.01 });
   });
