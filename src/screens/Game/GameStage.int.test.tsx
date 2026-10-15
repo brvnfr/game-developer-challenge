@@ -52,6 +52,7 @@ describe('GameStage lifecycle', () => {
           textures={{} as GameTextures}
           settings={DEFAULT_USER_SETTINGS}
           testMode={readTestMode('')}
+          overlays={{ aimLanes: false, hitboxes: false }}
           showTouchControls={false}
           audio={null}
           onMatchEnded={vi.fn()}

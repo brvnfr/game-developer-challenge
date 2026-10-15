@@ -57,7 +57,9 @@ test.describe('accessibility audit (T-046)', () => {
     await expect(page.getByRole('textbox', { name: 'Game session time' })).toBeFocused();
   });
 
-  test("Captain's Log tabs, tables, errors and the network dialog have no WCAG A/AA violations", async ({ page }) => {
+  test("Captain's Log tabs, tables, errors and the developer and network dialogs have no WCAG A/AA violations", async ({
+    page,
+  }) => {
     const game = new GamePage(page);
     await game.open({ scenario: 'many-pages' });
     await game.openCaptainsLog('Ranking');
@@ -68,6 +70,8 @@ test.describe('accessibility audit (T-046)', () => {
     await expectNoViolations(page);
 
     await page.getByRole('button', { name: 'Main Menu' }).click();
+    await game.openDeveloperTools();
+    await expectNoViolations(page);
     await page.getByRole('button', { name: 'Network scenarios' }).click();
     await expect(page.getByRole('dialog', { name: 'Network scenarios' })).toBeVisible();
     await expectNoViolations(page);

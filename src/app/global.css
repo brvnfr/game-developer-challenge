@@ -546,6 +546,82 @@ kbd {
   width: 100%;
 }
 
+.developer-button {
+  position: fixed;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: max(10px, env(safe-area-inset-left));
+  z-index: 5;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  padding: 4px;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: rgb(10 26 40 / 45%);
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.developer-button img {
+  width: 100%;
+  height: 100%;
+}
+
+.developer-button:hover,
+.developer-button:focus-visible {
+  opacity: 1;
+}
+
+.developer-button:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+.developer-dialog {
+  width: min(520px, 94vw);
+}
+
+.developer-dialog__group {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
+  border: none;
+}
+
+.developer-dialog__group legend {
+  margin: 0 auto 6px;
+}
+
+.developer-dialog__toggle {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  text-align: left;
+  cursor: pointer;
+}
+
+.developer-dialog__toggle input {
+  width: 22px;
+  height: 22px;
+  margin: 2px 0 0;
+  accent-color: var(--color-gold);
+}
+
+.developer-dialog__toggle input:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+.developer-dialog__toggle-label {
+  display: block;
+  font-weight: 700;
+}
+
 @media (width <= 520px) {
   .panel {
     padding: 18px 10px;

@@ -4,7 +4,14 @@ import { DEFAULT_USER_SETTINGS } from '@/game/config/defaults';
 import type { MatchResult } from '@/game/sim/match/types';
 import { suggestPlayerName, validatePlayerName } from '@/profile/playerName';
 import { LocalStore, MemoryStorage, type KeyValueStorage } from './LocalStore';
-import { LastResultRepository, PlayerProfileRepository, ScreenMemory, SettingsRepository } from './repositories';
+import {
+  DEFAULT_DEVELOPER_TOOLS,
+  DeveloperToolsRepository,
+  LastResultRepository,
+  PlayerProfileRepository,
+  ScreenMemory,
+  SettingsRepository,
+} from './repositories';
 
 const RESULT: MatchResult = {
   matchId: 'match-1',
@@ -116,5 +123,21 @@ describe('LastResultRepository and ScreenMemory', () => {
     expect(memory.isResultOpen()).toBe(true);
     memory.forget();
     expect(memory.isResultOpen()).toBe(false);
+  });
+});
+
+describe('DeveloperToolsRepository', () => {
+  it('starts with every overlay off, then keeps what was saved', () => {
+    const storage = new MemoryStorage();
+    expect(new DeveloperToolsRepository(storage).load()).toEqual(DEFAULT_DEVELOPER_TOOLS);
+    expect(DEFAULT_DEVELOPER_TOOLS).toEqual({ showAimLanes: false, showHitboxes: false });
+    new DeveloperToolsRepository(storage).save({ showAimLanes: true, showHitboxes: false });
+    expect(new DeveloperToolsRepository(storage).load()).toEqual({ showAimLanes: true, showHitboxes: false });
+  });
+
+  it('falls back to the defaults when the stored value is malformed', () => {
+    const storage = new MemoryStorage();
+    storage.setItem('pirate-battle.dev-tools.v2', JSON.stringify({ showAimLanes: 'yes' }));
+    expect(new DeveloperToolsRepository(storage).load()).toEqual(DEFAULT_DEVELOPER_TOOLS);
   });
 });

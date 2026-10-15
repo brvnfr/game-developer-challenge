@@ -8,7 +8,7 @@ import type { MatchView } from '@/game/bridge/MatchView';
 import { InputState } from '@/game/input/InputState';
 import { KeyboardInputSource } from '@/game/input/KeyboardInputSource';
 import type { GameTextures } from '@/game/render/assets/GameTextures';
-import { GameScene, type SceneStatistics } from '@/game/render/scene/GameScene';
+import { GameScene, NO_OVERLAYS, type SceneOverlays, type SceneStatistics } from '@/game/render/scene/GameScene';
 import { Viewport } from '@/game/render/Viewport';
 import type { PauseReason } from '@/game/sim/events/GameEvent';
 import type { MatchSession } from '@/game/sim/match/MatchSession';
@@ -29,6 +29,8 @@ export interface GameRuntimeOptions extends MatchFactoryOptions {
   readonly sound?: SoundOutput | null;
   /** Frame timing and entity counts for the performance report (real-time frames only). */
   readonly profiler?: FrameProfiler | null;
+  /** Developer overlays (aim lanes, hitboxes); all off unless switched on in Developer tools. */
+  readonly overlays?: SceneOverlays;
 }
 
 const MANUAL_TIME_CHUNK_SECONDS = 0.1;
@@ -144,6 +146,7 @@ export class GameRuntime {
       this.session,
       this.options.textures,
       window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      this.options.overlays ?? NO_OVERLAYS,
     );
     application.stage.addChild(this.scene.root);
     this.resizeObserver = new ResizeObserver(() => this.resizeTo(host));

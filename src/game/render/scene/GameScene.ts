@@ -8,6 +8,7 @@ import { ExplosionEffect, MuzzleFlashEffect, SinkingWreckEffect, SplashEffect } 
 import { EFFECT_FRAMES, SHIP_SPRITE_ROTATION_OFFSET, shipFrameFor, WRECK_STAGE } from '../spriteCatalog';
 import type { ViewportLayout } from '../Viewport';
 import { DamageFeedback } from './DamageFeedback';
+import { HitboxOverlayView } from './HitboxOverlayView';
 import { PlayerGunneryView } from './PlayerGunneryView';
 import { ProjectileViews } from './ProjectileViews';
 import { ShipView } from './ShipView';
@@ -17,18 +18,29 @@ import { WakeLayer } from './WakeLayer';
 const WATER_SPLASH_COLOUR = 0xe8f8ff;
 const DUST_COLOUR = 0xf3dcab;
 
+/** Developer overlays, off by default and switched on in Developer tools (main menu). */
+export interface SceneOverlays {
+  /** Dashed lanes showing the direction and range of the player's cannons. */
+  readonly aimLanes: boolean;
+  /** Collision shapes of islands, ships and projectiles. */
+  readonly hitboxes: boolean;
+}
+
+export const NO_OVERLAYS: SceneOverlays = { aimLanes: false, hitboxes: false };
+
 export interface SceneStatistics {
   readonly ships: number;
   readonly projectiles: number;
   readonly pooledProjectiles: number;
   readonly effects: number;
   readonly wakePuffs: number;
+  readonly overlays: SceneOverlays;
 }
 
 /**
  * PixiJS presentation of a match. Reads the simulation (never writes to it), keeps one view per entity,
- * and turns domain events into effects. Layers, bottom to top: terrain, wakes, aim guide, ships, projectiles,
- * effects, health bars and reload arcs, damage flash.
+ * and turns domain events into effects. Layers, bottom to top: terrain, wakes, aim lanes (developer overlay),
+ * ships, projectiles, effects, health bars and reload arcs, hitboxes (developer overlay), damage flash.
  */
 export class GameScene {
   readonly root = new Container({ label: 'world' });
@@ -36,6 +48,7 @@ export class GameScene {
   private readonly wakes = new WakeLayer();
   private readonly aimGuideLayer = new Container({ label: 'aim-guide' });
   private gunnery: PlayerGunneryView;
+  private readonly hitboxes: HitboxOverlayView | null;
   private readonly shipLayer = new Container({ label: 'ships' });
   private readonly overlayLayer = new Container({ label: 'health-bars' });
   private readonly projectiles: ProjectileViews;
@@ -48,11 +61,14 @@ export class GameScene {
     private session: MatchSession,
     private readonly textures: GameTextures,
     prefersReducedMotion: boolean,
+    private readonly overlays: SceneOverlays = NO_OVERLAYS,
   ) {
     this.terrain = new TerrainView(session.arena, textures, { isAnimated: !prefersReducedMotion });
     this.projectiles = new ProjectileViews(textures);
     this.damageFeedback = new DamageFeedback(session.arena.width, session.arena.height, prefersReducedMotion);
     this.gunnery = this.createGunnery();
+    this.aimGuideLayer.visible = overlays.aimLanes;
+    this.hitboxes = overlays.hitboxes ? new HitboxOverlayView(session.arena) : null;
     this.root.addChild(
       this.terrain.container,
       this.wakes.container,
@@ -61,6 +77,7 @@ export class GameScene {
       this.projectiles.container,
       this.effects.container,
       this.overlayLayer,
+      ...(this.hitboxes ? [this.hitboxes.container] : []),
       this.damageFeedback.overlay,
     );
   }
@@ -72,6 +89,7 @@ export class GameScene {
       pooledProjectiles: this.projectiles.pooledCount,
       effects: this.effects.activeCount,
       wakePuffs: this.wakes.activeCount,
+      overlays: this.overlays,
     };
   }
 
@@ -117,6 +135,7 @@ export class GameScene {
     this.wakes.update(deltaSeconds);
     this.syncShips(interpolation, deltaSeconds);
     this.gunnery.update(interpolation);
+    this.hitboxes?.update(this.session.world);
     this.projectiles.sync(this.session.world.projectiles, interpolation);
     this.effects.update(deltaSeconds);
     const shake = this.damageFeedback.update(deltaSeconds);
@@ -132,6 +151,7 @@ export class GameScene {
     this.projectiles.destroy();
     this.effects.destroy();
     this.gunnery.destroy();
+    this.hitboxes?.destroy();
     this.wakes.destroy();
     this.terrain.destroy();
     this.root.destroy({ children: true });

@@ -101,6 +101,41 @@ export class LastResultRepository {
   }
 }
 
+/** Developer tools (opened from a discreet button on the main menu): which match overlays are on. */
+export interface DeveloperToolsSettings {
+  /** Dashed lanes showing where each cannon fires and how far. */
+  readonly showAimLanes: boolean;
+  /** Hull circles of every ship, projectile radii and island colliders. */
+  readonly showHitboxes: boolean;
+}
+
+export const DEFAULT_DEVELOPER_TOOLS: DeveloperToolsSettings = {
+  showAimLanes: false,
+  showHitboxes: false,
+};
+
+const developerToolsSchema = z.object({
+  showAimLanes: z.boolean(),
+  showHitboxes: z.boolean(),
+});
+
+/** Developer tools choices, kept in localStorage for this browser. */
+export class DeveloperToolsRepository {
+  private readonly store: LocalStore<DeveloperToolsSettings>;
+
+  constructor(storage?: KeyValueStorage | null) {
+    this.store = new LocalStore(`${STORAGE_PREFIX}.dev-tools.v2`, developerToolsSchema, storage);
+  }
+
+  load(): DeveloperToolsSettings {
+    return this.store.read() ?? DEFAULT_DEVELOPER_TOOLS;
+  }
+
+  save(settings: DeveloperToolsSettings): boolean {
+    return this.store.write(settings);
+  }
+}
+
 const screenSchema = z.enum(['result']);
 
 /** Remembers, for this tab only, that the result screen was open, so a refresh shows it again. */

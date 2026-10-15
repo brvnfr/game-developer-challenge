@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { AudioEngine } from '@/game/audio/AudioEngine';
 import type { UserSettings } from '@/game/config/types';
 import type { GameTextures } from '@/game/render/assets/GameTextures';
+import type { SceneOverlays } from '@/game/render/scene/GameScene';
 import { DEFAULT_GAME_CONFIG } from '@/game/config/defaults';
 import { FrameProfiler } from '@/game/runtime/FrameProfiler';
 import { GameRuntime } from '@/game/runtime/GameRuntime';
@@ -19,6 +20,7 @@ interface GameStageProps {
   readonly textures: GameTextures;
   readonly settings: UserSettings;
   readonly testMode: TestModeOptions;
+  readonly overlays: SceneOverlays;
   readonly showTouchControls: boolean;
   readonly audio: AudioEngine | null;
   readonly onMatchEnded: (result: MatchResult) => void;
@@ -33,6 +35,7 @@ export function GameStage({
   textures,
   settings,
   testMode,
+  overlays,
   showTouchControls,
   audio,
   onMatchEnded,
@@ -64,6 +67,7 @@ export function GameStage({
       profiler: testMode.profile ? new FrameProfiler() : null,
       timeSource: testMode.manualTime ? 'manual' : 'realTime',
       sound: audio,
+      overlays,
       onMatchEnded: (result) => onMatchEndedRef.current(result),
     });
     let isMounted = true;
@@ -80,7 +84,7 @@ export function GameStage({
       setRuntime(null);
       gameRuntime.dispose();
     };
-  }, [textures, settings, testMode, audio]);
+  }, [textures, settings, testMode, overlays, audio]);
 
   return (
     <div className="game-stage">

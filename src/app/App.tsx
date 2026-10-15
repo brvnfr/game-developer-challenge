@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { AudioEngine } from '@/game/audio/AudioEngine';
 import type { UserSettings } from '@/game/config/types';
+import type { SceneOverlays } from '@/game/render/scene/GameScene';
 import type { MatchResult } from '@/game/sim/match/types';
 import { RemoteServicesProvider } from '@/remote/RemoteServicesProvider';
 import { toRegisterRequest } from '@/remote/toRegisterRequest';
@@ -10,7 +11,7 @@ import { MainMenuScreen } from '@/screens/MainMenu/MainMenuScreen';
 import { PlayerNameDialog } from '@/screens/MainMenu/PlayerNameDialog';
 import { OptionsScreen, type OptionsSaveOutcome } from '@/screens/Options/OptionsScreen';
 import { ResultScreen } from '@/screens/Result/ResultScreen';
-import type { PlayerProfile } from '@/storage/repositories';
+import type { DeveloperToolsSettings, PlayerProfile } from '@/storage/repositories';
 import { readTestMode } from '@/testing/testMode';
 import type { AppServices } from './AppServices';
 
@@ -61,6 +62,18 @@ function Screens({ services }: { readonly services: AppServices }) {
   const [lastResult, setLastResult] = useState<MatchResult | null>(() => services.lastResult.load());
   const [screen, setScreen] = useState<Screen>(() => initialScreen(services));
   const [isNamePromptOpen, setNamePromptOpen] = useState(false);
+  const [developerTools, setDeveloperTools] = useState<DeveloperToolsSettings>(() => services.developerTools.load());
+  const changeDeveloperTools = useCallback(
+    (next: DeveloperToolsSettings) => {
+      services.developerTools.save(next);
+      setDeveloperTools(next);
+    },
+    [services],
+  );
+  const overlays = useMemo<SceneOverlays>(
+    () => ({ aimLanes: developerTools.showAimLanes, hitboxes: developerTools.showHitboxes }),
+    [developerTools.showAimLanes, developerTools.showHitboxes],
+  );
   // Test mode may pin the settings through the URL; otherwise each match snapshots the saved options.
   const matchSettings = testMode.settings ?? settings;
 
@@ -107,6 +120,8 @@ function Screens({ services }: { readonly services: AppServices }) {
             onOptions={() => setScreen({ name: 'options' })}
             onRanking={() => setScreen({ name: 'log', tab: 'ranking' })}
             onMatchHistory={() => setScreen({ name: 'log', tab: 'history' })}
+            developerTools={developerTools}
+            onDeveloperToolsChange={changeDeveloperTools}
           />
           {isNamePromptOpen && (
             <PlayerNameDialog
@@ -150,6 +165,7 @@ function Screens({ services }: { readonly services: AppServices }) {
           key={screen.matchNumber}
           settings={matchSettings}
           testMode={testMode}
+          overlays={overlays}
           audio={services.audio}
           onMatchEnded={(result) => finishMatch(result, screen.matchNumber)}
           onExitToMenu={showMenu}

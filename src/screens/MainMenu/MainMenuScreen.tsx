@@ -3,11 +3,14 @@ import { useState } from 'react';
 import type { MatchResult } from '@/game/sim/match/types';
 import { useOutbox } from '@/remote/hooks';
 import { useRemoteServices } from '@/remote/remoteServicesContext';
+import type { DeveloperToolsSettings } from '@/storage/repositories';
 import { Button } from '@/ui/components/Button';
 import { MenuLayout } from '@/ui/components/MenuLayout';
 import { ControlsHelp } from '@/ui/ControlsHelp';
+import gearIcon from '@/ui/icons/gear.svg';
 import { summarizeResult } from '@/ui/matchResultText';
 import { useFocusOnMount } from '@/ui/useFocusOnMount';
+import { DeveloperToolsDialog } from './DeveloperToolsDialog';
 import { NetworkScenariosDialog } from './NetworkScenariosDialog';
 
 interface MainMenuScreenProps {
@@ -17,9 +20,17 @@ interface MainMenuScreenProps {
   readonly onOptions: () => void;
   readonly onRanking: () => void;
   readonly onMatchHistory: () => void;
+  readonly developerTools: DeveloperToolsSettings;
+  readonly onDeveloperToolsChange: (settings: DeveloperToolsSettings) => void;
 }
 
-/** Main menu: Play, Options, the Captain's Log tabs, the last battle and the control instructions. */
+type OpenDialog = 'none' | 'developerTools' | 'networkScenarios';
+
+/**
+ * Main menu: Play, Options, the Captain's Log tabs, the last battle and the control instructions. Testing aids
+ * (match overlays, network scenarios) live in the Developer tools dialog, opened from a small gear button in the
+ * corner: out of the players' way, but reachable by keyboard, mouse and touch.
+ */
 export function MainMenuScreen({
   captainName,
   lastResult,
@@ -27,11 +38,13 @@ export function MainMenuScreen({
   onOptions,
   onRanking,
   onMatchHistory,
+  developerTools,
+  onDeveloperToolsChange,
 }: MainMenuScreenProps) {
   const playButtonRef = useFocusOnMount<HTMLButtonElement>();
   const { mockServer } = useRemoteServices();
   const pendingCount = useOutbox().pending.length;
-  const [isNetworkDialogOpen, setNetworkDialogOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState<OpenDialog>('none');
   return (
     <MenuLayout
       labelledBy="main-menu-title"
@@ -73,13 +86,25 @@ export function MainMenuScreen({
           Match History
         </Button>
       </div>
-      {mockServer && (
-        <button type="button" className="link-button" onClick={() => setNetworkDialogOpen(true)}>
-          Network scenarios
-        </button>
+      <button
+        type="button"
+        className="developer-button"
+        aria-label="Developer tools"
+        title="Developer tools"
+        onClick={() => setOpenDialog('developerTools')}
+      >
+        <img src={gearIcon} alt="" />
+      </button>
+      {openDialog === 'developerTools' && (
+        <DeveloperToolsDialog
+          settings={developerTools}
+          onChange={onDeveloperToolsChange}
+          onOpenNetworkScenarios={mockServer ? () => setOpenDialog('networkScenarios') : null}
+          onClose={() => setOpenDialog('none')}
+        />
       )}
-      {mockServer && isNetworkDialogOpen && (
-        <NetworkScenariosDialog mockServer={mockServer} onClose={() => setNetworkDialogOpen(false)} />
+      {mockServer && openDialog === 'networkScenarios' && (
+        <NetworkScenariosDialog mockServer={mockServer} onClose={() => setOpenDialog('developerTools')} />
       )}
     </MenuLayout>
   );

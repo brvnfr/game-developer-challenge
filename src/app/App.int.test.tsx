@@ -23,16 +23,21 @@ const FINISHED_MATCH: MatchResult = {
 vi.mock('@/screens/Game/GameScreen', () => ({
   GameScreen: ({
     settings,
+    overlays,
     onMatchEnded,
     onExitToMenu,
   }: {
     settings: { sessionTimeSeconds: number; spawnIntervalSeconds: number };
+    overlays: { aimLanes: boolean; hitboxes: boolean };
     onMatchEnded: (result: MatchResult) => void;
     onExitToMenu: () => void;
   }) => (
     <main aria-label="Pirate Battle match">
       <p data-testid="match-settings">
         {settings.sessionTimeSeconds}/{settings.spawnIntervalSeconds}
+      </p>
+      <p data-testid="match-overlays">
+        aim lanes {String(overlays.aimLanes)}, hitboxes {String(overlays.hitboxes)}
       </p>
       <button type="button" onClick={() => onMatchEnded(FINISHED_MATCH)}>
         Finish match
@@ -144,6 +149,54 @@ describe('App screen flow', () => {
     unmount();
     renderApp(persistent, perTab);
     expect(screen.getByRole('button', { name: 'Play' })).toBeInTheDocument();
+  });
+});
+
+describe('Developer tools', () => {
+  it('stay out of the way: only a small gear button on the menu, network scenarios inside, every overlay off', async () => {
+    const { user } = renderApp();
+    expect(screen.getByRole('button', { name: 'Developer tools' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Network scenarios' })).toBeNull();
+    await nameCaptainAndPlay(user);
+    expect(screen.getByTestId('match-overlays')).toHaveTextContent('aim lanes false, hitboxes false');
+  });
+
+  it('switch overlays on for the next match and remember them after a refresh', async () => {
+    const { user, persistent, unmount } = renderApp();
+    await user.click(screen.getByRole('button', { name: 'Developer tools' }));
+    const dialog = screen.getByRole('dialog', { name: 'Developer tools' });
+    expect(within(dialog).getByRole('checkbox', { name: 'Aim lanes' })).toHaveFocus();
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Aim lanes' }));
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Hitboxes' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Close' }));
+    await nameCaptainAndPlay(user);
+    expect(screen.getByTestId('match-overlays')).toHaveTextContent('aim lanes true, hitboxes true');
+
+    unmount();
+    const refreshed = renderApp(persistent);
+    await refreshed.user.click(screen.getByRole('button', { name: 'Developer tools' }));
+    expect(screen.getByRole('checkbox', { name: 'Aim lanes' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: 'Hitboxes' })).toBeChecked();
+  });
+
+  it('opens the network scenarios from the developer tools and returns to them', async () => {
+    const { user } = renderApp();
+    await user.click(screen.getByRole('button', { name: 'Developer tools' }));
+    await user.click(screen.getByRole('button', { name: 'Network scenarios' }));
+    const network = screen.getByRole('dialog', { name: 'Network scenarios' });
+    await user.click(within(network).getByRole('button', { name: 'Close' }));
+    expect(screen.getByRole('dialog', { name: 'Developer tools' })).toBeVisible();
+  });
+
+  it('"Turn overlays off" switches every overlay off', async () => {
+    const { user } = renderApp();
+    await user.click(screen.getByRole('button', { name: 'Developer tools' }));
+    await user.click(screen.getByRole('checkbox', { name: 'Aim lanes' }));
+    await user.click(screen.getByRole('button', { name: 'Turn overlays off' }));
+    expect(screen.getByRole('checkbox', { name: 'Aim lanes' })).not.toBeChecked();
+    await user.click(screen.getByRole('button', { name: 'Close' }));
+    await nameCaptainAndPlay(user);
+    expect(screen.getByTestId('match-overlays')).toHaveTextContent('aim lanes false, hitboxes false');
   });
 });
 

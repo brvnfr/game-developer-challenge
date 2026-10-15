@@ -32,6 +32,7 @@ export const STORAGE_KEYS = {
   lastResult: 'pirate-battle.last-result.v1',
   mockServer: 'pirate-battle.mock-server.v1',
   outbox: 'pirate-battle.outbox.v1',
+  developerTools: 'pirate-battle.dev-tools.v2',
 } as const;
 
 /** Page object for the game: navigation, real input and read-only observation through the test harness. */
@@ -192,14 +193,31 @@ export class GamePage {
     return this.page.getByTestId('registration');
   }
 
-  /** Chooses a network scenario in the "Network scenarios" dialog of the main menu (real UI). */
-  async selectNetworkScenario(label: string): Promise<void> {
-    await this.page.getByRole('button', { name: 'Network scenarios' }).click();
+  /** Opens Developer tools from the gear button in the corner of the main menu. */
+  async openDeveloperTools() {
+    await this.page.getByRole('button', { name: 'Developer tools' }).click();
+    const dialog = this.page.getByRole('dialog', { name: 'Developer tools' });
+    await expect(dialog).toBeVisible();
+    return dialog;
+  }
+
+  /** Opens Developer tools › Network scenarios on the main menu. */
+  async openNetworkScenarios() {
+    const tools = await this.openDeveloperTools();
+    await tools.getByRole('button', { name: 'Network scenarios' }).click();
     const dialog = this.page.getByRole('dialog', { name: 'Network scenarios' });
+    await expect(dialog).toBeVisible();
+    return dialog;
+  }
+
+  /** Chooses a network scenario in Developer tools › Network scenarios (real UI), then closes both dialogs. */
+  async selectNetworkScenario(label: string): Promise<void> {
+    const dialog = await this.openNetworkScenarios();
     await dialog.getByLabel('Scenario').selectOption({ label });
     await dialog.getByRole('button', { name: 'Apply' }).click();
     await expect(dialog.getByRole('status')).toContainText('Scenario applied');
     await dialog.getByRole('button', { name: 'Close' }).click();
+    await this.page.getByRole('dialog', { name: 'Developer tools' }).getByRole('button', { name: 'Close' }).click();
   }
 
   /** Matches stored by the mock server with this id (reads its localStorage; the API is not involved). */

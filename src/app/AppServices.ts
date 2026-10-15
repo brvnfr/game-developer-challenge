@@ -2,6 +2,7 @@ import { AudioEngine } from '@/game/audio/AudioEngine';
 import type { RemoteServices } from '@/remote/RemoteServices';
 import { browserLocalStorage, browserSessionStorage, MemoryStorage, type KeyValueStorage } from '@/storage/LocalStore';
 import {
+  DeveloperToolsRepository,
   LastResultRepository,
   PlayerProfileRepository,
   ScreenMemory,
@@ -17,6 +18,8 @@ export interface AppServices {
   readonly playerProfile: PlayerProfileRepository;
   readonly lastResult: LastResultRepository;
   readonly screenMemory: ScreenMemory;
+  /** Hidden developer tools (match overlays, network scenarios). */
+  readonly developerTools: DeveloperToolsRepository;
   readonly remote: RemoteServices;
   /** Sound effects and music; silent until the first user gesture. */
   readonly audio: AudioEngine;
@@ -34,6 +37,7 @@ function createServices(
     playerProfile: new PlayerProfileRepository(persistent),
     lastResult: new LastResultRepository(persistent),
     screenMemory: new ScreenMemory(perTab),
+    developerTools: new DeveloperToolsRepository(persistent),
     remote,
   };
 }
