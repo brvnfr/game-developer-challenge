@@ -19,7 +19,10 @@ challenge and are not redistributed for any other purpose. The originals are kep
 | `public/assets/game/water.png`         | `npm run assets`       | Unchanged copy of `assets/png/retina/tiles/tile_73.png`, used as a repeating sea texture         |
 | `public/assets/audio/*`                | `npm run assets:audio` | WAV → MP3 mono 96 kbit/s for effects, WAV mono 22.05 kHz for loops (ffmpeg); 5.8 MB → 1.2 MB     |
 
-The menus use the PNGs under `assets/png/retina/ui/` directly (buttons, panel, title, icons).
+The menus use the PNGs under `assets/png/retina/ui/` directly (buttons, panel, title, icons). The menus' sea
+scene is composed in CSS from the provided tiles, ships and island blocks (`public/assets/menu/*.png`, cut by
+`npm run assets`); the provided `ui_scene_background.png` is no longer used. The Jungle Gaming logo is the
+provided `assets/logo_jungle_gaming.svg`, shown unchanged and linking to junglegaming.io.
 
 ## Created for this project
 
@@ -27,6 +30,7 @@ The menus use the PNGs under `assets/png/retina/ui/` directly (buttons, panel, t
   provided UI; same license as the source code.
 - The wake and smoke puff texture is generated at runtime (a soft white disc drawn on a canvas, tinted per
   layer); the aim lanes, reload arcs and projectile streaks are drawn with PixiJS graphics and sprites. No external art was added.
+- The boot splash's ship's wheel (inline SVG in `index.html`) and the "turn your phone" phone illustration.
 - All source code, tests, fixtures and documentation in this repository.
 
 ## Fonts

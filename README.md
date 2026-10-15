@@ -121,15 +121,23 @@ show their condition: a damaged hull with flames and thin smoke below two thirds
 below one third. The sea and the shallows stop moving (and the screen stops shaking on hits)
 when the system asks for reduced motion. The result screen adds battle highlights: shots fired, hit rate, damage dealt and taken.
 
-**The archipelago.** Seven hand-placed islands — Fort Island, Palm Island, Ruins Island, Jungle Island, Turtle
-Island and two sandbars (one with a wreck on its reef) — plus single reef rocks. Channels between islands are
-at least three tiles wide, and rocks block ships and shots like islands do.
+**The archipelago.** Five hand-placed islands — Fort Island, Palm Island, Ruins Island, Turtle Island and a
+sandbar with a wreck — plus two reef rocks. Channels between islands are at least three tiles wide and every
+island keeps at least two tiles from the edges, so a chased ship always has a way out; rocks block ships and
+shots like islands do.
 
 **Mobile orientation:** matches are played in **landscape**. On a touch device held upright the match pauses
 behind a full-screen "Turn your phone sideways" notice (HUD and controls hidden); after turning back, the pause
 dialog asks the player to resume. Menus work in both orientations. On phones in landscape the HUD is compact:
 one slim ribbon with health, score and time, a small pause button in the corner, and the sound toggle in the
 pause dialog (it is there on every screen).
+
+**Menus.** The page opens on a loading screen (a turning ship's wheel and a progress bar) while the mock API
+starts and the interface's art and fonts load, so the first menu appears complete. The menus sit on an
+animated sea scene made from the game's own art — islands, the fort, ships under sail — that keeps still when
+the system asks for reduced motion. Jungle Gaming's logo, bottom right, links to junglegaming.io. Focus moves to
+each screen's main action for screen readers, but the focus ring only shows while navigating with the keyboard
+(Tab, or arrows inside tabs and fields); a mouse or touch press hides it again.
 
 ## Options and local data
 
@@ -260,6 +268,8 @@ Source assets are in [`assets/`](assets/). `npm run assets` converts them into P
 - `tiles@1x.json` / `tiles@2x.json` — generated from the 64 px / 128 px tile sheets (row-major, `tile_1` is top-left).
 - `ui@1x.json` / `ui@2x.json` — the provided UI atlases (the `ui` metadata is stripped; `borders` are kept for 9-slice).
 - `water.png` — a standalone copy of the water tile (tile 73, 128 px), so the sea can be drawn as one repeating texture.
+- `terrain@1x.json` / `terrain@2x.json` — the grass island, sand island and shallows blocks cut whole from the tile sheets, drawn as nine-slices.
+- `public/assets/menu/*.png` — the same three blocks (128 px tiles) as standalone images for the menus' sea scene (CSS nine-slices).
 
 Sounds: the WAV files in `assets/sounds` are converted by `npm run assets:audio` into `public/assets/audio`
 (effects → MP3 mono 96 kbit/s, loops → mono 22 kHz WAV for gapless looping; 5.8 MB → 1.2 MB). Audio starts after

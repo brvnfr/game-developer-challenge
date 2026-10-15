@@ -72,6 +72,22 @@ run and be unit-tested in Node, deterministically. Coding conventions are in
   live region (`MatchAnnouncer`) announces only meaningful changes (status, time milestones, low health, score
   changes at most every few seconds, end).
 
+## Boot and menus
+
+- `index.html` carries an inline loading screen (no external code or art) that shows as soon as the page opens.
+  `main.tsx` starts the mock API and `preloadUi` in parallel: every image of the interface (UI atlas PNGs,
+  icons, the logo and the sea scene's art) is decoded and the three font faces are loaded, with progress on
+  the splash (`BootSplash`, `aria-valuenow`). A failed or slow file never blocks the game (each resolves anyway,
+  and the whole wait is capped at 10 s). The app renders after that and the splash fades out once the first
+  screen has been painted. The game's atlases still load with their own progress and retry when a match starts.
+- `SeaBackdrop` (behind every `MenuLayout` screen) is a CSS scene built only from the game's art: the water tile
+  drifting, island blocks as `border-image` nine-slices with the fort's wall pieces and palms placed on a tile
+  grid, ships sailing along keyframed courses with wakes, cloud shadows, warm light and a vignette. A 16:10 stage
+  (10:16 on portrait screens) covers the viewport and is laid out in container units, so the islands frame the
+  panels at any size. It animates only transforms and opacity and stops for reduced motion (and in screenshots,
+  which show its base pose).
+- `trackFocusModality` keeps the focus ring for keyboard navigation only (`data-focus-ring` on `<html>`).
+
 ## Simulation cycle
 
 ```mermaid
