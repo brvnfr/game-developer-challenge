@@ -128,6 +128,6 @@ describe('MovementSystem', () => {
     ship.setControls(1, 0);
     simulate(context, 4);
     expect(ship.position.y).toBeGreaterThan(330); // pushed along the coast
-    expect(ship.velocity.length).toBeGreaterThan(20);
+    expect(ship.velocity.length).toBeGreaterThan(10);
   });
 });

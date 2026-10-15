@@ -9,6 +9,8 @@ export interface MatchStatisticsSnapshot {
   readonly hitsOnEnemies: number;
   readonly hitsOnPlayer: number;
   readonly damageTakenByPlayer: number;
+  /** Damage the player's cannonballs dealt to enemies. */
+  readonly damageDealtByPlayer: number;
   readonly enemiesDestroyedByPlayer: number;
   /** Chasers that exploded against the player (they never score). */
   readonly enemiesDestroyedByRam: number;
@@ -17,7 +19,7 @@ export interface MatchStatisticsSnapshot {
 
 /**
  * Read-only counters of what happened in a match, collected from the domain events of each step. Used by the
- * test instrumentation and profiling; the rules never read them.
+ * result screen, the HUD (reload indicators), the test instrumentation and profiling; the rules never read them.
  */
 export class MatchStatistics {
   private readonly playerVolleys = { front: 0, left: 0, right: 0 };
@@ -27,6 +29,7 @@ export class MatchStatistics {
   private hitsOnEnemies = 0;
   private hitsOnPlayer = 0;
   private damageTakenByPlayer = 0;
+  private damageDealtByPlayer = 0;
   private enemiesDestroyedByPlayer = 0;
   private enemiesDestroyedByRam = 0;
 
@@ -42,8 +45,12 @@ export class MatchStatistics {
       }
     }
     for (const hit of events.ofTypeSince('projectileHit', firstEventIndex)) {
-      if (hit.targetId === this.playerId) this.hitsOnPlayer++;
-      else this.hitsOnEnemies++;
+      if (hit.targetId === this.playerId) {
+        this.hitsOnPlayer++;
+      } else {
+        this.hitsOnEnemies++;
+        this.damageDealtByPlayer += hit.damage;
+      }
     }
     for (const damaged of events.ofTypeSince('shipDamaged', firstEventIndex)) {
       if (damaged.shipId === this.playerId) this.damageTakenByPlayer += damaged.damage;
@@ -66,6 +73,7 @@ export class MatchStatistics {
       hitsOnEnemies: this.hitsOnEnemies,
       hitsOnPlayer: this.hitsOnPlayer,
       damageTakenByPlayer: this.damageTakenByPlayer,
+      damageDealtByPlayer: this.damageDealtByPlayer,
       enemiesDestroyedByPlayer: this.enemiesDestroyedByPlayer,
       enemiesDestroyedByRam: this.enemiesDestroyedByRam,
       enemiesSpawnedByKind: { ...this.enemiesSpawnedByKind },

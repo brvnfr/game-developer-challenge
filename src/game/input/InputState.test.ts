@@ -43,6 +43,23 @@ describe('InputState', () => {
     input.clear();
     expect(input.toCommands()).toEqual(IDLE_COMMANDS);
   });
+
+  it('passes the joystick steering on until that touch lets go', () => {
+    const input = new InputState();
+    input.steer('joystick:4', { heading: Math.PI / 2, throttle: 0.6 });
+    input.press('touch:5', 'fireRight');
+    expect(input.toCommands()).toEqual({
+      ...IDLE_COMMANDS,
+      isFiringRight: true,
+      steering: { heading: Math.PI / 2, throttle: 0.6 },
+    });
+    input.releaseSource('joystick:4');
+    expect(input.toCommands().steering).toBeNull();
+    expect(input.toCommands().isFiringRight).toBe(true);
+    input.steer('joystick:6', { heading: 0, throttle: 1 });
+    input.clear();
+    expect(input.toCommands()).toEqual(IDLE_COMMANDS);
+  });
 });
 
 describe('key bindings', () => {

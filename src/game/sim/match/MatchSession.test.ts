@@ -54,6 +54,7 @@ const ALL_INPUTS_HELD: PlayerCommands = {
   isFiringFront: true,
   isFiringLeft: true,
   isFiringRight: true,
+  steering: null,
 };
 
 describe('MatchSession lifecycle', () => {
@@ -183,6 +184,34 @@ describe('MatchSession lifecycle', () => {
   });
 });
 
+describe('MatchSession joystick steering', () => {
+  const steerTowards = (heading: number, throttle = 1): PlayerCommands => ({
+    ...IDLE_COMMANDS,
+    steering: { heading, throttle },
+  });
+
+  it('turns the ship towards the joystick heading without overshooting, and sails at its throttle', () => {
+    const session = createSession();
+    session.start();
+    const target = Math.PI / 2;
+    let largestOvershoot = 0;
+    for (let step = 0; step < 120; step++) {
+      session.step(steerTowards(target, 0.5));
+      largestOvershoot = Math.max(largestOvershoot, session.player.heading - target);
+    }
+    expect(session.player.heading).toBeCloseTo(target, 2);
+    expect(largestOvershoot).toBeLessThan(0.05);
+    expect(session.player.speed).toBeCloseTo(session.player.maxSpeed * 0.5, 0);
+  });
+
+  it('gives keys and buttons priority over the joystick', () => {
+    const session = createSession();
+    session.start();
+    playFor(session, 0.5, () => ({ ...steerTowards(Math.PI / 2), turnDirection: -1 }));
+    expect(session.player.heading).toBeLessThan(0);
+  });
+});
+
 describe('MatchSession determinism', () => {
   const scriptedCommands = (step: number): PlayerCommands => ({
     isSailingForward: step % 240 < 200,
@@ -190,6 +219,7 @@ describe('MatchSession determinism', () => {
     isFiringFront: step % 30 === 0,
     isFiringLeft: step % 90 === 0,
     isFiringRight: step % 90 === 45,
+    steering: null,
   });
 
   const playScriptedMatch = (seed: number) => {
@@ -226,6 +256,7 @@ describe('Headless full match', () => {
         isFiringFront: true,
         isFiringLeft: true,
         isFiringRight: true,
+        steering: null,
       });
       for (const event of eventsOfType(session.drainEvents(), 'enemySpawned')) spawnedKinds.add(event.kind);
       for (const ship of session.world.ships) {
@@ -235,6 +266,11 @@ describe('Headless full match', () => {
     }
     expect(spawnedKinds).toEqual(new Set(['chaser', 'shooter']));
     expect(session.result).not.toBeNull();
+    const highlights = session.result?.highlights;
+    expect(highlights?.cannonballsFired).toBeGreaterThan(0);
+    expect(highlights?.hits).toBeLessThanOrEqual(highlights?.cannonballsFired ?? 0);
+    expect(highlights?.damageTaken).toBeGreaterThan(0);
+    if (session.score > 0) expect(highlights?.damageDealt).toBeGreaterThan(0);
     expect(peakEntityCount).toBeLessThan(200);
   });
 });

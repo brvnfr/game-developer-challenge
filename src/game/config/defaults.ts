@@ -13,10 +13,10 @@ export const DEFAULT_GAME_CONFIG: GameConfig = {
     maxHealth: 100,
     maxSpeed: 170,
     acceleration: 260,
-    deceleration: 110,
+    deceleration: 140,
     turnSpeed: 2.6,
-    turnAcceleration: 8,
-    lateralGrip: 2.2,
+    turnAcceleration: 13,
+    lateralGrip: 3.5,
     hullRadius: 21,
     hullLength: 108,
     frontCannon: {

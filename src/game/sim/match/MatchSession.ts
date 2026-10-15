@@ -7,6 +7,8 @@ import type { Ship } from '../entities/Ship';
 import { EventQueue } from '../events/EventQueue';
 import { HullPlacement } from '../HullPlacement';
 import type { GameEvent, MatchEndReason, PauseReason } from '../events/GameEvent';
+import { angleDifference } from '@/game/core/math/angles';
+import { turnInputFor } from '../ai/SteeringNavigator';
 import { IDLE_COMMANDS, type PlayerCommands } from '../PlayerCommands';
 import { ShipFactory } from '../ShipFactory';
 import type { SimulationContext } from '../SimulationContext';
@@ -21,7 +23,7 @@ import { World } from '../World';
 import type { MatchSetup } from './MatchSetup';
 import { MatchStatistics, type MatchStatisticsSnapshot } from './MatchStatistics';
 import { ScoreKeeper } from './ScoreKeeper';
-import type { MatchResult, MatchSnapshot, MatchStatus } from './types';
+import type { MatchHighlights, MatchResult, MatchSnapshot, MatchStatus } from './types';
 
 export interface MatchSessionOptions {
   readonly config: MatchConfig;
@@ -198,12 +200,38 @@ export class MatchSession {
       durationSeconds: this.config.match.durationSeconds,
       enemiesAlive: this.world.livingEnemies().length,
       endReason: this.matchResult?.endReason ?? null,
+      ...this.volleyCounts(),
     };
+  }
+
+  private highlights(): MatchHighlights {
+    const statistics = this.statistics.snapshot();
+    return {
+      cannonballsFired: statistics.playerProjectilesFired,
+      hits: statistics.hitsOnEnemies,
+      damageDealt: statistics.damageDealtByPlayer,
+      damageTaken: statistics.damageTakenByPlayer,
+    };
+  }
+
+  private volleyCounts(): Pick<MatchSnapshot, 'frontVolleys' | 'leftVolleys' | 'rightVolleys'> {
+    const { playerVolleys } = this.statistics.snapshot();
+    return { frontVolleys: playerVolleys.front, leftVolleys: playerVolleys.left, rightVolleys: playerVolleys.right };
   }
 
   private applyPlayerCommands(commands: PlayerCommands): void {
     if (!this.player.isAlive) return;
-    this.player.setControls(commands.isSailingForward ? 1 : 0, commands.turnDirection);
+    const { steering } = commands;
+    const usesKeys = commands.isSailingForward || commands.turnDirection !== 0;
+    if (steering && !usesKeys) {
+      const headingError = angleDifference(this.player.heading, steering.heading);
+      this.player.setControls(
+        steering.throttle,
+        turnInputFor(this.player, headingError, this.config.match.stepSeconds),
+      );
+    } else {
+      this.player.setControls(commands.isSailingForward ? 1 : 0, commands.turnDirection);
+    }
     const triggers = {
       front: commands.isFiringFront,
       left: commands.isFiringLeft,
@@ -224,6 +252,7 @@ export class MatchSession {
       endedAt: this.now().toISOString(),
       settings: { ...this.config.settings },
       seed: this.seed,
+      highlights: this.highlights(),
     };
     this.events.push({ type: 'matchEnded', reason: endReason });
   }

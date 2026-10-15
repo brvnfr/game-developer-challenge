@@ -7,10 +7,12 @@ import { DEFAULT_GAME_CONFIG } from '@/game/config/defaults';
 import { FrameProfiler } from '@/game/runtime/FrameProfiler';
 import { GameRuntime } from '@/game/runtime/GameRuntime';
 import type { MatchResult } from '@/game/sim/match/types';
+import type { MatchView } from '@/game/bridge/MatchView';
 import { useExternalStore } from '@/game/bridge/useExternalStore';
 import { Hud } from '@/ui/hud/Hud';
+import { MatchStartBanner } from '@/ui/hud/MatchStartBanner';
 import { SoundToggleIcon } from '@/ui/SoundToggle';
-import { TouchControls } from '@/ui/touch/TouchControls';
+import { TouchControls, type WeaponReloads } from '@/ui/touch/TouchControls';
 import type { TestModeOptions } from '@/testing/testMode';
 import { useMediaQuery } from '@/ui/useMediaQuery';
 import { PauseOverlay } from './PauseOverlay';
@@ -101,6 +103,19 @@ export function GameStage({
   );
 }
 
+/** The "Battle stations!" call stays over the arena for the first two seconds of play. */
+const START_BANNER_SECONDS = 2;
+
+/** Reload indicators of the touch cannon buttons: volleys so far and each weapon's cooldown in this match. */
+function reloadsOf(runtime: GameRuntime, match: MatchView): WeaponReloads {
+  const { frontCannon, broadside } = runtime.match.config.player;
+  return {
+    fireFront: { volleys: match.frontVolleys, seconds: frontCannon.cooldownSeconds },
+    fireLeft: { volleys: match.leftVolleys, seconds: broadside.cooldownSeconds },
+    fireRight: { volleys: match.rightVolleys, seconds: broadside.cooldownSeconds },
+  };
+}
+
 const PAUSE_REASON_TEXT: Record<string, string> = {
   manual: 'Take a breath, captain.',
   blur: 'The game paused because the window lost focus.',
@@ -134,7 +149,12 @@ function GameOverlays({
         onPause={() => runtime.pause('manual')}
         extraControls={audio && <SoundToggleIcon engine={audio} className="hud__sound" />}
       />
-      {showTouchControls && match.status === 'running' && <TouchControls input={runtime.input} />}
+      {match.status === 'running' && match.durationSeconds - match.remainingSeconds < START_BANNER_SECONDS && (
+        <MatchStartBanner durationSeconds={match.durationSeconds} />
+      )}
+      {showTouchControls && (match.status === 'running' || match.status === 'paused') && (
+        <TouchControls input={runtime.input} reloads={reloadsOf(runtime, match)} isHidden={match.status === 'paused'} />
+      )}
       {match.status === 'paused' && (
         <PauseOverlay
           reasonText={PAUSE_REASON_TEXT[match.pauseReason ?? 'manual'] ?? ''}

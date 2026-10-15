@@ -82,6 +82,14 @@ const resultSchema = z.object({
   endedAt: z.string(),
   settings: settingsSchema,
   seed: z.number(),
+  highlights: z
+    .object({
+      cannonballsFired: z.number(),
+      hits: z.number(),
+      damageDealt: z.number(),
+      damageTaken: z.number(),
+    })
+    .optional(),
 });
 
 /** Result of the last completed match (abandoned matches never reach it). */

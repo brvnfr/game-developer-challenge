@@ -2,11 +2,9 @@ import type { PointerEvent } from 'react';
 import fireFrontIcon from '@assets/png/retina/ui/controls/icon_fire_front.png';
 import fireLeftIcon from '@assets/png/retina/ui/controls/icon_fire_left.png';
 import fireRightIcon from '@assets/png/retina/ui/controls/icon_fire_right.png';
-import forwardIcon from '@assets/png/retina/ui/controls/icon_forward.png';
-import turnLeftIcon from '@assets/png/retina/ui/controls/icon_turn_left.png';
-import turnRightIcon from '@assets/png/retina/ui/controls/icon_turn_right.png';
 import type { InputState } from '@/game/input/InputState';
 import type { GameAction } from '@/game/input/keyBindings';
+import { VirtualJoystick } from './VirtualJoystick';
 import './touch-controls.css';
 
 interface TouchButtonDefinition {
@@ -15,11 +13,13 @@ interface TouchButtonDefinition {
   readonly icon: string;
 }
 
-const MOVEMENT_BUTTONS: readonly TouchButtonDefinition[] = [
-  { action: 'turnLeft', label: 'Turn left', icon: turnLeftIcon },
-  { action: 'sailForward', label: 'Sail forward', icon: forwardIcon },
-  { action: 'turnRight', label: 'Turn right', icon: turnRightIcon },
-];
+/** One cannon's reload: how many volleys it has fired (each new one restarts the sweep) and how long it takes. */
+export interface ReloadState {
+  readonly volleys: number;
+  readonly seconds: number;
+}
+
+export type WeaponReloads = Readonly<Record<'fireFront' | 'fireLeft' | 'fireRight', ReloadState>>;
 
 const WEAPON_BUTTONS: readonly TouchButtonDefinition[] = [
   { action: 'fireLeft', label: 'Fire left broadside', icon: fireLeftIcon },
@@ -28,20 +28,31 @@ const WEAPON_BUTTONS: readonly TouchButtonDefinition[] = [
 ];
 
 /**
- * On-screen controls for touch devices. Every pointer is an independent input source, so several fingers
- * can sail, turn and fire at the same time; lifting, cancelling or sliding off a button releases it.
+ * On-screen controls for touch devices: a helm joystick on the left, the three cannons on the right. Every
+ * pointer is an independent input source, so one thumb can steer while the other fires; lifting or cancelling
+ * a finger releases what it held.
  */
-export function TouchControls({ input }: { readonly input: InputState }) {
+export function TouchControls({
+  input,
+  reloads,
+  isHidden,
+}: {
+  readonly input: InputState;
+  readonly reloads: WeaponReloads;
+  /** While paused the controls stay mounted but hidden, so the reload sweeps freeze instead of restarting. */
+  readonly isHidden: boolean;
+}) {
   return (
-    <div className="touch-controls" data-testid="touch-controls">
-      <div className="touch-controls__group touch-controls__group--movement">
-        {MOVEMENT_BUTTONS.map((button) => (
-          <TouchButton key={button.action} definition={button} input={input} />
-        ))}
-      </div>
+    <div className={isHidden ? 'touch-controls touch-controls--hidden' : 'touch-controls'} data-testid="touch-controls">
+      <VirtualJoystick input={input} />
       <div className="touch-controls__group touch-controls__group--weapons">
         {WEAPON_BUTTONS.map((button) => (
-          <TouchButton key={button.action} definition={button} input={input} />
+          <TouchButton
+            key={button.action}
+            definition={button}
+            input={input}
+            reload={reloads[button.action as keyof WeaponReloads]}
+          />
         ))}
       </div>
     </div>
@@ -51,9 +62,11 @@ export function TouchControls({ input }: { readonly input: InputState }) {
 function TouchButton({
   definition,
   input,
+  reload,
 }: {
   readonly definition: TouchButtonDefinition;
   readonly input: InputState;
+  readonly reload: ReloadState;
 }) {
   const sourceId = (event: PointerEvent) => `touch:${event.pointerId}`;
   const press = (event: PointerEvent<HTMLButtonElement>) => {
@@ -83,6 +96,15 @@ function TouchButton({
       }}
     >
       <img src={definition.icon} alt="" draggable={false} />
+      {reload.volleys > 0 && (
+        // A CSS sweep the length of the cooldown, restarted (new key) by every volley: no per-frame React work.
+        <span
+          key={reload.volleys}
+          className="touch-controls__reload"
+          style={{ animationDuration: `${reload.seconds}s` }}
+          data-testid={`reload-${definition.action}`}
+        />
+      )}
     </button>
   );
 }

@@ -34,6 +34,7 @@ const FINISHED_MATCH = {
   endedAt: '2026-10-14T12:00:00.000Z',
   settings: { sessionTimeSeconds: 120, spawnIntervalSeconds: 3 },
   seed: 1,
+  highlights: { cannonballsFired: 96, hits: 41, damageDealt: 655, damageTaken: 60 },
 };
 
 test.describe('visual regression @visual', () => {

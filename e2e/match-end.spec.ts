@@ -60,6 +60,11 @@ test.describe('end of the match and restart (E2E-06)', () => {
     await expect(page.getByTestId('result-time')).toHaveText(
       `${Math.floor(playedSeconds / 60)}:${String(playedSeconds % 60).padStart(2, '0')}`,
     );
+    // The idle captain fired nothing and took a full hull of damage.
+    await expect(page.getByTestId('highlight-fired')).toHaveText('0');
+    await expect(page.getByTestId('highlight-accuracy')).toHaveText('0%');
+    const damageTaken = Number(await page.getByTestId('highlight-taken').textContent());
+    expect(damageTaken).toBeGreaterThanOrEqual(ended.player.maxHealth);
   });
 
   test('Play Again starts a clean match: health, score, timer and entities are restored', async ({ page }) => {

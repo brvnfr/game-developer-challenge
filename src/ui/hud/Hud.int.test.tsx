@@ -13,6 +13,9 @@ const initialView: MatchView = {
   remainingSeconds: 120,
   durationSeconds: 120,
   enemiesAlive: 0,
+  frontVolleys: 0,
+  leftVolleys: 0,
+  rightVolleys: 0,
   endReason: null,
   result: null,
 };
