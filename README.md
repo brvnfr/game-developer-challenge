@@ -2,7 +2,7 @@
 
 A top-down 2D naval shooter built with **React**, **TypeScript (strict)** and **PixiJS**. Navigate between islands, fight enemy ships and score points until the match ends.
 
-**Live demo:** _URL added after the Vercel deployment._
+**Live demo:** <https://game-developer-challenge-two.vercel.app/>
 
 | Document                                             | Content                                                                                                           |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -262,4 +262,19 @@ in the official Playwright Docker image (same Linux baselines), uploading the HT
 
 ## Deployment
 
+Published on Vercel: **<https://game-developer-challenge-two.vercel.app/>**. Vercel's Git integration builds every
+push to `main`; the published bundle carries the commit it was built from (`VITE_VERCEL_GIT_COMMIT_SHA`, inlined
+by Vercel), which is how the deployed version was matched to the delivered commit.
+
 The app is a static site. `vercel.json` configures the Vercel build (`npm ci`, `npm run build`, output `dist/`) and serves `mockServiceWorker.js` without caching so the API mocks run in the published build.
+
+Checked on the published site (2026-10-14): the menu loads with no console errors; the Ranking tab lists the
+fixture captains through the MSW worker; a full match ends, shows its result, is saved to the Captain's Log, stays
+on the result screen after a refresh and appears in Match History; a phone-sized landscape viewport shows the
+arena with the touch controls. To run the whole E2E suite against it:
+
+```bash
+PLAYWRIGHT_BASE_URL=https://game-developer-challenge-two.vercel.app npx playwright test
+```
+
+(PowerShell: `$env:PLAYWRIGHT_BASE_URL='https://game-developer-challenge-two.vercel.app'; npx playwright test`.)
