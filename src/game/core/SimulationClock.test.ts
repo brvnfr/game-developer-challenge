@@ -34,7 +34,7 @@ describe('SimulationClock', () => {
     expect(clock.advance(-1)).toBe(0);
     expect(clock.advance(Number.NaN)).toBe(0);
     expect(clock.advance(0)).toBe(0);
-    expect(clock.totalSteps).toBe(0);
+    expect(clock.interpolationFactor).toBe(0);
   });
 
   it('rejects a non-positive step', () => {

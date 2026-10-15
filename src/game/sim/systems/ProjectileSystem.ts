@@ -49,32 +49,19 @@ export class ProjectileSystem implements SimulationSystem {
     }
     if (islandEntry !== null) {
       projectile.stopAt(start.lerp(end, islandEntry));
-      events.push({
-        type: 'projectileExpired',
-        projectileId: projectile.id,
-        reason: 'hitIsland',
-        position: projectile.position,
-      });
+      events.pushProjectileExpired(projectile, 'hitIsland');
       return;
     }
 
     projectile.travelTo(end);
-    if (!arena.contains(projectile.position)) {
+    const expiry = !arena.contains(projectile.position)
+      ? 'leftArena'
+      : projectile.remainingRange <= 0
+        ? 'rangeExhausted'
+        : null;
+    if (expiry) {
       projectile.deactivate();
-      events.push({
-        type: 'projectileExpired',
-        projectileId: projectile.id,
-        reason: 'leftArena',
-        position: projectile.position,
-      });
-    } else if (projectile.remainingRange <= 0) {
-      projectile.deactivate();
-      events.push({
-        type: 'projectileExpired',
-        projectileId: projectile.id,
-        reason: 'rangeExhausted',
-        position: projectile.position,
-      });
+      events.pushProjectileExpired(projectile, expiry);
     }
   }
 

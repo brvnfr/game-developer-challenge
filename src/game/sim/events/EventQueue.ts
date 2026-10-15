@@ -1,4 +1,5 @@
-import type { GameEvent, GameEventOf, GameEventType } from './GameEvent';
+import type { Projectile } from '../entities/Projectile';
+import type { GameEvent, GameEventOf, GameEventType, ProjectileExpiryReason } from './GameEvent';
 
 /** Events produced by the simulation since the last drain. */
 export class EventQueue {
@@ -22,5 +23,10 @@ export class EventQueue {
 
   get size(): number {
     return this.pending.length;
+  }
+
+  /** Reports a projectile that left play without hitting a ship (it must already be inactive). */
+  pushProjectileExpired(projectile: Projectile, reason: ProjectileExpiryReason): void {
+    this.push({ type: 'projectileExpired', projectileId: projectile.id, reason, position: projectile.position });
   }
 }

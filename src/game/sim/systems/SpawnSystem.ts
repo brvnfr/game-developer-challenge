@@ -15,7 +15,6 @@ export class SpawnSystem implements SimulationSystem {
   private readonly spawnPoints: SpawnPointFinder;
   private nextWaveStep: number;
   private spawned = 0;
-  private skipped = 0;
 
   constructor(private readonly config: MatchConfig) {
     this.stepsBetweenWaves = Math.max(1, Math.round(config.spawn.intervalSeconds / config.match.stepSeconds));
@@ -26,11 +25,6 @@ export class SpawnSystem implements SimulationSystem {
 
   get spawnedCount(): number {
     return this.spawned;
-  }
-
-  /** Spawns that found no valid point (kept for diagnostics). */
-  get skippedCount(): number {
-    return this.skipped;
   }
 
   /** `step` is the 1-based index of the step being simulated. */
@@ -50,11 +44,9 @@ export class SpawnSystem implements SimulationSystem {
   private spawnEnemy(kind: EnemyKind, level: DifficultyLevel, context: SimulationContext): void {
     const player = context.world.player;
     if (!player) return;
+    // No free point far enough from the player (a crowded arena): this enemy is skipped, the wave goes on.
     const position = this.spawnPoints.find(this.config[kind].hullLength / 2, player.position, context);
-    if (!position) {
-      this.skipped++;
-      return;
-    }
+    if (!position) return;
     const enemy = context.ships.createEnemy(kind, position, position.angleTo(player.position), {
       speedMultiplier: level.enemySpeedMultiplier,
       shooterCooldownMultiplier: level.shooterCooldownMultiplier,

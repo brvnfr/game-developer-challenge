@@ -1,4 +1,5 @@
-import { angleDifference, clamp } from '@/game/core/math/angles';
+import { angleDifference } from '@/game/core/math/angles';
+import { clamp } from '@/game/core/math/numbers';
 import { Vector2 } from '@/game/core/math/Vector2';
 import type { Ship } from '../entities/Ship';
 import type { SimulationContext } from '../SimulationContext';

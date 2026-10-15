@@ -10,7 +10,7 @@ describe('ShipCollisionSystem', () => {
   it('makes a Chaser that rams the player explode and damage the player', () => {
     const context = createTestContext();
     const player = context.ships.createPlayer(new Vector2(300, 300), 0);
-    const chaser = context.ships.createChaser(new Vector2(320, 300), 0);
+    const chaser = context.ships.createEnemy('chaser', new Vector2(320, 300), 0);
     collisions.update(context);
     expect(chaser.isAlive).toBe(false);
     expect(player.health).toBe(player.maxHealth - context.config.chaser.ramDamage);
@@ -20,32 +20,32 @@ describe('ShipCollisionSystem', () => {
   it('ignores a destroyed Chaser', () => {
     const context = createTestContext();
     const player = context.ships.createPlayer(new Vector2(300, 300), 0);
-    context.ships.createChaser(new Vector2(320, 300), 0).destroy();
+    context.ships.createEnemy('chaser', new Vector2(320, 300), 0).destroy();
     collisions.update(context);
     expect(player.health).toBe(player.maxHealth);
   });
 
   it('separates other overlapping ships side by side in one step', () => {
     const context = createTestContext();
-    const first = context.ships.createShooter(new Vector2(300, 300), 0);
-    const second = context.ships.createShooter(new Vector2(300, 310), 0);
+    const first = context.ships.createEnemy('shooter', new Vector2(300, 300), 0);
+    const second = context.ships.createEnemy('shooter', new Vector2(300, 310), 0);
     collisions.update(context);
     expect(first.position.distanceTo(second.position)).toBeCloseTo(first.hullRadius + second.hullRadius);
-    expect(first.overlaps(second)).toBe(false);
+    expect(first.findContactWith(second)).toBeNull();
   });
 
   it('separates ships overlapping bow to stern within a few steps', () => {
     const context = createTestContext();
-    const first = context.ships.createShooter(new Vector2(300, 300), 0);
-    const second = context.ships.createShooter(new Vector2(330, 300), 0);
+    const first = context.ships.createEnemy('shooter', new Vector2(300, 300), 0);
+    const second = context.ships.createEnemy('shooter', new Vector2(330, 300), 0);
     for (let step = 0; step < 5; step++) collisions.update(context);
-    expect(first.overlaps(second)).toBe(false);
+    expect(first.findContactWith(second)).toBeNull();
   });
 
   it('detects a ram on the bow even when the ship centres are far apart', () => {
     const context = createTestContext();
     const player = context.ships.createPlayer(new Vector2(300, 300), 0);
-    const chaser = context.ships.createChaser(new Vector2(300 + player.boundingRadius + 30, 300), Math.PI);
+    const chaser = context.ships.createEnemy('chaser', new Vector2(300 + player.boundingRadius + 30, 300), Math.PI);
     expect(player.position.distanceTo(chaser.position)).toBeGreaterThan(80);
     collisions.update(context);
     expect(chaser.isAlive).toBe(false);
@@ -55,7 +55,7 @@ describe('ShipCollisionSystem', () => {
 describe('DamageResolver', () => {
   it('reports damage and a single destruction', () => {
     const context = createTestContext();
-    const chaser = context.ships.createChaser(new Vector2(300, 300), 0);
+    const chaser = context.ships.createEnemy('chaser', new Vector2(300, 300), 0);
     expect(context.damage.applyDamage(chaser, 10, 'playerProjectile')).toBe(false);
     expect(context.damage.applyDamage(chaser, 100, 'playerProjectile')).toBe(true);
     expect(context.damage.applyDamage(chaser, 10, 'playerProjectile')).toBe(false);
@@ -67,7 +67,7 @@ describe('DamageResolver', () => {
   it('removes the projectiles in flight of a destroyed enemy', () => {
     const context = createTestContext();
     context.ships.createPlayer(new Vector2(900, 300), 0);
-    const shooter = context.ships.createShooter(new Vector2(300, 300), 0);
+    const shooter = context.ships.createEnemy('shooter', new Vector2(300, 300), 0);
     const cannon = shooter.weapon('cannon');
     if (!cannon) throw new Error('Shooter has no cannon');
     const [projectile] = new WeaponSystem().fire(shooter, cannon, context);

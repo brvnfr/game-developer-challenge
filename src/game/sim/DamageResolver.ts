@@ -43,12 +43,7 @@ export class DamageResolver {
     for (const projectile of this.world.projectiles) {
       if (projectile.isActive && projectile.ownerId === ship.id) {
         projectile.deactivate();
-        this.events.push({
-          type: 'projectileExpired',
-          projectileId: projectile.id,
-          reason: 'ownerDestroyed',
-          position: projectile.position,
-        });
+        this.events.pushProjectileExpired(projectile, 'ownerDestroyed');
       }
     }
   }

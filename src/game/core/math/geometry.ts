@@ -1,3 +1,4 @@
+import { clamp } from './numbers';
 import { Vector2 } from './Vector2';
 
 /** Axis-aligned rectangle. */
@@ -9,7 +10,7 @@ export interface BoundingBox {
 }
 
 function closestPointInBox(point: Vector2, box: BoundingBox): Vector2 {
-  return new Vector2(Math.min(Math.max(point.x, box.minX), box.maxX), Math.min(Math.max(point.y, box.minY), box.maxY));
+  return new Vector2(clamp(point.x, box.minX, box.maxX), clamp(point.y, box.minY, box.maxY));
 }
 
 export function circleOverlapsBox(center: Vector2, radius: number, box: BoundingBox): boolean {

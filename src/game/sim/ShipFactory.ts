@@ -11,7 +11,7 @@ export interface EnemyModifiers {
   readonly preferredAvoidanceSide: 1 | -1;
 }
 
-export const NEUTRAL_ENEMY_MODIFIERS: EnemyModifiers = {
+const NEUTRAL_ENEMY_MODIFIERS: EnemyModifiers = {
   speedMultiplier: 1,
   shooterCooldownMultiplier: 1,
   preferredAvoidanceSide: 1,
@@ -42,46 +42,32 @@ export class ShipFactory {
     );
   }
 
+  /**
+   * Creates an enemy of either kind. Both steer with their own navigation memory and get the difficulty's speed;
+   * a Chaser rams, a Shooter carries one cannon whose cooldown follows the difficulty.
+   */
   createEnemy(
     kind: EnemyKind,
     position: Vector2,
     heading: number,
     modifiers: EnemyModifiers = NEUTRAL_ENEMY_MODIFIERS,
   ): Ship {
-    return kind === 'chaser'
-      ? this.createChaser(position, heading, modifiers)
-      : this.createShooter(position, heading, modifiers);
-  }
-
-  createChaser(position: Vector2, heading: number, modifiers: EnemyModifiers = NEUTRAL_ENEMY_MODIFIERS): Ship {
-    const stats = this.config.chaser;
-    return this.world.addShip(
-      new Ship({
-        id: this.world.createEntityId(),
-        kind: 'chaser',
-        stats,
-        position,
-        heading,
-        navigation: new NavigationState(modifiers.preferredAvoidanceSide, position),
-        ramDamage: stats.ramDamage,
-        speedMultiplier: modifiers.speedMultiplier,
-      }),
-    );
-  }
-
-  createShooter(position: Vector2, heading: number, modifiers: EnemyModifiers = NEUTRAL_ENEMY_MODIFIERS): Ship {
-    const stats = this.config.shooter;
-    return this.world.addShip(
-      new Ship({
-        id: this.world.createEntityId(),
-        kind: 'shooter',
-        stats,
-        position,
-        heading,
-        weapons: [new Weapon('cannon', stats.cannon, modifiers.shooterCooldownMultiplier)],
-        navigation: new NavigationState(modifiers.preferredAvoidanceSide, position),
-        speedMultiplier: modifiers.speedMultiplier,
-      }),
-    );
+    const common = {
+      id: this.world.createEntityId(),
+      kind,
+      position,
+      heading,
+      navigation: new NavigationState(modifiers.preferredAvoidanceSide, position),
+      speedMultiplier: modifiers.speedMultiplier,
+    };
+    const ship =
+      kind === 'chaser'
+        ? new Ship({ ...common, stats: this.config.chaser, ramDamage: this.config.chaser.ramDamage })
+        : new Ship({
+            ...common,
+            stats: this.config.shooter,
+            weapons: [new Weapon('cannon', this.config.shooter.cannon, modifiers.shooterCooldownMultiplier)],
+          });
+    return this.world.addShip(ship);
   }
 }

@@ -12,7 +12,6 @@ const FLOATING_POINT_TOLERANCE = 1e-9;
  */
 export class SimulationClock {
   private pendingSeconds = 0;
-  private stepsSimulated = 0;
 
   constructor(
     readonly stepSeconds: number,
@@ -27,17 +26,12 @@ export class SimulationClock {
     this.pendingSeconds += Math.min(frameSeconds, this.maxFrameSeconds);
     const steps = Math.floor((this.pendingSeconds + FLOATING_POINT_TOLERANCE) / this.stepSeconds);
     this.pendingSeconds = Math.max(0, this.pendingSeconds - steps * this.stepSeconds);
-    this.stepsSimulated += steps;
     return steps;
   }
 
   /** Progress in [0, 1) between the previous and the current simulation step, for interpolation. */
   get interpolationFactor(): number {
     return Math.min(this.pendingSeconds / this.stepSeconds, 0.999);
-  }
-
-  get totalSteps(): number {
-    return this.stepsSimulated;
   }
 
   discardPendingTime(): void {

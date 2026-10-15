@@ -46,14 +46,4 @@ export class SeededRandom {
     if (items.length === 0) throw new Error('Cannot pick from an empty list');
     return items[Math.floor(this.next() * items.length)] as T;
   }
-
-  /** Fisher–Yates shuffle returning a new array. */
-  shuffled<T>(items: readonly T[]): T[] {
-    const result = [...items];
-    for (let index = result.length - 1; index > 0; index--) {
-      const swapIndex = Math.floor(this.next() * (index + 1));
-      [result[index], result[swapIndex]] = [result[swapIndex] as T, result[index] as T];
-    }
-    return result;
-  }
 }

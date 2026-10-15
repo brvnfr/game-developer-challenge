@@ -1,3 +1,4 @@
+import { approach } from '@/game/core/math/numbers';
 import type { Vector2 } from '@/game/core/math/Vector2';
 import type { Ship } from '../entities/Ship';
 import type { SimulationContext } from '../SimulationContext';
@@ -5,11 +6,6 @@ import type { SimulationSystem } from './SimulationSystem';
 
 /** Share of the sliding speed kept per step while scraping along a coast or the arena edge. */
 const SCRAPE_SPEED_RETENTION = 0.97;
-
-/** Moves `value` towards `target` by at most `maxDelta`. */
-function approach(value: number, target: number, maxDelta: number): number {
-  return value < target ? Math.min(target, value + maxDelta) : Math.max(target, value - maxDelta);
-}
 
 /**
  * Integrates the motion of living ships, then keeps the whole hull out of islands and inside the arena.

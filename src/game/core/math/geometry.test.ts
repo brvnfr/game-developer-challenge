@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { angleDifference, clamp, wrapAngle } from './angles';
+import { angleDifference, wrapAngle } from './angles';
 import {
   circleBoxSeparation,
   circleOverlapsBox,
@@ -82,10 +82,5 @@ describe('angles', () => {
   it('computes the shortest signed rotation', () => {
     expect(angleDifference(Math.PI - 0.1, -Math.PI + 0.1)).toBeCloseTo(0.2);
     expect(angleDifference(0.1, -0.1)).toBeCloseTo(-0.2);
-  });
-
-  it('clamps values', () => {
-    expect(clamp(5, 0, 1)).toBe(1);
-    expect(clamp(-5, 0, 1)).toBe(0);
   });
 });

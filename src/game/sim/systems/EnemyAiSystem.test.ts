@@ -27,7 +27,7 @@ describe('Chaser behaviour', () => {
     const context = createTestContext(OPEN_SEA);
     const runStep = createPipeline(context);
     const player = context.ships.createPlayer(new Vector2(1000, 400), 0);
-    const chaser = context.ships.createChaser(new Vector2(100, 100), Math.PI);
+    const chaser = context.ships.createEnemy('chaser', new Vector2(100, 100), Math.PI);
     const isChaserAlive = () => chaser.isAlive;
     for (let step = 0; step < stepsFor(15) && isChaserAlive(); step++) runStep();
     expect(chaser.isAlive).toBe(false);
@@ -38,7 +38,7 @@ describe('Chaser behaviour', () => {
     const context = createTestContext(ISLAND_SEA);
     const runStep = createPipeline(context);
     const player = context.ships.createPlayer(new Vector2(1100, 384), 0);
-    const chaser = context.ships.createChaser(new Vector2(200, 384), 0);
+    const chaser = context.ships.createEnemy('chaser', new Vector2(200, 384), 0);
     const isChaserAlive = () => chaser.isAlive;
     for (let step = 0; step < stepsFor(20) && isChaserAlive(); step++) {
       runStep();
@@ -54,7 +54,7 @@ describe('Shooter behaviour', () => {
     const context = createTestContext(OPEN_SEA);
     const runStep = createPipeline(context);
     const player = context.ships.createPlayer(new Vector2(1100, 400), 0);
-    const shooter = context.ships.createShooter(new Vector2(100, 400), Math.PI);
+    const shooter = context.ships.createEnemy('shooter', new Vector2(100, 400), Math.PI);
     expect(shooter.position.distanceTo(player.position)).toBeGreaterThan(context.config.shooter.attackRange);
     let shotsFired = 0;
     for (let step = 0; step < stepsFor(15); step++) {
@@ -75,7 +75,7 @@ describe('Shooter behaviour', () => {
     const context = createTestContext(OPEN_SEA, undefined);
     const runStep = createPipeline(context);
     const player = context.ships.createPlayer(new Vector2(1100, 400), 0);
-    const shooter = context.ships.createShooter(new Vector2(200, 400), 0);
+    const shooter = context.ships.createEnemy('shooter', new Vector2(200, 400), 0);
     let closestDistance = Infinity;
     for (let step = 0; step < stepsFor(20) && player.isAlive; step++) {
       runStep();
@@ -87,7 +87,7 @@ describe('Shooter behaviour', () => {
   it('holds fire without line of sight', () => {
     const context = createTestContext(ISLAND_SEA);
     const player = context.ships.createPlayer(new Vector2(900, 384), 0);
-    const shooter = context.ships.createShooter(new Vector2(470, 384), 0);
+    const shooter = context.ships.createEnemy('shooter', new Vector2(470, 384), 0);
     new EnemyAiSystem(context.config).update(context);
     expect(context.arena.hasLineOfSight(shooter.position, player.position)).toBe(false);
     expect(shooter.weapon('cannon')?.isTriggerHeld).toBe(false);
@@ -96,7 +96,7 @@ describe('Shooter behaviour', () => {
   it('stops attacking once the player is destroyed', () => {
     const context = createTestContext(OPEN_SEA);
     const player = context.ships.createPlayer(new Vector2(500, 400), 0);
-    const shooter = context.ships.createShooter(new Vector2(200, 400), 0);
+    const shooter = context.ships.createEnemy('shooter', new Vector2(200, 400), 0);
     player.destroy();
     new EnemyAiSystem(context.config).update(context);
     expect(shooter.throttle).toBe(0);

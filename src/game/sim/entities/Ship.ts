@@ -1,5 +1,5 @@
 import type { ShipStats } from '@/game/config/types';
-import { clamp } from '@/game/core/math/angles';
+import { clamp } from '@/game/core/math/numbers';
 import { Vector2 } from '@/game/core/math/Vector2';
 import type { NavigationState } from './NavigationState';
 import { factionOf, type Faction, type ShipKind, type WeaponSlot } from './types';
@@ -143,10 +143,6 @@ export class Ship {
     this.previousHeading = this.heading;
   }
 
-  isEnemyOf(other: Ship): boolean {
-    return this.faction !== other.faction;
-  }
-
   /**
    * Centres of the three circles that model the hull (stern, midship, bow) for a given pose.
    * Together they cover the hull from bow to stern, matching the ship art.
@@ -171,10 +167,6 @@ export class Ship {
       }
     }
     return deepest;
-  }
-
-  overlaps(other: Ship): boolean {
-    return this.findContactWith(other) !== null;
   }
 
   /** Applies damage once; health never goes below zero. Destroyed ships ignore further damage. */

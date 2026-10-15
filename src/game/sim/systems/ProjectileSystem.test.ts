@@ -50,7 +50,7 @@ describe('ProjectileSystem', () => {
     const { context, player, fireFront, simulate } = setUp(ISLAND_SEA);
     player.position = new Vector2(300, 384);
     fireFront();
-    const shieldedTarget = context.ships.createChaser(new Vector2(900, 384), 0);
+    const shieldedTarget = context.ships.createEnemy('chaser', new Vector2(900, 384), 0);
     simulate(1.5);
     expect(shieldedTarget.health).toBe(shieldedTarget.maxHealth);
     const [expiry] = eventsOfType(context.events.drain(), 'projectileExpired');
@@ -60,7 +60,7 @@ describe('ProjectileSystem', () => {
 
   it('damages an enemy exactly once and disappears', () => {
     const { context, fireFront, simulate } = setUp();
-    const enemy = context.ships.createShooter(new Vector2(400, 200), 0);
+    const enemy = context.ships.createEnemy('shooter', new Vector2(400, 200), 0);
     fireFront();
     simulate(1);
     expect(enemy.health).toBe(enemy.maxHealth - context.config.player.frontCannon.damage);
@@ -70,8 +70,8 @@ describe('ProjectileSystem', () => {
 
   it('never hits ships of the same faction', () => {
     const { context, player, simulate } = setUp();
-    const shooter = context.ships.createShooter(new Vector2(500, 200), Math.PI);
-    const allyInTheWay = context.ships.createShooter(new Vector2(400, 200), 0);
+    const shooter = context.ships.createEnemy('shooter', new Vector2(500, 200), Math.PI);
+    const allyInTheWay = context.ships.createEnemy('shooter', new Vector2(400, 200), 0);
     const cannon = shooter.weapon('cannon');
     if (!cannon) throw new Error('Shooter has no cannon');
     weapons.fire(shooter, cannon, context);
@@ -82,7 +82,7 @@ describe('ProjectileSystem', () => {
 
   it('does not tunnel through a target at very high speed', () => {
     const { context } = setUp();
-    const enemy = context.ships.createChaser(new Vector2(300, 200), 0);
+    const enemy = context.ships.createEnemy('chaser', new Vector2(300, 200), 0);
     context.world.addProjectile(
       new Projectile({
         id: context.world.createEntityId(),
@@ -102,7 +102,7 @@ describe('ProjectileSystem', () => {
 
   it('ignores destroyed ships', () => {
     const { context, fireFront, simulate } = setUp();
-    context.ships.createChaser(new Vector2(400, 200), 0).destroy();
+    context.ships.createEnemy('chaser', new Vector2(400, 200), 0).destroy();
     fireFront();
     simulate(1);
     expect(eventsOfType(context.events.drain(), 'projectileHit')).toHaveLength(0);

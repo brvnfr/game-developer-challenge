@@ -3,7 +3,6 @@ import type { MatchEndReason, PauseReason } from '../events/GameEvent';
 
 export type MatchStatus = 'ready' | 'running' | 'paused' | 'ended';
 
-/** Outcome of a completed match. Abandoned matches never produce one. */
 /** How the player fought, shown on the result screen (not part of the ranking record). */
 export interface MatchHighlights {
   readonly cannonballsFired: number;
@@ -12,6 +11,7 @@ export interface MatchHighlights {
   readonly damageTaken: number;
 }
 
+/** Outcome of a completed match. Abandoned matches never produce one. */
 export interface MatchResult {
   readonly matchId: string;
   readonly score: number;

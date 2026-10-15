@@ -2,16 +2,10 @@
 import { DEFAULT_GAME_CONFIG } from '@/game/config/defaults';
 import { createMatchConfig } from '@/game/config/matchConfig';
 import type { GameConfig, MatchConfig, UserSettings } from '@/game/config/types';
-import { SeededRandom } from '@/game/core/SeededRandom';
 import { Arena } from '../arena/Arena';
 import type { ArenaDefinition } from '../arena/ArenaDefinition';
-import { DamageResolver } from '../DamageResolver';
-import { EventQueue } from '../events/EventQueue';
-import { HullPlacement } from '../HullPlacement';
 import type { GameEvent, GameEventOf, GameEventType } from '../events/GameEvent';
-import { ShipFactory } from '../ShipFactory';
-import type { SimulationContext } from '../SimulationContext';
-import { World } from '../World';
+import { createSimulationContext, type SimulationContext } from '../SimulationContext';
 
 const OPEN_SEA_COLUMNS = 20;
 const OPEN_SEA_ROWS = 12;
@@ -48,20 +42,7 @@ export function createTestContext(
   config: MatchConfig = createTestConfig(),
   seed = 1,
 ): SimulationContext {
-  const world = new World();
-  const events = new EventQueue();
-  const arena = new Arena(definition);
-  return {
-    world,
-    arena,
-    config,
-    events,
-    random: new SeededRandom(seed),
-    damage: new DamageResolver(world, events),
-    ships: new ShipFactory(world, config),
-    hullPlacement: new HullPlacement(arena),
-    stepSeconds: config.match.stepSeconds,
-  };
+  return createSimulationContext(new Arena(definition), config, seed);
 }
 
 export const stepsFor = (seconds: number, stepSeconds = 1 / 60): number => Math.round(seconds / stepSeconds);

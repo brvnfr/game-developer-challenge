@@ -21,7 +21,8 @@ export type SettingsValidationResult =
   | { readonly isValid: true; readonly settings: UserSettings }
   | { readonly isValid: false; readonly errors: SettingsErrors };
 
-const SETTINGS_FIELDS = Object.keys(SETTINGS_RULES) as SettingsField[];
+/** The fields of the Options form, in display order. */
+export const SETTINGS_FIELDS = Object.keys(SETTINGS_RULES) as readonly SettingsField[];
 
 /** Accepts numbers or numeric strings; a decimal comma is accepted ("2,5" → 2.5). */
 export function parseSettingValue(rawValue: unknown): number | null {

@@ -26,10 +26,9 @@ describe('SeededRandom', () => {
     }
   });
 
-  it('shuffles without losing items and picks from the list', () => {
+  it('picks from the list', () => {
     const random = new SeededRandom(9);
     const items = [1, 2, 3, 4, 5, 6];
-    expect(random.shuffled(items).sort()).toEqual(items);
     expect(items).toContain(random.pick(items));
     expect(() => random.pick([])).toThrow();
   });

@@ -1,17 +1,12 @@
 import type { MatchConfig } from '@/game/config/types';
 import { Vector2 } from '@/game/core/math/Vector2';
-import { SeededRandom } from '@/game/core/SeededRandom';
 import type { Arena } from '../arena/Arena';
-import { DamageResolver } from '../DamageResolver';
 import type { Ship } from '../entities/Ship';
-import { EventQueue } from '../events/EventQueue';
-import { HullPlacement } from '../HullPlacement';
+import type { EventQueue } from '../events/EventQueue';
 import type { GameEvent, MatchEndReason, PauseReason } from '../events/GameEvent';
-import { angleDifference } from '@/game/core/math/angles';
-import { turnInputFor } from '../ai/SteeringNavigator';
 import { IDLE_COMMANDS, type PlayerCommands } from '../PlayerCommands';
-import { ShipFactory } from '../ShipFactory';
-import type { SimulationContext } from '../SimulationContext';
+import { PlayerHelm } from '../PlayerHelm';
+import { createSimulationContext, type SimulationContext } from '../SimulationContext';
 import { EnemyAiSystem } from '../systems/EnemyAiSystem';
 import { MovementSystem } from '../systems/MovementSystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
@@ -19,7 +14,7 @@ import { ShipCollisionSystem } from '../systems/ShipCollisionSystem';
 import type { SimulationSystem } from '../systems/SimulationSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
-import { World } from '../World';
+import type { World } from '../World';
 import type { MatchSetup } from './MatchSetup';
 import { MatchStatistics, type MatchStatisticsSnapshot } from './MatchStatistics';
 import { ScoreKeeper } from './ScoreKeeper';
@@ -46,13 +41,14 @@ export interface MatchSessionOptions {
  * When the player dies on the same step the time runs out, the end reason is `playerDestroyed`.
  */
 export class MatchSession {
-  readonly world = new World();
+  readonly world: World;
   readonly config: MatchConfig;
   readonly arena: Arena;
   readonly seed: number;
   readonly player: Ship;
-  private readonly events = new EventQueue();
+  private readonly events: EventQueue;
   private readonly context: SimulationContext;
+  private readonly helm: PlayerHelm;
   private readonly spawnSystem: SpawnSystem;
   private readonly systems: readonly SimulationSystem[];
   private readonly scoreKeeper = new ScoreKeeper();
@@ -73,18 +69,10 @@ export class MatchSession {
     this.now = options.now;
     this.totalSteps = Math.round(this.config.match.durationSeconds / this.config.match.stepSeconds);
 
-    const ships = new ShipFactory(this.world, this.config);
-    this.context = {
-      world: this.world,
-      arena: this.arena,
-      config: this.config,
-      events: this.events,
-      random: new SeededRandom(options.seed),
-      damage: new DamageResolver(this.world, this.events),
-      ships,
-      hullPlacement: new HullPlacement(this.arena),
-      stepSeconds: this.config.match.stepSeconds,
-    };
+    this.context = createSimulationContext(this.arena, this.config, options.seed);
+    this.world = this.context.world;
+    this.events = this.context.events;
+    const { ships } = this.context;
     this.spawnSystem = new SpawnSystem(this.config);
     this.systems = [
       new EnemyAiSystem(this.config),
@@ -98,6 +86,7 @@ export class MatchSession {
     this.player = playerStart
       ? ships.createPlayer(new Vector2(playerStart.x, playerStart.y), playerStart.heading)
       : ships.createPlayer(this.arena.playerStart, this.arena.definition.playerStartHeading);
+    this.helm = new PlayerHelm(this.player, this.config.match.stepSeconds);
     this.statistics = new MatchStatistics(this.player.id);
     for (const enemy of options.setup?.enemies ?? []) {
       const position = new Vector2(enemy.x, enemy.y);
@@ -174,7 +163,7 @@ export class MatchSession {
     if (this.currentStatus !== 'running') return;
     this.currentStep++;
     const firstEventOfStep = this.events.size;
-    this.applyPlayerCommands(commands);
+    this.helm.apply(commands);
     for (const system of this.systems) system.update(this.context, this.currentStep);
     this.scoreKeeper.collect(this.events, firstEventOfStep);
     this.statistics.collect(this.events, firstEventOfStep);
@@ -190,6 +179,7 @@ export class MatchSession {
   }
 
   snapshot(): MatchSnapshot {
+    const { playerVolleys } = this.statistics.snapshot();
     return {
       status: this.currentStatus,
       pauseReason: this.currentPauseReason,
@@ -200,7 +190,9 @@ export class MatchSession {
       durationSeconds: this.config.match.durationSeconds,
       enemiesAlive: this.world.livingEnemies().length,
       endReason: this.matchResult?.endReason ?? null,
-      ...this.volleyCounts(),
+      frontVolleys: playerVolleys.front,
+      leftVolleys: playerVolleys.left,
+      rightVolleys: playerVolleys.right,
     };
   }
 
@@ -212,33 +204,6 @@ export class MatchSession {
       damageDealt: statistics.damageDealtByPlayer,
       damageTaken: statistics.damageTakenByPlayer,
     };
-  }
-
-  private volleyCounts(): Pick<MatchSnapshot, 'frontVolleys' | 'leftVolleys' | 'rightVolleys'> {
-    const { playerVolleys } = this.statistics.snapshot();
-    return { frontVolleys: playerVolleys.front, leftVolleys: playerVolleys.left, rightVolleys: playerVolleys.right };
-  }
-
-  private applyPlayerCommands(commands: PlayerCommands): void {
-    if (!this.player.isAlive) return;
-    const { steering } = commands;
-    const usesKeys = commands.isSailingForward || commands.turnDirection !== 0;
-    if (steering && !usesKeys) {
-      const headingError = angleDifference(this.player.heading, steering.heading);
-      this.player.setControls(
-        steering.throttle,
-        turnInputFor(this.player, headingError, this.config.match.stepSeconds),
-      );
-    } else {
-      this.player.setControls(commands.isSailingForward ? 1 : 0, commands.turnDirection);
-    }
-    const triggers = {
-      front: commands.isFiringFront,
-      left: commands.isFiringLeft,
-      right: commands.isFiringRight,
-      cannon: false,
-    };
-    for (const weapon of this.player.weapons) weapon.isTriggerHeld = triggers[weapon.slot];
   }
 
   private end(endReason: MatchEndReason): void {

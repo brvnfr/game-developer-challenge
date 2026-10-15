@@ -12,7 +12,3 @@ export function wrapAngle(angle: number): number {
 export function angleDifference(fromAngle: number, toAngle: number): number {
   return wrapAngle(toAngle - fromAngle);
 }
-
-export function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value));
-}

@@ -1,4 +1,5 @@
 import type { DifficultyKeyframe } from '@/game/config/types';
+import { clamp } from '@/game/core/math/numbers';
 
 export interface DifficultyLevel {
   readonly enemiesPerWave: number;
@@ -28,12 +29,12 @@ export class DifficultyCurve {
   levelAt(elapsedSeconds: number): DifficultyLevel {
     const [before, after] = this.surroundingKeyframes(elapsedSeconds);
     const span = after.atSeconds - before.atSeconds;
-    const progress = span > 0 ? Math.min(1, Math.max(0, (elapsedSeconds - before.atSeconds) / span)) : 0;
+    const progress = span > 0 ? clamp((elapsedSeconds - before.atSeconds) / span, 0, 1) : 0;
     const interpolate = (from: number, to: number) => from + (to - from) * progress;
     return {
       enemiesPerWave: Math.max(1, Math.floor(interpolate(before.enemiesPerWave, after.enemiesPerWave))),
       maxEnemiesAlive: Math.max(1, Math.floor(interpolate(before.maxEnemiesAlive, after.maxEnemiesAlive))),
-      shooterProbability: Math.min(1, Math.max(0, interpolate(before.shooterProbability, after.shooterProbability))),
+      shooterProbability: clamp(interpolate(before.shooterProbability, after.shooterProbability), 0, 1),
       enemySpeedMultiplier: interpolate(before.enemySpeedMultiplier, after.enemySpeedMultiplier),
       shooterCooldownMultiplier: interpolate(before.shooterCooldownMultiplier, after.shooterCooldownMultiplier),
     };

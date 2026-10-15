@@ -17,18 +17,15 @@ export interface ArenaDefinition {
   readonly playerStartHeading: number;
 }
 
-export const WATER_TILE = '.';
-export const GRASS_ISLAND_TILE = '#';
-export const SAND_ISLAND_TILE = 's';
-export const ROCK_TILE = 'r';
-
 export type TerrainKind = 'water' | 'grassIsland' | 'sandIsland' | 'rock';
+/** The two kinds of island; the simulation treats them alike, the renderer draws each with its own art. */
+export type IslandKind = Extract<TerrainKind, 'grassIsland' | 'sandIsland'>;
 
 const TERRAIN_BY_CHARACTER: Readonly<Record<string, TerrainKind>> = {
-  [WATER_TILE]: 'water',
-  [GRASS_ISLAND_TILE]: 'grassIsland',
-  [SAND_ISLAND_TILE]: 'sandIsland',
-  [ROCK_TILE]: 'rock',
+  '.': 'water',
+  '#': 'grassIsland',
+  s: 'sandIsland',
+  r: 'rock',
 };
 
 /** Terrain of a tile character, or null when the character is not part of the format. */
@@ -37,7 +34,7 @@ export function terrainKindOf(character: string): TerrainKind | null {
 }
 
 /** Islands (grass or sand): merged into rectangular colliders that fill their tiles. */
-export function isLand(kind: TerrainKind): boolean {
+export function isLand(kind: TerrainKind): kind is IslandKind {
   return kind === 'grassIsland' || kind === 'sandIsland';
 }
 

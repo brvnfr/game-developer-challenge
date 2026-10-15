@@ -1,4 +1,5 @@
 import { circleBoxSeparation, circleOverlapsBox, segmentBoxEntry, type BoundingBox } from '@/game/core/math/geometry';
+import { clamp } from '@/game/core/math/numbers';
 import { Vector2 } from '@/game/core/math/Vector2';
 import { isLand, isObstacle, terrainKindOf, type ArenaDefinition, type TerrainKind } from './ArenaDefinition';
 import { buildIslandColliders } from './islandColliders';
@@ -93,8 +94,8 @@ export class Arena {
       if (!moved) break;
     }
     const clamped = new Vector2(
-      Math.min(Math.max(position.x, radius), this.width - radius),
-      Math.min(Math.max(position.y, radius), this.height - radius),
+      clamp(position.x, radius, this.width - radius),
+      clamp(position.y, radius, this.height - radius),
     );
     return { position: clamped, touchedIsland, touchedBounds: !clamped.equals(position) };
   }

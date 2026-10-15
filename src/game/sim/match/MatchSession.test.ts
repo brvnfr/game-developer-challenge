@@ -92,7 +92,7 @@ describe('MatchSession lifecycle', () => {
     });
     session.start();
     session.player.takeDamage(session.player.maxHealth - 5);
-    session.simulationContext.ships.createChaser(session.player.position.add(new Vector2(30, 0)), Math.PI);
+    session.simulationContext.ships.createEnemy('chaser', session.player.position.add(new Vector2(30, 0)), Math.PI);
     session.step();
     expect(session.status).toBe('ended');
     expect(session.result?.endReason).toBe('playerDestroyed');
@@ -156,7 +156,8 @@ describe('MatchSession lifecycle', () => {
       seed: 1,
     });
     session.start();
-    const target = session.simulationContext.ships.createShooter(
+    const target = session.simulationContext.ships.createEnemy(
+      'shooter',
       session.player.position.add(new Vector2(150, 0)),
       Math.PI,
     );
