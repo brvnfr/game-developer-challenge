@@ -113,8 +113,7 @@ pushed. Letting go lets the ship glide to a stop. The fire buttons show a reload
 
 **Handling and aiming.** The ship has momentum: the rudder swings to full turn in a fifth of a second, the hull
 drifts a little after a turn, and it glides for about a second after you stop sailing. Cannonballs carry the
-ship's speed. The three arcs around the hull fill up as the bow chaser and each broadside reload (gold when
-loaded). Lanes showing where each cannon fires can be switched on in [Developer tools](#developer-tools).
+ship's speed. Each cannon button of the HUD shows a sweep while that cannon reloads. Lanes showing where each cannon fires can be switched on in [Developer tools](#developer-tools).
 
 **Reading the battle.** Damage numbers pop above a ship when it is hit (red for you, gold for enemies). Ships
 show their condition: a damaged hull with flames and thin smoke below two thirds of their health, a thick plume
@@ -204,7 +203,7 @@ in the bottom-left corner of the main menu (keyboard: Tab to it; touch: tap it).
 | Hitboxes          | The shapes the rules collide: island rectangles, the three hull circles of each ship, cannonballs |
 | Network scenarios | How the mock ranking/history server behaves (below)                                               |
 
-Both overlays are off by default; the reload arcs around the player's ship are part of the HUD and always shown.
+Both overlays are off by default; reloading is always shown on the HUD's cannon buttons.
 **Turn overlays off** resets both. The choices are stored in `pirate-battle.dev-tools.v2`.
 
 ## Network scenarios

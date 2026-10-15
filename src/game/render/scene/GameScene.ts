@@ -16,7 +16,7 @@ import { EFFECT_FRAMES, SHIP_SPRITE_ROTATION_OFFSET, shipFrameFor, WRECK_STAGE }
 import type { ViewportLayout } from '../Viewport';
 import { DamageFeedback } from './DamageFeedback';
 import { HitboxOverlayView } from './HitboxOverlayView';
-import { PlayerGunneryView } from './PlayerGunneryView';
+import { AimGuideView } from './AimGuideView';
 import { ProjectileViews } from './ProjectileViews';
 import { ShipView } from './ShipView';
 import { TerrainView } from './terrain/TerrainView';
@@ -52,7 +52,7 @@ export interface SceneStatistics {
 /**
  * PixiJS presentation of a match. Reads the simulation (never writes to it), keeps one view per entity,
  * and turns domain events into effects. Layers, bottom to top: terrain, wakes, aim lanes (developer overlay),
- * ships, smoke, projectiles, effects, health bars and reload arcs, damage numbers, hitboxes (developer overlay),
+ * ships, smoke, projectiles, effects, health bars, damage numbers, hitboxes (developer overlay),
  * damage flash.
  */
 export class GameScene {
@@ -61,7 +61,7 @@ export class GameScene {
   private readonly wakes = new PuffLayer(WAKE_STYLE);
   private readonly smoke = new PuffLayer(SMOKE_STYLE);
   private readonly aimGuideLayer = new Container({ label: 'aim-guide' });
-  private gunnery: PlayerGunneryView;
+  private aimGuide: AimGuideView;
   private readonly hitboxes: HitboxOverlayView | null;
   private readonly shipLayer = new Container({ label: 'ships' });
   private readonly overlayLayer = new Container({ label: 'health-bars' });
@@ -83,7 +83,7 @@ export class GameScene {
     this.terrain = new TerrainView(session.arena, textures, { isAnimated: !prefersReducedMotion });
     this.projectiles = new ProjectileViews(textures);
     this.damageFeedback = new DamageFeedback(session.arena.width, session.arena.height, prefersReducedMotion);
-    this.gunnery = this.createGunnery();
+    this.aimGuide = this.createAimGuide();
     this.aimGuideLayer.visible = overlays.aimLanes;
     this.hitboxes = overlays.hitboxes ? new HitboxOverlayView(session.arena) : null;
     this.root.addChild(
@@ -136,8 +136,8 @@ export class GameScene {
     this.floatingText.clear();
     this.wakes.clear();
     this.smoke.clear();
-    this.gunnery.destroy();
-    this.gunnery = this.createGunnery();
+    this.aimGuide.destroy();
+    this.aimGuide = this.createAimGuide();
     this.damageFeedback.reset();
   }
 
@@ -162,7 +162,7 @@ export class GameScene {
     this.wakes.update(deltaSeconds);
     this.smoke.update(deltaSeconds);
     this.syncShips(interpolation, deltaSeconds);
-    this.gunnery.update(interpolation);
+    this.aimGuide.update(interpolation);
     this.hitboxes?.update(this.session.world);
     this.projectiles.sync(this.session.world.projectiles, interpolation);
     this.effects.update(deltaSeconds);
@@ -180,7 +180,7 @@ export class GameScene {
     this.projectiles.destroy();
     this.effects.destroy();
     this.floatingText.destroy();
-    this.gunnery.destroy();
+    this.aimGuide.destroy();
     this.hitboxes?.destroy();
     this.wakes.destroy();
     this.smoke.destroy();
@@ -215,12 +215,11 @@ export class GameScene {
     return view;
   }
 
-  /** Aim guide and reload arcs of the current match's player. */
-  private createGunnery(): PlayerGunneryView {
-    const gunnery = new PlayerGunneryView(this.session.player);
-    this.aimGuideLayer.addChild(gunnery.guide);
-    this.overlayLayer.addChild(gunnery.reloadIndicator);
-    return gunnery;
+  /** Aim lanes of the current match's player (shown only when switched on in Developer tools). */
+  private createAimGuide(): AimGuideView {
+    const aimGuide = new AimGuideView(this.session.player);
+    this.aimGuideLayer.addChild(aimGuide.guide);
+    return aimGuide;
   }
 
   private handleEvent(event: GameEvent): void {

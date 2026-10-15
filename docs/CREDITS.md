@@ -29,7 +29,7 @@ provided `assets/logo_jungle_gaming.svg`, shown unchanged and linking to jungleg
 - `src/ui/icons/sound-on.svg`, `src/ui/icons/sound-off.svg`, `src/ui/icons/gear.svg` — drawn for this project in the colours of the
   provided UI; same license as the source code.
 - The wake and smoke puff texture is generated at runtime (a soft white disc drawn on a canvas, tinted per
-  layer); the aim lanes, reload arcs and projectile streaks are drawn with PixiJS graphics and sprites. No external art was added.
+  layer); the aim lanes and projectile streaks are drawn with PixiJS graphics and sprites. No external art was added.
 - The boot splash's ship's wheel (inline SVG in `index.html`) and the "turn your phone" phone illustration.
 - All source code, tests, fixtures and documentation in this repository.
 
