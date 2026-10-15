@@ -89,22 +89,34 @@ run the reference check with `npm run test:e2e:docker`. Three consecutive runs p
 
 ## Controls
 
-| Action                      | Keyboard          | Touch                             |
-| --------------------------- | ----------------- | --------------------------------- |
-| Sail forward                | `W` / `↑`         | Up arrow button (left group)      |
-| Turn left / right           | `A` `D` / `←` `→` | Curved arrow buttons (left group) |
-| Fire front cannon           | `Space`           | Centre button (right group)       |
-| Fire left / right broadside | `Q` / `E`         | Side buttons (right group)        |
-| Pause / resume              | `P` / `Esc`       | Pause button (top right)          |
+| Action                      | Keyboard          | Touch                       |
+| --------------------------- | ----------------- | --------------------------- |
+| Sail forward                | `W` / `↑`         | Helm joystick (bottom left) |
+| Turn left / right           | `A` `D` / `←` `→` | Helm joystick (bottom left) |
+| Fire front cannon           | `Space`           | Centre button (right group) |
+| Fire left / right broadside | `Q` / `E`         | Side buttons (right group)  |
+| Pause / resume              | `P` / `Esc`       | Pause button (top right)    |
 
 Sailing and firing can be combined. Game keys are only captured while a match is on screen. The match pauses
 automatically when the window loses focus or the tab is hidden; resuming always needs a player action.
 
-**Handling and aiming.** The ship has momentum: the rudder takes a moment to swing and to straighten, the hull
-drifts a little after a turn, and it glides for about a second and a half after you stop sailing. Cannonballs
-carry the ship's speed. Dashed lanes around your ship show where each cannon fires and how far (bright when
-loaded, faint while reloading), and the three arcs around the hull fill up as the bow chaser and each broadside
-reload. The sea, shallows and wakes are animated; they stay still when the system asks for reduced motion.
+**Helm joystick (touch).** Drag the helm in the direction you want to sail: the ship turns towards that
+heading (braking its turn before it gets there) and sails with a throttle that follows how far the knob is
+pushed. Letting go lets the ship glide to a stop. The fire buttons show a reload sweep after each shot.
+
+**Handling and aiming.** The ship has momentum: the rudder swings to full turn in a fifth of a second, the hull
+drifts a little after a turn, and it glides for about a second after you stop sailing. Cannonballs carry the
+ship's speed. The three arcs around the hull fill up as the bow chaser and each broadside reload (gold when
+loaded). Lanes showing where each cannon fires can be switched on in [Developer tools](#developer-tools).
+
+**Reading the battle.** Damage numbers pop above a ship when it is hit (red for you, gold for enemies). Ships
+show their condition: a damaged hull with flames and thin smoke below two thirds of their health, a thick plume
+below one third. The sea and the shallows stop moving (and the screen stops shaking on hits)
+when the system asks for reduced motion. The result screen adds battle highlights: shots fired, hit rate, damage dealt and taken.
+
+**The archipelago.** Seven hand-placed islands — Fort Island, Palm Island, Ruins Island, Jungle Island, Turtle
+Island and two sandbars (one with a wreck on its reef) — plus single reef rocks. Channels between islands are
+at least three tiles wide, and rocks block ships and shots like islands do.
 
 **Mobile orientation:** matches are played in **landscape**. On touch devices held in portrait the match pauses
 behind a "Rotate your device" notice; after rotating back, the pause dialog asks the player to resume. Menus
@@ -164,9 +176,23 @@ captains fill the ranking for four configurations.
 | `GET /api/players/:playerId/matches`       | The player's history page                       |
 | `PUT /api/matches/:matchId`                | 201 created · 200 already stored · 409 conflict |
 
+## Developer tools
+
+Testing aids are kept out of the players' way in a **Developer tools** dialog, opened from the small gear button
+in the bottom-left corner of the main menu (keyboard: Tab to it; touch: tap it). It contains:
+
+| Tool              | What it does                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| Aim lanes         | Dashed lanes showing where the bow chaser and each broadside fire and how far (next match on)     |
+| Hitboxes          | The shapes the rules collide: island rectangles, the three hull circles of each ship, cannonballs |
+| Network scenarios | How the mock ranking/history server behaves (below)                                               |
+
+Both overlays are off by default; the reload arcs around the player's ship are part of the HUD and always shown.
+**Turn overlays off** resets both. The choices are stored in `pirate-battle.dev-tools.v2`.
+
 ## Network scenarios
 
-Open **Network scenarios** at the bottom of the main menu to choose how the mock server behaves, with a
+Open **Developer tools (gear button) › Network scenarios** on the main menu to choose how the mock server behaves, with a
 **seed** (reproducible delays) and a **base latency**. **Reset mock server** restores the initial state: only
 the fixtures and the _Success_ scenario. The choice is stored (`pirate-battle.network.v1`) and survives a
 refresh. Scenarios can also be chosen through the URL, e.g. `/?scenario=slow&networkSeed=3&latency=0`.
