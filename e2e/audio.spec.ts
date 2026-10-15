@@ -4,7 +4,7 @@ import { GamePage } from './support/GamePage';
 
 const playedSounds = (page: Page) => page.evaluate(() => window.__PIRATE_BATTLE__?.audio().played ?? []);
 
-test.describe('sound (T-039)', () => {
+test.describe('sound', () => {
   test('sounds follow the game, stop when muted, and the choice is remembered', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ setup: 'open-water', seed: 1, spawnSeconds: 10 });

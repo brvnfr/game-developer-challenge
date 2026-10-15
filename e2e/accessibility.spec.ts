@@ -11,7 +11,7 @@ async function expectNoViolations(page: Page): Promise<void> {
   expect(results.violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([]);
 }
 
-test.describe('accessibility audit (T-046)', () => {
+test.describe('accessibility audit', () => {
   test('menu, name dialog and options have no WCAG A/AA violations', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ captainName: null });

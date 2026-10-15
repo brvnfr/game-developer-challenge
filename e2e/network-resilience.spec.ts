@@ -3,7 +3,7 @@ import { GamePage } from './support/GamePage';
 
 const FAILED_REQUESTS = { patterns: [/Failed to load resource/] };
 
-test.describe('timeouts and late answers (E2E-12)', () => {
+test.describe('timeouts and late answers', () => {
   test('a save that timed out after being stored is recovered without a duplicate', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({

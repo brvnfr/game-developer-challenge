@@ -4,7 +4,7 @@ import { GamePage } from './support/GamePage';
 /** Failure scenarios make the browser log the failed requests; that is expected here. */
 const FAILED_REQUESTS = { patterns: [/Failed to load resource/] };
 
-test.describe("Captain's Log: queries and pagination (E2E-10)", () => {
+test.describe("Captain's Log: queries and pagination", () => {
   test('shows the loading state, then the ranking of the current settings, best first', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ scenario: 'slow' });

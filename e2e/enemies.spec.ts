@@ -4,7 +4,7 @@ import { GamePage } from './support/GamePage';
 const distance = (first: { x: number; y: number }, second: { x: number; y: number }) =>
   Math.hypot(first.x - second.x, first.y - second.y);
 
-test.describe('enemies and spawning (E2E-05)', () => {
+test.describe('enemies and spawning', () => {
   test('a Chaser closes in, rams the player, explodes and does not score', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ setup: 'chaser-ahead', seed: 1, spawnSeconds: 10 });

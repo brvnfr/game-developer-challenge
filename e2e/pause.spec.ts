@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/test';
 import { GamePage } from './support/GamePage';
 
-test.describe('pause (E2E-07)', () => {
+test.describe('pause', () => {
   test('pauses manually, freezes the clock and resumes on request', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ seed: 2, spawnSeconds: 10 });

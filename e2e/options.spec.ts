@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/test';
 import { GamePage } from './support/GamePage';
 
-test.describe('options (E2E-01)', () => {
+test.describe('options', () => {
   test('values are validated, saved, kept after a refresh and used by the next match', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ seed: 3 }); // no session/spawn in the URL: the match uses the saved options
@@ -72,7 +72,7 @@ test.describe('options (E2E-01)', () => {
   });
 });
 
-test.describe('captain name (E2E-01)', () => {
+test.describe('captain name', () => {
   test('the first Play asks for a name; it is kept and editable in Options', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ seed: 3, captainName: null });

@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/test';
 import { GamePage } from './support/GamePage';
 
-test.describe('asset loading (E2E-02)', () => {
+test.describe('asset loading', () => {
   test.use({ allowConsoleErrors: { patterns: [/Failed to load resource/, /net::ERR_FAILED/, /\[Assets\]/] } });
   // page.route() does not see requests that pass through a service worker, and the mock API runs in one.
   // These tests do not use the API, so service workers are blocked and the app runs without mocks.

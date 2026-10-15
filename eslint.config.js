@@ -14,12 +14,12 @@ export default tseslint.config(
       'test-results',
       'public/mockServiceWorker.js',
       'node_modules',
-      '.sync',
       'docs/reports',
     ],
   },
   {
-    files: ['**/*.{ts,tsx}'],
+    // The project's own code; anything else in the folder (local tooling, scratch files) is left alone.
+    files: ['src/**/*.{ts,tsx}', 'e2e/**/*.ts', 'scripts/**/*.ts', '*.ts'],
     extends: [js.configs.recommended, ...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       ecmaVersion: 2023,
@@ -62,7 +62,7 @@ export default tseslint.config(
     rules: { 'no-console': 'off' },
   },
   {
-    files: ['**/*.js'],
+    files: ['*.js'],
     extends: [tseslint.configs.disableTypeChecked],
   },
 );

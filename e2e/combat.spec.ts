@@ -5,7 +5,7 @@ import { GamePage } from './support/GamePage';
 const angleBetween = (first: number, second: number) =>
   Math.abs(Math.atan2(Math.sin(first - second), Math.cos(first - second)));
 
-test.describe('player weapons, damage and score (E2E-04)', () => {
+test.describe('player weapons, damage and score', () => {
   test('the front cannon fires one cannonball straight ahead', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ setup: 'open-water', seed: 1, spawnSeconds: 10 });

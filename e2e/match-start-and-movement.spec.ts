@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/test';
 import { GamePage } from './support/GamePage';
 
-test.describe('match start and movement (E2E-03)', () => {
+test.describe('match start and movement', () => {
   test('starts a single match with a full HUD and a running clock', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ seed: 1, spawnSeconds: 10 });
@@ -77,7 +77,7 @@ test.describe('match start and movement (E2E-03)', () => {
   });
 });
 
-test.describe('viewport (T-035)', () => {
+test.describe('viewport', () => {
   test('fits the canvas to the window on resize without changing the match', async ({ page, isMobile }) => {
     test.skip(isMobile, 'Resizing is exercised on the desktop project');
     const game = new GamePage(page);

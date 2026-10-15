@@ -15,7 +15,7 @@ async function storedResultId(game: GamePage): Promise<string | null> {
   }, STORAGE_KEYS.lastResult);
 }
 
-test.describe('result persistence (E2E-08)', () => {
+test.describe('result persistence', () => {
   test('the result screen survives a refresh and the last battle shows on the menu', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ seed: 3, sessionSeconds: 180, spawnSeconds: 10 });

@@ -3,7 +3,7 @@ import { GamePage } from './support/GamePage';
 
 const FAILED_REQUESTS = { patterns: [/Failed to load resource/] };
 
-test.describe('match registration (E2E-11)', () => {
+test.describe('match registration', () => {
   test('a completed match is saved once and appears in Match History and the ranking', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ seed: 3, sessionSeconds: 60, spawnSeconds: 10, captainName: 'Anne Bonny' });

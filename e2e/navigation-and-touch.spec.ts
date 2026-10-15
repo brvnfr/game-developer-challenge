@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures/test';
 import { GamePage } from './support/GamePage';
 
-test.describe('navigation and lifecycle (E2E-09)', () => {
+test.describe('navigation and lifecycle', () => {
   test('repeatedly entering and leaving matches never leaks runtimes or canvases', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ seed: 3, spawnSeconds: 10 });
@@ -34,7 +34,7 @@ test.describe('navigation and lifecycle (E2E-09)', () => {
   });
 });
 
-test.describe('touch controls (E2E-09)', () => {
+test.describe('touch controls', () => {
   test('the helm joystick steers and sails while a cannon button fires', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'Touch input runs on the mobile project');
     const game = new GamePage(page);
@@ -78,7 +78,7 @@ test.describe('touch controls (E2E-09)', () => {
   });
 });
 
-test.describe('mobile orientation (E2E-09)', () => {
+test.describe('mobile orientation', () => {
   test('portrait pauses the match behind a "turn your phone" notice; landscape needs an explicit resume', async ({
     page,
     isMobile,
@@ -127,7 +127,7 @@ test.describe('mobile orientation (E2E-09)', () => {
   });
 });
 
-test.describe('on-screen controls with a keyboard (E2E-09)', () => {
+test.describe('on-screen controls with a keyboard', () => {
   test('each control lights up while its key is held, and the mouse can use them too', async ({ page, isMobile }) => {
     test.skip(isMobile, 'Keyboard controls run on the desktop project');
     const game = new GamePage(page);
@@ -162,7 +162,7 @@ test.describe('on-screen controls with a keyboard (E2E-09)', () => {
   });
 });
 
-test.describe('main menu on small screens (E2E-09)', () => {
+test.describe('main menu on small screens', () => {
   test('the instructions sit beside the menu on large screens and open in a dialog on small ones', async ({
     page,
     isMobile,

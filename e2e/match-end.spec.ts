@@ -8,7 +8,7 @@ import { GamePage } from './support/GamePage';
  */
 const FIGHTING_KEYS = ['KeyW', 'KeyA', 'Space', 'KeyQ', 'KeyE'] as const;
 
-test.describe('end of the match and restart (E2E-06)', () => {
+test.describe('end of the match and restart', () => {
   test('time running out ends the match, freezes the simulation and shows the result', async ({ page }) => {
     const game = new GamePage(page);
     await game.open({ seed: 11, sessionSeconds: 60, spawnSeconds: 10 });
