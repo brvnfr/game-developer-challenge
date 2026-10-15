@@ -33,7 +33,11 @@ async function bootstrap(container: HTMLElement): Promise<void> {
   trackFocusModality(document.documentElement, window);
   const audio = new AudioEngine({ baseUrl: import.meta.env.BASE_URL, storage: browserLocalStorage() });
   audio.attachUnlockListeners(window);
-  if (readTestMode().isEnabled) installTestHarness(audio);
+  const testMode = readTestMode();
+  if (testMode.isEnabled) installTestHarness(audio);
+  // With the test clock frozen (manual time), the menus' decorative animations hold still as well: tests stay
+  // deterministic, and a CPU-rendered browser is not kept busy compositing a moving sea behind every step.
+  if (testMode.manualTime) document.documentElement.setAttribute('data-motion', 'still');
   const apiConfig = readApiConfig();
   const mockServer: MockServer | null = apiConfig.areMocksEnabled
     ? await startMockApi(apiConfig.apiPath, apiConfig.scenarioOverrides)

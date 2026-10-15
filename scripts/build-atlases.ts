@@ -26,6 +26,7 @@ import { PNG } from 'pngjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sourcePath = (...segments: string[]) => join(root, 'assets', ...segments);
 const outputDirectory = join(root, 'public', 'assets', 'game');
+const menuOutputDirectory = join(root, 'public', 'assets', 'menu');
 const generatedTypesFile = join(root, 'src', 'game', 'render', 'assets', 'atlasFrames.generated.ts');
 
 interface Rect {
@@ -156,6 +157,22 @@ function buildTerrainAtlas(file: string, name: string, tileSize: number, scale: 
   return writeAtlas(name, `${name}.png`, imageFile, frames, scale);
 }
 
+/**
+ * The same island blocks as standalone images for the menus' sea backdrop, which draws them as CSS nine-slices
+ * (`border-image` needs a whole image, not an atlas frame).
+ */
+function writeMenuBlocks(file: string, tileSize: number): string[] {
+  const sheet = PNG.sync.read(readFileSync(sourcePath('tilesheet', file)));
+  mkdirSync(menuOutputDirectory, { recursive: true });
+  return TERRAIN_BLOCKS.map((block) => {
+    const blockSize = block.size * tileSize;
+    const image = new PNG({ width: blockSize, height: blockSize });
+    PNG.bitblt(sheet, image, block.column * tileSize, block.row * tileSize, blockSize, blockSize, 0, 0);
+    writeFileSync(join(menuOutputDirectory, `${block.name}.png`), PNG.sync.write(image));
+    return block.name;
+  });
+}
+
 function buildUiAtlas(file: string, name: string, scale: number): string[] {
   const json = JSON.parse(readFileSync(sourcePath('spritesheet', file), 'utf8')) as {
     frames: Record<string, PixiFrame & { ui?: unknown }>;
@@ -182,6 +199,7 @@ const tileFrames = buildTilesAtlas('tiles_sheet.png', 'tiles@1x', 64, 1);
 const retinaTileFrames = buildTilesAtlas('tiles_sheet_retina.png', 'tiles@2x', 128, 2);
 const terrainFrames = buildTerrainAtlas('tiles_sheet.png', 'terrain@1x', 64, 1);
 const retinaTerrainFrames = buildTerrainAtlas('tiles_sheet_retina.png', 'terrain@2x', 128, 2);
+const menuBlocks = writeMenuBlocks('tiles_sheet_retina.png', 128);
 const uiFrames = buildUiAtlas('ui_sheet.json', 'ui@1x', 1);
 const retinaUiFrames = buildUiAtlas('ui_sheet_retina.json', 'ui@2x', 2);
 if (
@@ -207,5 +225,5 @@ writeFileSync(
   ].join('\n'),
 );
 console.info(
-  `Atlases written: ships(${shipFrames.length}) tiles(${tileFrames.length}) terrain(${terrainFrames.length}) ui(${uiFrames.length})`,
+  `Atlases written: ships(${shipFrames.length}) tiles(${tileFrames.length}) terrain(${terrainFrames.length}) ui(${uiFrames.length}); menu blocks: ${menuBlocks.join(', ')}`,
 );

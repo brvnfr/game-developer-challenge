@@ -59,10 +59,37 @@ body,
 }
 
 .menu-screen {
-  background:
-    linear-gradient(rgb(10 30 45 / 35%), rgb(10 30 45 / 35%)),
-    url('@assets/ui_scene_background.png') center / cover no-repeat,
-    var(--color-sea-deep);
+  position: relative;
+  background: var(--color-sea-deep);
+}
+
+/* Panels paint above the sea backdrop (src/ui/backdrop) by document order. No z-index here: a stacking context
+   on a panel would trap its dialogs (z-index 50) below the panels that follow it. */
+.menu-screen > :not(.sea-backdrop, .brand-mark) {
+  position: relative;
+}
+
+.brand-mark {
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 5;
+  display: block;
+  width: clamp(84px, 9vw, 120px);
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 1px 3px rgb(0 0 0 / 55%));
+}
+
+.brand-mark:hover,
+.brand-mark:focus-visible {
+  opacity: 1;
 }
 
 .panel {

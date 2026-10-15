@@ -1,0 +1,299 @@
+/*
+ * Menu backdrop. The stage is a 16:10 box (10:16 on portrait screens) that covers the screen; everything inside
+ * is placed in container units of the stage (cqw/cqh) and sized in tiles of --tile (a share of the stage's
+ * longer side), so the islands stay in the corners and keep their size on phones and wide monitors alike.
+ */
+.sea-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #0d4466;
+  /* Its own layer, painted once: changes in the panels above never repaint the scene. */
+  contain: strict;
+  will-change: transform;
+}
+
+.sea-backdrop__stage {
+  --tile: 3.6cqmax;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100vw, 160vh);
+  height: max(100vh, 62.5vw);
+  transform: translate(-50%, -50%);
+  container-type: size;
+}
+
+@media (orientation: portrait) {
+  .sea-backdrop__stage {
+    width: max(100vw, 62.5vh);
+    height: max(100vh, 160vw);
+  }
+}
+
+/* The game's water tile, drifting diagonally; the loop moves exactly one tile, so it never jumps. */
+.sea-backdrop__sea {
+  position: absolute;
+  inset: -9cqmax;
+  background: var(--water) 0 0 / 9cqmax 9cqmax repeat;
+  animation: sea-backdrop-drift 40s linear infinite;
+  will-change: transform;
+}
+
+/* Deeper, darker water in the open sea, between the islands. */
+.sea-backdrop__depth {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 48cqw 34cqh at 50% 52%, rgb(6 46 82 / 42%), transparent 75%),
+    radial-gradient(ellipse 30cqw 22cqh at 30% 40%, rgb(6 46 82 / 22%), transparent 75%);
+}
+
+/* Soft bright patches that breathe slowly, like light on the swell. */
+.sea-backdrop__glints {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 20cqw 8cqh at 36% 24%, rgb(255 255 255 / 14%), transparent 70%),
+    radial-gradient(ellipse 18cqw 7cqh at 66% 70%, rgb(255 255 255 / 12%), transparent 70%),
+    radial-gradient(ellipse 14cqw 6cqh at 16% 58%, rgb(255 255 255 / 10%), transparent 70%);
+  animation: sea-backdrop-breathe 7s ease-in-out infinite alternate;
+}
+
+/* Islands: --columns × --rows tiles; the shallows reach one tile further, as in the arena. */
+.sea-backdrop__island {
+  position: absolute;
+  width: calc(var(--tile) * var(--columns));
+  height: calc(var(--tile) * var(--rows));
+}
+
+.sea-backdrop__shallows {
+  position: absolute;
+  inset: calc(var(--tile) * -0.9);
+  border: var(--tile) solid transparent;
+  border-image: var(--shallows) 128 fill / var(--tile) stretch;
+}
+
+.sea-backdrop__land {
+  position: absolute;
+  inset: 0;
+  border: var(--tile) solid transparent;
+}
+
+.sea-backdrop__island--grass .sea-backdrop__land {
+  border-image: var(--grass) 128 fill / var(--tile) stretch;
+}
+
+.sea-backdrop__island--sand .sea-backdrop__land {
+  border-image: var(--sand) 128 fill / var(--tile) stretch;
+}
+
+/* Corners of the scene, so the islands frame the menu panels instead of hiding behind them. */
+.sea-backdrop__island--fort {
+  top: 4cqh;
+  right: 3cqw;
+}
+
+.sea-backdrop__island--palms {
+  bottom: 6cqh;
+  left: 3cqw;
+}
+
+.sea-backdrop__island--wreck {
+  top: 9cqh;
+  left: 7cqw;
+}
+
+.sea-backdrop__island--islet {
+  right: 9cqw;
+  bottom: 11cqh;
+}
+
+/* Props: the game's palms, rocks, walls and wrecks, centred on a tile position of their island. */
+.sea-backdrop__prop {
+  position: absolute;
+  top: calc(var(--tile) * var(--row));
+  left: calc(var(--tile) * var(--column));
+  width: calc(var(--tile) * var(--scale));
+  aspect-ratio: 1;
+  background: center / contain no-repeat;
+  transform: translate(-50%, -50%) rotate(var(--turn));
+}
+
+/* Ships: the hull sprite points down, so each ship is turned to its course; the wake trails behind it. */
+.sea-backdrop__ship {
+  position: absolute;
+  width: calc(var(--tile) * 0.95);
+  aspect-ratio: 66 / 113;
+  will-change: transform;
+}
+
+.sea-backdrop__hull {
+  position: absolute;
+  inset: 0;
+  background: center / contain no-repeat;
+}
+
+.sea-backdrop__wake {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 72%;
+  height: 240%;
+  border-radius: 50% 50% 40% 40%;
+  background: linear-gradient(to top, rgb(255 255 255 / 60%), rgb(255 255 255 / 0%));
+  filter: blur(0.3cqw);
+}
+
+/* The blue-sailed hero crosses the lower sea from west to east. */
+.sea-backdrop__ship--hero {
+  top: 74cqh;
+  left: 0;
+  transform: translate3d(58cqw, 0, 0) rotate(-90deg);
+  animation: sea-backdrop-hero 70s linear infinite;
+}
+
+.sea-backdrop__ship--hero .sea-backdrop__hull {
+  background-image: var(--ship-hero);
+}
+
+/* A red raider runs the other way across the top. */
+.sea-backdrop__ship--raider {
+  top: 6cqh;
+  left: 0;
+  transform: translate3d(46cqw, 0, 0) rotate(90deg);
+  animation: sea-backdrop-raider 90s linear infinite;
+}
+
+.sea-backdrop__ship--raider .sea-backdrop__hull {
+  background-image: var(--ship-raider);
+}
+
+/* A black-sailed ship rides at anchor off the islet, swinging gently. */
+.sea-backdrop__ship--anchored {
+  right: 20cqw;
+  bottom: 7cqh;
+  transform: rotate(-52deg);
+  animation: sea-backdrop-swing 6s ease-in-out infinite alternate;
+}
+
+.sea-backdrop__ship--anchored .sea-backdrop__hull {
+  background-image: var(--ship-anchored);
+}
+
+/* Shadows of passing clouds. */
+.sea-backdrop__cloud {
+  position: absolute;
+  left: -50cqw;
+  width: 46cqw;
+  height: 26cqw;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(4 24 40 / 24%), transparent);
+  transform: translate3d(70cqw, 0, 0);
+  will-change: transform;
+}
+
+.sea-backdrop__cloud--a {
+  top: -8cqh;
+  animation: sea-backdrop-cloud 70s linear infinite;
+}
+
+.sea-backdrop__cloud--b {
+  top: 50cqh;
+  transform: translate3d(20cqw, 0, 0);
+  animation: sea-backdrop-cloud 95s linear -40s infinite;
+}
+
+/* Warm late-afternoon light from the top left, and a vignette that keeps the panels readable. (Plain alpha
+   gradients: blend modes and filters over the whole screen are costly where the browser composites on the CPU.) */
+.sea-backdrop__light {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 18% 6%, rgb(255 214 140 / 16%), transparent 55%);
+}
+
+.sea-backdrop__vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 40%, rgb(3 18 32 / 58%) 100%),
+    linear-gradient(rgb(3 18 32 / 12%), rgb(3 18 32 / 12%));
+}
+
+@keyframes sea-backdrop-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-9cqmax, -9cqmax, 0);
+  }
+}
+
+@keyframes sea-backdrop-breathe {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sea-backdrop-hero {
+  from {
+    transform: translate3d(-6cqw, 0, 0) rotate(-90deg);
+  }
+
+  50% {
+    transform: translate3d(50cqw, 2cqh, 0) rotate(-94deg);
+  }
+
+  to {
+    transform: translate3d(106cqw, -1cqh, 0) rotate(-88deg);
+  }
+}
+
+@keyframes sea-backdrop-raider {
+  from {
+    transform: translate3d(106cqw, 0, 0) rotate(90deg);
+  }
+
+  to {
+    transform: translate3d(-6cqw, 3cqh, 0) rotate(92deg);
+  }
+}
+
+@keyframes sea-backdrop-swing {
+  from {
+    transform: rotate(-58deg);
+  }
+
+  to {
+    transform: rotate(-46deg);
+  }
+}
+
+@keyframes sea-backdrop-cloud {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(160cqw, 10cqh, 0);
+  }
+}
+
+/* Without motion every element rests in its base pose (also what screenshots of the menu show). */
+@media (prefers-reduced-motion: reduce) {
+  .sea-backdrop * {
+    animation: none !important;
+  }
+}
+
+/* Test mode with the clock frozen (src/main.tsx). */
+:root[data-motion='still'] .sea-backdrop * {
+  animation: none !important;
+}
