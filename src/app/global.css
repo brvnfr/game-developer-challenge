@@ -27,7 +27,13 @@ body,
   height: 100%;
 }
 
+/* The focus ring is for keyboard navigation (Tab, arrows in widgets): src/ui/focusModality.ts sets the flag.
+   Mouse, touch and game keys never show it, although focus still moves for screen readers. */
 :focus-visible {
+  outline: none;
+}
+
+:root[data-focus-ring='visible'] :focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
@@ -703,7 +709,7 @@ kbd {
   opacity: 1;
 }
 
-.developer-button:focus-visible {
+:root[data-focus-ring='visible'] .developer-button:focus-visible {
   outline: 3px solid var(--color-gold);
   outline-offset: 2px;
 }
@@ -741,7 +747,7 @@ kbd {
   accent-color: var(--color-gold);
 }
 
-.developer-dialog__toggle input:focus-visible {
+:root[data-focus-ring='visible'] .developer-dialog__toggle input:focus-visible {
   outline: 3px solid var(--color-gold);
   outline-offset: 2px;
 }

@@ -56,12 +56,19 @@ test.describe('accessibility audit (T-046)', () => {
   test('menus can be used with the keyboard alone, with a visible focus ring', async ({ page }) => {
     const game = new GamePage(page);
     await game.open();
-    await expect(page.getByRole('button', { name: 'Play' })).toBeFocused();
+    const playButton = page.getByRole('button', { name: 'Play' });
+    await expect(playButton).toBeFocused();
+    // Focus moved by the app (not by the player) shows no ring until the keyboard is used to navigate.
+    expect(await playButton.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('none');
     await page.keyboard.press('Tab');
     const optionsButton = page.getByRole('button', { name: 'Options' });
     await expect(optionsButton).toBeFocused();
     const outline = await optionsButton.evaluate((element) => getComputedStyle(element).outlineStyle);
     expect(outline).toBe('solid');
+    // A mouse press hides the ring again; the next Tab brings it back.
+    await page.mouse.click(5, 5);
+    await optionsButton.focus();
+    expect(await optionsButton.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('none');
     await page.keyboard.press('Enter');
     await expect(page.getByRole('textbox', { name: 'Game session time' })).toBeFocused();
   });

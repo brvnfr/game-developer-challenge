@@ -12,6 +12,7 @@ import { createRemoteServices } from '@/remote/RemoteServices';
 import { browserLocalStorage } from '@/storage/LocalStore';
 import { installTestHarness } from '@/testing/TestHarness';
 import { readTestMode } from '@/testing/testMode';
+import { trackFocusModality } from '@/ui/focusModality';
 import '@/app/global.css';
 
 /**
@@ -29,6 +30,7 @@ async function startMockApi(apiPath: string, scenarioOverrides: ReturnType<typeo
 }
 
 async function bootstrap(container: HTMLElement): Promise<void> {
+  trackFocusModality(document.documentElement, window);
   const audio = new AudioEngine({ baseUrl: import.meta.env.BASE_URL, storage: browserLocalStorage() });
   audio.attachUnlockListeners(window);
   if (readTestMode().isEnabled) installTestHarness(audio);
