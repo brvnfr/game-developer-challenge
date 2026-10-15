@@ -1,0 +1,99 @@
+/* Forms: labelled fields, the number stepper, hints, errors and the status line. */
+
+.form {
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+  width: 100%;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  width: 100%;
+}
+
+.field__label {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.field__input,
+.stepper__input {
+  min-height: 44px;
+  border: 2px solid rgb(242 179 61 / 55%);
+  border-radius: 8px;
+  background: var(--color-field);
+  color: var(--color-parchment);
+  font: 700 18px var(--font-body);
+  text-align: center;
+}
+
+.field__input {
+  width: min(280px, 100%);
+  padding: 6px 12px;
+}
+
+.field__input[aria-invalid='true'],
+.stepper__input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.field__hint {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.field__error {
+  margin: 0;
+  color: var(--color-error);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.stepper__controls {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.stepper__value {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font: 700 20px var(--font-body);
+}
+
+.stepper__input {
+  width: 88px;
+  padding: 6px 8px;
+}
+
+.form-status {
+  min-height: 1.4em;
+  margin: 0;
+  font-weight: 700;
+}
+
+.form-status--error {
+  color: var(--color-error);
+}
+
+.form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+@media (height <= 520px) {
+  .form {
+    gap: 10px;
+  }
+
+  .field__hint {
+    font-size: 12px;
+  }
+}

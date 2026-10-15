@@ -1,0 +1,63 @@
+/* Design tokens, resets and accessibility helpers shared by every screen. */
+
+:root {
+  color-scheme: dark;
+  --font-display: 'Lilita One', 'Trebuchet MS', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --color-sea-deep: #123a55;
+  --color-panel: #1b2a3a;
+  --color-parchment: #f8ecd2;
+  --color-gold: #f2b33d;
+  --color-focus: #ffd75e;
+  --color-error: #ffb4a8;
+  --color-field: rgb(6 18 30 / 55%);
+  font-family: var(--font-body);
+  background: var(--color-sea-deep);
+  color: var(--color-parchment);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+/* The focus ring is for keyboard navigation (Tab, arrows in widgets): src/ui/focusModality.ts sets the flag.
+   Mouse, touch and game keys never show it, although focus still moves for screen readers. */
+:focus-visible {
+  outline: none;
+}
+
+:root[data-focus-ring='visible'] :focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+kbd {
+  min-width: 26px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgb(248 236 210 / 60%);
+  font-family: var(--font-body);
+  font-size: 12px;
+  text-align: center;
+}

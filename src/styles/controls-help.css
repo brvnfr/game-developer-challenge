@@ -1,0 +1,83 @@
+/* Control instructions: beside the main menu, or in the Controls dialog on small screens. */
+
+.controls-help {
+  width: 100%;
+  text-align: left;
+}
+
+.controls-help__title {
+  margin: 8px 0 6px;
+  font-size: 16px;
+  color: var(--color-gold);
+}
+
+.controls-help__list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.controls-help__row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.controls-help__row dt {
+  display: flex;
+  gap: 4px;
+}
+
+.controls-help__row dd {
+  margin: 0;
+}
+
+.controls-help__touch {
+  margin: 8px 0 0;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* The Controls button opens the instructions in a dialog where the "How to play" panel does not fit beside
+   the menu (narrow or short screens). */
+.menu-panel__controls-button {
+  display: none;
+}
+
+@media (width <= 900px), (height <= 520px) {
+  .menu-panel__controls-button {
+    display: inline-block;
+  }
+}
+
+.controls-dialog {
+  text-align: left;
+}
+
+.controls-dialog > .small-button {
+  justify-self: center;
+}
+
+/* Short screens: the instructions in two columns, so the dialog fits with its title. */
+@media (height <= 520px) {
+  .dialog.controls-dialog {
+    width: min(720px, 96vw);
+    gap: 8px;
+  }
+
+  .controls-dialog .controls-help__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 24px;
+  }
+
+  .controls-dialog .controls-help__row {
+    grid-template-columns: 82px 1fr;
+    font-size: 14px;
+  }
+
+  .controls-dialog .controls-help__touch {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+}

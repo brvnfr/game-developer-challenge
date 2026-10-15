@@ -1,0 +1,134 @@
+/* Main menu: title, captain, actions, last battle, pending saves and the developer tools button. */
+
+.menu-panel__title {
+  margin: 0;
+}
+
+.menu-panel__title img {
+  width: min(360px, 70vw);
+}
+
+.menu-panel__tagline {
+  margin: 0;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.menu-panel__actions {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+.menu-panel__motto {
+  margin: 4px 0 0;
+  font-size: 15px;
+}
+
+.menu-panel__captain {
+  margin: 0;
+  font-size: 15px;
+}
+
+.menu-panel__captain strong {
+  color: var(--color-gold);
+}
+
+.last-battle {
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--color-field);
+  font-size: 14px;
+}
+
+.last-battle strong {
+  color: var(--color-gold);
+}
+
+.menu-panel__log-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.menu-panel__pending {
+  margin: 0;
+  color: var(--color-gold);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.developer-button {
+  position: fixed;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: max(10px, env(safe-area-inset-left));
+  z-index: 5;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  padding: 4px;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: rgb(10 26 40 / 45%);
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.developer-button img {
+  width: 100%;
+  height: 100%;
+}
+
+.developer-button:hover,
+.developer-button:focus-visible {
+  opacity: 1;
+}
+
+:root[data-focus-ring='visible'] .developer-button:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* Main menu on short screens (phones in landscape): smaller title and buttons, Play and Options side by
+   side, the motto left out, so the whole menu fits without scrolling. */
+@media (height <= 520px) {
+  .menu-panel__title img {
+    width: min(220px, 40vw);
+  }
+
+  .menu-panel__tagline {
+    font-size: 11px;
+  }
+
+  .menu-panel__captain {
+    font-size: 14px;
+  }
+
+  .menu-panel__actions {
+    grid-auto-flow: column;
+    gap: 12px;
+  }
+
+  .menu-panel .primary-button {
+    min-width: 160px;
+    min-height: 44px;
+    padding: 6px 22px;
+    font-size: 17px;
+  }
+
+  .menu-panel .small-button {
+    min-width: 0;
+    min-height: 36px;
+    padding: 6px 18px;
+    font-size: 13px;
+  }
+
+  .menu-panel__motto {
+    display: none;
+  }
+}

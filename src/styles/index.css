@@ -1,0 +1,13 @@
+/*
+ * Styles shared by the menus, dialogs and the game's HTML overlays. Components with styles of their own import
+ * them next to their code (hud.css, captains-log.css…). The order below is the cascade order.
+ */
+@import './base.css';
+@import './buttons.css';
+@import './layout.css';
+@import './controls-help.css';
+@import './main-menu.css';
+@import './forms.css';
+@import './dialogs.css';
+@import './result.css';
+@import './options.css';

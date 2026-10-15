@@ -15,7 +15,7 @@ import { installTestHarness } from '@/testing/TestHarness';
 import { readTestMode } from '@/testing/testMode';
 import { SEA_BACKDROP_IMAGES } from '@/ui/backdrop/seaBackdropArt';
 import { trackFocusModality } from '@/ui/focusModality';
-import '@/app/global.css';
+import '@/styles/index.css';
 
 /**
  * Starts the mock API (MSW) before the first render, so the first ranking request is already intercepted.

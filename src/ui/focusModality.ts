@@ -10,7 +10,7 @@ export type FocusRing = 'visible' | 'hidden';
  * Shows the focus ring only to people navigating with the keyboard. Focus still moves for everyone (dialogs
  * and screens focus their main action, for screen readers), but the ring appears only after Tab or after arrow
  * keys inside a widget, and disappears again on a mouse or touch press. Game keys (W, Space, arrows on the
- * canvas…) never show it. The state lives on the root's `data-focus-ring` attribute, read by `global.css`.
+ * canvas…) never show it. The state lives on the root's `data-focus-ring` attribute, read by `src/styles/base.css`.
  */
 export function trackFocusModality(
   root: HTMLElement,

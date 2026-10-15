@@ -1,0 +1,123 @@
+/* Menu screens: the sea backdrop, the wooden panel, the side panel and the Jungle Gaming mark. */
+
+.screen-center,
+.menu-screen {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.menu-screen {
+  position: relative;
+  background: var(--color-sea-deep);
+}
+
+/* Panels paint above the sea backdrop (src/ui/backdrop) by document order. No z-index here: a stacking context
+   on a panel would trap its dialogs (z-index 50) below the panels that follow it. */
+.menu-screen > :not(.sea-backdrop, .brand-mark) {
+  position: relative;
+}
+
+.brand-mark {
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 5;
+  display: block;
+  width: clamp(84px, 9vw, 120px);
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 1px 3px rgb(0 0 0 / 55%));
+}
+
+.brand-mark:hover,
+.brand-mark:focus-visible {
+  opacity: 1;
+}
+
+.panel {
+  padding: 40px 36px;
+  border: 32px solid transparent;
+  border-image: url('@assets/png/retina/ui/menu/panel_menu.png') 80 64 fill / 40px 32px stretch;
+  color: var(--color-parchment);
+  text-align: center;
+}
+
+.panel__title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 30px);
+  color: var(--color-gold);
+  text-shadow: 0 2px 0 rgb(0 0 0 / 50%);
+}
+
+.menu-panel {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  width: min(520px, 94vw);
+}
+
+.menu-panel > * {
+  max-width: 100%;
+}
+
+.menu-screen--with-aside {
+  grid-template-columns: minmax(0, auto) minmax(0, 380px);
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-aside {
+  width: 100%;
+  padding: 28px 24px;
+  text-align: left;
+}
+
+/* Narrow or short screens: no room for the side panel. */
+@media (width <= 900px), (height <= 520px) {
+  .menu-screen--with-aside {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  .menu-aside {
+    display: none;
+  }
+}
+
+/* Short screens (phones in landscape): slimmer panels, so a whole screen fits without scrolling. */
+@media (height <= 520px) {
+  .panel {
+    padding: 14px 20px;
+    border-width: 24px;
+  }
+
+  .panel__title {
+    font-size: 22px;
+  }
+
+  .menu-screen {
+    padding: 8px;
+  }
+
+  .menu-panel {
+    gap: 8px;
+    width: min(600px, 96vw);
+  }
+}
+
+@media (width <= 520px) {
+  .panel {
+    padding: 18px 10px;
+    border-width: 22px;
+  }
+}

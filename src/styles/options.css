@@ -1,0 +1,18 @@
+/* Options screen. */
+
+/* Wide but short screens (phones in landscape): the Options fields sit side by side. */
+@media (height <= 520px) and (width >= 720px) {
+  .options-panel {
+    width: min(900px, 96vw);
+  }
+
+  .options-panel .form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .options-panel .form-status,
+  .options-panel .form__actions {
+    grid-column: 1 / -1;
+  }
+}

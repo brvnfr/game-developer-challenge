@@ -1,0 +1,86 @@
+/* Result screen: the score, how the battle went and whether it reached the Captain's Log. */
+
+.result__score {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(56px, 9vw, 80px);
+  line-height: 1;
+  color: var(--color-gold);
+  text-shadow: 0 3px 0 rgb(0 0 0 / 45%);
+}
+
+.result__details {
+  margin: 0 0 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.result__details time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Battle highlights: four small brass-edged plaques under the score. */
+.result__highlights {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 10px;
+}
+
+.result__highlight {
+  display: grid;
+  gap: 2px;
+  padding: 8px 6px;
+  border: 2px solid rgb(213 138 47 / 55%);
+  border-radius: 10px;
+  background: rgb(5 16 26 / 45%);
+}
+
+.result__highlight dt {
+  order: 2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-parchment);
+}
+
+.result__highlight dd {
+  order: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.1;
+  color: var(--color-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (width <= 520px) {
+  .result__highlights {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.registration {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.registration__text {
+  min-height: 1.4em;
+  margin: 0;
+  font-weight: 700;
+}
+
+.registration__text--problem {
+  color: var(--color-error);
+}
+
+@media (height <= 520px) {
+  .result__score {
+    font-size: 48px;
+  }
+}
