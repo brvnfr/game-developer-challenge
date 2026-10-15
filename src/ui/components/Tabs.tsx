@@ -1,5 +1,6 @@
 import { useRef, type KeyboardEvent } from 'react';
 import { tabId, tabPanelId } from './tabIds';
+import { classNames } from '@/ui/classNames';
 
 export interface TabDefinition<Id extends string> {
   readonly id: Id;
@@ -53,7 +54,7 @@ export function Tabs<Id extends string>({ label, tabs, selectedId, onSelect, idP
             aria-selected={isSelected}
             aria-controls={tabPanelId(idPrefix, tab.id)}
             tabIndex={isSelected ? 0 : -1}
-            className={isSelected ? 'tab tab--selected' : 'tab'}
+            className={classNames('tab', isSelected && 'tab--selected')}
             onClick={() => onSelect(tab.id)}
             onKeyDown={(event) => handleKeyDown(event, index)}
           >

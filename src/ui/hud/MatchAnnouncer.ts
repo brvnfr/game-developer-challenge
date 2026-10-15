@@ -1,5 +1,5 @@
 import type { MatchSnapshot } from '@/game/sim/match/types';
-import { describeDuration } from './formatTime';
+import { describeDuration } from '@/ui/formatTime';
 
 /** Remaining-time marks announced to screen readers. */
 const TIME_MARKS_SECONDS = [60, 30, 10];

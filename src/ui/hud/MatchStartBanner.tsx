@@ -1,4 +1,4 @@
-import { formatClock } from './formatTime';
+import { formatClock } from '@/ui/formatTime';
 import './match-start-banner.css';
 
 /**

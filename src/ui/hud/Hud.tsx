@@ -10,20 +10,22 @@ import pauseIcon from '@assets/png/retina/ui/controls/icon_pause.png';
 import type { ExternalStore } from '@/game/bridge/ExternalStore';
 import type { MatchView } from '@/game/bridge/MatchView';
 import { useExternalStore } from '@/game/bridge/useExternalStore';
+import { healthBandFor, PLAYER_HEALTH_BAR } from '@/game/render/healthBarStyles';
 import type { MatchSnapshot } from '@/game/sim/match/types';
-import { describeDuration, formatClock } from './formatTime';
+import { RoundIconButton } from '@/ui/components/RoundIconButton';
+import { describeDuration, formatClock } from '@/ui/formatTime';
 import { MatchAnnouncer } from './MatchAnnouncer';
 import './hud.css';
 
-/** Fill area of health_frame.png, from the UI atlas metadata (`fill_rect`, logical pixels of a 256 px bar). */
-const HEALTH_FILL_START = 30 / 256;
-const HEALTH_FILL_WIDTH = 196 / 256;
-
-function healthFillFor(ratio: number): string {
-  if (ratio >= 0.5) return healthFillGreen;
-  if (ratio >= 0.25) return healthFillAmber;
-  return healthFillRed;
-}
+/** The same bar as the one over the player's ship (same colours at the same health, same fill area). */
+const HEALTH_FILL_IMAGES: Readonly<Record<string, string>> = {
+  health_fill_green: healthFillGreen,
+  health_fill_amber: healthFillAmber,
+  health_fill_red: healthFillRed,
+};
+const { fillRect, frameWidth } = PLAYER_HEALTH_BAR;
+const HEALTH_FILL_START = fillRect.x / frameWidth;
+const HEALTH_FILL_WIDTH = fillRect.width / frameWidth;
 
 interface HudProps {
   readonly store: ExternalStore<MatchView>;
@@ -51,7 +53,7 @@ export function Hud({ store, onPause, extraControls, onRender }: HudProps) {
             <img src={healthFrame} alt="" />
             <img
               className="hud__bar-fill"
-              src={healthFillFor(healthRatio)}
+              src={HEALTH_FILL_IMAGES[healthBandFor(PLAYER_HEALTH_BAR, healthRatio)]}
               alt=""
               style={{ clipPath: `inset(0 ${clipRight}% 0 0)` }}
             />
@@ -72,15 +74,13 @@ export function Hud({ store, onPause, extraControls, onRender }: HudProps) {
         </div>
       </div>
       {extraControls}
-      <button
-        type="button"
-        className="round-button hud__pause"
+      <RoundIconButton
+        icon={pauseIcon}
+        label="Pause"
+        className="hud__pause"
         onClick={onPause}
-        aria-label="Pause"
         disabled={match.status !== 'running'}
-      >
-        <img src={pauseIcon} alt="" />
-      </button>
+      />
       <MatchStatusSummary match={match} />
     </div>
   );

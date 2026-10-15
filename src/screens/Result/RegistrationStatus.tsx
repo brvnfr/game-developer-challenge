@@ -1,6 +1,7 @@
 import { useSubmissionStatus, type SubmissionStatus } from '@/remote/hooks';
 import { useRemoteServices } from '@/remote/remoteServicesContext';
 import { Button } from '@/ui/components/Button';
+import { classNames } from '@/ui/classNames';
 
 function describe(status: SubmissionStatus): string {
   switch (status.kind) {
@@ -29,7 +30,7 @@ export function RegistrationStatus({ matchId }: { readonly matchId: string }) {
   const canRetry = status.kind === 'retrying' || status.kind === 'failed';
   return (
     <div className="registration" data-testid="registration" data-state={status.kind}>
-      <p role="status" className={canRetry ? 'registration__text registration__text--problem' : 'registration__text'}>
+      <p role="status" className={classNames('registration__text', canRetry && 'registration__text--problem')}>
         {describe(status)}
       </p>
       {canRetry && (

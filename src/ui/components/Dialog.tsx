@@ -1,5 +1,6 @@
 import { useId, useRef, type ReactNode, type RefObject } from 'react';
 import { useFocusTrap } from './useFocusTrap';
+import { classNames } from '@/ui/classNames';
 
 interface DialogProps {
   readonly title: string;
@@ -23,7 +24,7 @@ export function Dialog({ title, description, initialFocusRef, onEscape, classNam
     <div className="dialog-backdrop">
       <div
         ref={dialogRef}
-        className={className ? `panel dialog ${className}` : 'panel dialog'}
+        className={classNames('panel dialog', className)}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

@@ -1,5 +1,5 @@
 import type { MatchResult } from '@/game/sim/match/types';
-import { formatClock } from './hud/formatTime';
+import { formatClock } from './formatTime';
 
 /** Short reason shown next to the score (result screen, last battle, Match History). */
 export const END_REASON_LABELS: Readonly<Record<MatchResult['endReason'], string>> = {

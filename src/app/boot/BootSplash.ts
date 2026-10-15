@@ -1,3 +1,5 @@
+import { clamp } from '@/game/core/math/numbers';
+
 /** Time the splash takes to fade out (matches the transition in index.html). */
 const FADE_OUT_MS = 350;
 
@@ -20,7 +22,7 @@ export class BootSplash {
 
   /** `fraction` from 0 to 1. */
   setProgress(fraction: number): void {
-    const percent = Math.round(Math.min(1, Math.max(0, fraction)) * 100);
+    const percent = Math.round(clamp(fraction, 0, 1) * 100);
     this.element?.setAttribute('aria-valuenow', String(percent));
     if (this.fill) this.fill.style.width = `${percent}%`;
     if (this.status) this.status.textContent = `Hoisting the sails… ${percent}%`;

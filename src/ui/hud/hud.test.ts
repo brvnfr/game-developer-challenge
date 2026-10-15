@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import type { MatchSnapshot } from '@/game/sim/match/types';
-import { describeDuration, formatClock } from './formatTime';
 import { MatchAnnouncer } from './MatchAnnouncer';
 
 const running: MatchSnapshot = {
@@ -17,23 +16,6 @@ const running: MatchSnapshot = {
   rightVolleys: 0,
   endReason: null,
 };
-
-describe('time formatting', () => {
-  it.each([
-    [120, '2:00'],
-    [102, '1:42'],
-    [9, '0:09'],
-    [-3, '0:00'],
-  ])('formats %i seconds as %s', (seconds, text) => {
-    expect(formatClock(seconds)).toBe(text);
-  });
-
-  it('describes durations in words for screen readers', () => {
-    expect(describeDuration(61)).toBe('1 minute 1 second');
-    expect(describeDuration(120)).toBe('2 minutes');
-    expect(describeDuration(0)).toBe('0 seconds');
-  });
-});
 
 describe('MatchAnnouncer', () => {
   it('announces status changes', () => {

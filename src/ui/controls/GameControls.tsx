@@ -9,6 +9,7 @@ import type { InputState } from '@/game/input/InputState';
 import { KEY_BINDINGS, type GameAction } from '@/game/input/keyBindings';
 import { VirtualJoystick } from './VirtualJoystick';
 import './game-controls.css';
+import { classNames } from '@/ui/classNames';
 
 /** `touch`: helm joystick and cannon buttons. `keyboard`: every control as a button with its key, lit while held. */
 export type ControlMode = 'touch' | 'keyboard';
@@ -66,7 +67,7 @@ export function GameControls({
   const showKeys = mode === 'keyboard';
   return (
     <div
-      className={`game-controls game-controls--${mode}${isHidden ? ' game-controls--hidden' : ''}`}
+      className={classNames('game-controls', `game-controls--${mode}`, isHidden && 'game-controls--hidden')}
       data-testid="game-controls"
       data-mode={mode}
     >

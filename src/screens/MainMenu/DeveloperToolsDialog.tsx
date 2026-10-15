@@ -1,5 +1,5 @@
 import { useId, useRef, type ReactNode, type Ref } from 'react';
-import type { DeveloperToolsSettings } from '@/storage/repositories';
+import { DEFAULT_DEVELOPER_TOOLS, type DeveloperToolsSettings } from '@/storage/repositories';
 import { Button } from '@/ui/components/Button';
 import { Dialog } from '@/ui/components/Dialog';
 
@@ -53,7 +53,7 @@ export function DeveloperToolsDialog({
             Network scenarios
           </Button>
         )}
-        <Button variant="small" onClick={() => onChange({ showAimLanes: false, showHitboxes: false })}>
+        <Button variant="small" onClick={() => onChange(DEFAULT_DEVELOPER_TOOLS)}>
           Turn overlays off
         </Button>
         <Button variant="secondary" onClick={onClose}>

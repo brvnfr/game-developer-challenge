@@ -1,7 +1,12 @@
 import { useId, useRef, useState, type FormEvent } from 'react';
 import type { AudioEngine } from '@/game/audio/AudioEngine';
 import { DEFAULT_USER_SETTINGS } from '@/game/config/defaults';
-import { SETTINGS_RULES, validateSettings, type SettingsField } from '@/game/config/settingsValidation';
+import {
+  SETTINGS_FIELDS,
+  SETTINGS_RULES,
+  validateSettings,
+  type SettingsField,
+} from '@/game/config/settingsValidation';
 import type { UserSettings } from '@/game/config/types';
 import { PLAYER_NAME_MAX_LENGTH, validatePlayerName } from '@/profile/playerName';
 import { Button } from '@/ui/components/Button';
@@ -11,6 +16,7 @@ import { TextField } from '@/ui/components/TextField';
 import { SoundToggleButton } from '@/ui/SoundToggle';
 import { useFocusOnMount } from '@/ui/useFocusOnMount';
 import { canStepSettingValue, formatSettingValue, stepSettingValue } from './settingsStepping';
+import { classNames } from '@/ui/classNames';
 
 /** Outcome reported by the owner of the saved options. */
 export type OptionsSaveOutcome = 'saved' | 'notPersisted';
@@ -32,8 +38,6 @@ const STATUS_TEXT: Record<SaveStatus, string> = {
   notPersisted: 'Options apply to this visit, but this browser could not store them.',
 };
 
-const SETTING_FIELDS: readonly SettingsField[] = ['sessionTimeSeconds', 'spawnIntervalSeconds'];
-
 function rangeHint(field: SettingsField): string {
   const rule = SETTINGS_RULES[field];
   const steps = rule.increment === 1 ? 'whole seconds' : `steps of ${formatSettingValue(rule.increment)} s`;
@@ -45,6 +49,10 @@ function toFieldTexts(settings: UserSettings): Record<SettingsField, string> {
     sessionTimeSeconds: formatSettingValue(settings.sessionTimeSeconds),
     spawnIntervalSeconds: formatSettingValue(settings.spawnIntervalSeconds),
   };
+}
+
+function isSameSettings(first: UserSettings, second: UserSettings): boolean {
+  return SETTINGS_FIELDS.every((field) => first[field] === second[field]);
 }
 
 /**
@@ -66,8 +74,7 @@ export function OptionsScreen({ audio, savedSettings, savedCaptainName, onSave, 
   const nameError = nameValidation.isValid ? undefined : nameValidation.error;
   const hasUnsavedChanges =
     !settingsValidation.isValid ||
-    settingsValidation.settings.sessionTimeSeconds !== savedSettings.sessionTimeSeconds ||
-    settingsValidation.settings.spawnIntervalSeconds !== savedSettings.spawnIntervalSeconds ||
+    !isSameSettings(settingsValidation.settings, savedSettings) ||
     !nameValidation.isValid ||
     nameValidation.name !== savedCaptainName;
 
@@ -99,7 +106,7 @@ export function OptionsScreen({ audio, savedSettings, savedCaptainName, onSave, 
         Options
       </h1>
       <form className="form" noValidate onSubmit={handleSubmit} aria-labelledby="options-title">
-        {SETTING_FIELDS.map((field) => {
+        {SETTINGS_FIELDS.map((field) => {
           const rule = SETTINGS_RULES[field];
           const text = fieldTexts[field];
           return (
@@ -141,9 +148,10 @@ export function OptionsScreen({ audio, savedSettings, savedCaptainName, onSave, 
         </div>
         <p
           role="status"
-          className={
-            status === 'invalid' || status === 'notPersisted' ? 'form-status form-status--error' : 'form-status'
-          }
+          className={classNames(
+            'form-status',
+            (status === 'invalid' || status === 'notPersisted') && 'form-status--error',
+          )}
         >
           {status === 'idle' && hasUnsavedChanges ? 'You have unsaved changes.' : STATUS_TEXT[status]}
         </p>

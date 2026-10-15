@@ -5,7 +5,8 @@ import type { UserSettings } from '@/game/config/types';
 import { useRankingConfigurations, useRankingPage } from '@/remote/hooks';
 import { Pagination } from '@/ui/components/Pagination';
 import { RemoteList } from '@/ui/components/RemoteList';
-import { describeBattleSettings, describeDateTime, formatDayMonth, formatTimeOfDay } from '@/ui/formatDate';
+import { describeBattleSettings } from '@/ui/formatDate';
+import { MatchDateCell } from './MatchDateCell';
 
 interface RankingPanelProps {
   /** The player's current options: their ranking is shown first. */
@@ -27,9 +28,8 @@ export function RankingPanel({ currentSettings, playerId }: RankingPanelProps) {
   const configurations = useRankingConfigurations();
   const selectId = useId();
 
-  const configKeys = [currentKey, ...(configurations.data?.items.map((item) => item.configKey) ?? [])].filter(
-    (key, index, keys) => keys.indexOf(key) === index,
-  );
+  // The player's own settings first, then every configuration that has matches (each once).
+  const configKeys = [...new Set([currentKey, ...(configurations.data?.items.map((item) => item.configKey) ?? [])])];
 
   return (
     <>
@@ -91,12 +91,7 @@ export function RankingPanel({ currentSettings, playerId }: RankingPanelProps) {
                       {isPlayer && <span className="badge">You</span>}
                     </td>
                     <td className="log-table__points">{entry.score}</td>
-                    <td className="log-table__date">
-                      <time dateTime={entry.endedAt} title={describeDateTime(entry.endedAt)}>
-                        <span className="log-table__day">{formatDayMonth(entry.endedAt)}</span>
-                        <span className="log-table__time"> · {formatTimeOfDay(entry.endedAt)}</span>
-                      </time>
-                    </td>
+                    <MatchDateCell endedAt={entry.endedAt} />
                   </tr>
                 );
               })}

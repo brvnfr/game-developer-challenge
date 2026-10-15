@@ -1,4 +1,5 @@
 import { parseSettingValue, type FieldRule } from '@/game/config/settingsValidation';
+import { clamp } from '@/game/core/math/numbers';
 
 /** Formats a setting for its text field: integers without decimals, halves with one ("2.5"). */
 export function formatSettingValue(value: number): string {
@@ -14,7 +15,7 @@ export function stepSettingValue(rawValue: string, direction: -1 | 1, rule: Fiel
   if (current === null) return formatSettingValue(direction > 0 ? rule.minimum : rule.maximum);
   const target = current + direction * rule.increment;
   const snapped = rule.minimum + Math.round((target - rule.minimum) / rule.increment) * rule.increment;
-  return formatSettingValue(Math.min(rule.maximum, Math.max(rule.minimum, snapped)));
+  return formatSettingValue(clamp(snapped, rule.minimum, rule.maximum));
 }
 
 /** Whether − (direction −1) or + (direction 1) can still change the value. */

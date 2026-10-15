@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { SeaBackdrop } from '@/ui/backdrop/SeaBackdrop';
 import { BrandMark } from './BrandMark';
+import { classNames } from '@/ui/classNames';
 
 interface MenuLayoutProps {
   /** Id of the heading that names the main panel. */
@@ -14,12 +15,9 @@ interface MenuLayoutProps {
 /** Shared frame of the menu screens: the animated sea backdrop, the wooden panel and the Jungle Gaming mark. */
 export function MenuLayout({ labelledBy, children, aside, className }: MenuLayoutProps) {
   return (
-    <main className={aside ? 'menu-screen menu-screen--with-aside' : 'menu-screen'}>
+    <main className={classNames('menu-screen', aside !== undefined && 'menu-screen--with-aside')}>
       <SeaBackdrop />
-      <section
-        className={className ? `panel menu-panel ${className}` : 'panel menu-panel'}
-        aria-labelledby={labelledBy}
-      >
+      <section className={classNames('panel menu-panel', className)} aria-labelledby={labelledBy}>
         {children}
       </section>
       {aside}

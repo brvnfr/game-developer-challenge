@@ -1,4 +1,5 @@
 import type { ComponentPropsWithRef } from 'react';
+import { classNames } from '@/ui/classNames';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'small';
 
@@ -8,6 +9,5 @@ interface ButtonProps extends ComponentPropsWithRef<'button'> {
 
 /** Wooden plank button from the UI kit. Defaults to `type="button"` so it never submits a form by accident. */
 export function Button({ variant = 'primary', className, type = 'button', ...buttonProps }: ButtonProps) {
-  const classes = className ? `${variant}-button ${className}` : `${variant}-button`;
-  return <button type={type} className={classes} {...buttonProps} />;
+  return <button type={type} className={classNames(`${variant}-button`, className)} {...buttonProps} />;
 }

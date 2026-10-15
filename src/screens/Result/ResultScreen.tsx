@@ -1,7 +1,7 @@
 import type { MatchHighlights, MatchResult } from '@/game/sim/match/types';
 import { Button } from '@/ui/components/Button';
 import { MenuLayout } from '@/ui/components/MenuLayout';
-import { formatClock } from '@/ui/hud/formatTime';
+import { formatClock } from '@/ui/formatTime';
 import { END_REASON_LABELS, isoDuration, playedSecondsOf, RESULT_TITLES } from '@/ui/matchResultText';
 import { useFocusOnMount } from '@/ui/useFocusOnMount';
 import { RegistrationStatus } from './RegistrationStatus';

@@ -2,6 +2,7 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { ApiError } from '@/api/ApiError';
 import { Button } from './Button';
+import { classNames } from '@/ui/classNames';
 
 interface RemoteListProps<Data> {
   readonly query: UseQueryResult<Data>;
@@ -57,7 +58,7 @@ export function RemoteList<Data>({
 
   return (
     <div
-      className={isPlaceholderData ? 'remote-list remote-list--stale' : 'remote-list'}
+      className={classNames('remote-list', isPlaceholderData && 'remote-list--stale')}
       aria-busy={isPending || isPlaceholderData}
       data-testid={testId}
       data-state={data === undefined ? (error ? 'error' : 'loading') : isEmpty(data) ? 'empty' : 'ready'}

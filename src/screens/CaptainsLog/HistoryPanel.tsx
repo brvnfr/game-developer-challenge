@@ -5,8 +5,10 @@ import { useRemoteServices } from '@/remote/remoteServicesContext';
 import { Button } from '@/ui/components/Button';
 import { Pagination } from '@/ui/components/Pagination';
 import { RemoteList } from '@/ui/components/RemoteList';
-import { describeDateTime, formatDayMonth, formatMatchDuration, formatTimeOfDay } from '@/ui/formatDate';
+import { formatDayMonth } from '@/ui/formatDate';
+import { formatMatchDuration } from '@/ui/formatTime';
 import { END_REASON_LABELS } from '@/ui/matchResultText';
+import { MatchDateCell } from './MatchDateCell';
 
 interface HistoryPanelProps {
   readonly playerId: string;
@@ -78,12 +80,7 @@ export function HistoryPanel({ playerId, playerName, highlightMatchId }: History
                   key={record.matchId}
                   className={record.matchId === highlightMatchId ? 'log-table__row--highlight' : undefined}
                 >
-                  <td className="log-table__date">
-                    <time dateTime={record.endedAt} title={describeDateTime(record.endedAt)}>
-                      <span className="log-table__day">{formatDayMonth(record.endedAt)}</span>
-                      <span className="log-table__time"> · {formatTimeOfDay(record.endedAt)}</span>
-                    </time>
-                  </td>
+                  <MatchDateCell endedAt={record.endedAt} />
                   <td className="log-table__points">{record.score}</td>
                   <td>{formatMatchDuration(record.durationMs)}</td>
                   <td className={`log-table__reason log-table__reason--${record.endReason}`}>
