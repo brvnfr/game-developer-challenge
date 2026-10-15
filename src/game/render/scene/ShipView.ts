@@ -8,7 +8,8 @@ import {
   shipFrameFor,
   type DamageStage,
 } from '../spriteCatalog';
-import { ENEMY_HEALTH_BAR, HealthBarView, PLAYER_HEALTH_BAR } from './HealthBarView';
+import { ENEMY_HEALTH_BAR, PLAYER_HEALTH_BAR } from '../healthBarStyles';
+import { HealthBarView } from './HealthBarView';
 import { WakeEmitter } from './WakeEmitter';
 import type { PuffLayer } from './PuffLayer';
 import { SmokeEmitter } from './SmokeEmitter';

@@ -1,4 +1,5 @@
 import type { PlayerCommands, SteeringCommand } from '@/game/sim/PlayerCommands';
+import { Listeners } from '@/shared/Listeners';
 import { GAME_ACTIONS, type GameAction } from './keyBindings';
 
 /**
@@ -12,7 +13,7 @@ export class InputState {
   );
   /** Joystick steering per source; the most recent source wins. */
   private readonly steeringBySource = new Map<string, SteeringCommand>();
-  private readonly listeners = new Set<() => void>();
+  private readonly listeners = new Listeners();
   private heldKey = '';
 
   press(sourceId: string, action: GameAction): void {
@@ -29,10 +30,7 @@ export class InputState {
    * Calls `listener` whenever the set of held actions changes (not on key repeats or steering moves), so the
    * on-screen controls can show what is pressed without polling every frame. Returns the unsubscribe function.
    */
-  subscribe = (listener: () => void): (() => void) => {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  };
+  readonly subscribe = this.listeners.subscribe;
 
   /** Held actions as a stable key ("fireFront sailForward"; empty when nothing is held). */
   getHeldKey = (): string => this.heldKey;
@@ -83,6 +81,6 @@ export class InputState {
     const key = GAME_ACTIONS.filter((action) => this.isActive(action)).join(' ');
     if (key === this.heldKey) return;
     this.heldKey = key;
-    for (const listener of this.listeners) listener();
+    this.listeners.notify();
   }
 }

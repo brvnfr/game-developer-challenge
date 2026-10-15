@@ -3,9 +3,8 @@ import type { AudioEngine } from '@/game/audio/AudioEngine';
 import type { UserSettings } from '@/game/config/types';
 import type { GameTextures } from '@/game/render/assets/GameTextures';
 import type { SceneOverlays } from '@/game/render/scene/GameScene';
-import { DEFAULT_GAME_CONFIG } from '@/game/config/defaults';
-import { FrameProfiler } from '@/game/runtime/FrameProfiler';
 import { GameRuntime } from '@/game/runtime/GameRuntime';
+import type { PauseReason } from '@/game/sim/events/GameEvent';
 import type { MatchResult } from '@/game/sim/match/types';
 import type { MatchView } from '@/game/bridge/MatchView';
 import { useExternalStore } from '@/game/bridge/useExternalStore';
@@ -13,7 +12,7 @@ import { Hud } from '@/ui/hud/Hud';
 import { MatchStartBanner } from '@/ui/hud/MatchStartBanner';
 import { SoundToggleButton, SoundToggleIcon } from '@/ui/SoundToggle';
 import { GameControls, type ControlMode, type WeaponReloads } from '@/ui/controls/GameControls';
-import type { TestModeOptions } from '@/testing/testMode';
+import { runtimeOptionsFor, type TestModeOptions } from '@/testing/testMode';
 import { useMediaQuery } from '@/ui/useMediaQuery';
 import { PauseOverlay } from './PauseOverlay';
 import { RotateDeviceNotice } from './RotateDeviceNotice';
@@ -55,20 +54,9 @@ export function GameStage({
     const host = hostRef.current;
     if (!host) return;
     const gameRuntime = new GameRuntime({
+      ...runtimeOptionsFor(testMode),
       textures,
       settings,
-      ...(testMode.seed === undefined ? {} : { seed: testMode.seed }),
-      ...(testMode.setup === undefined ? {} : { setup: testMode.setup }),
-      ...(testMode.playerMaxHealth === undefined
-        ? {}
-        : {
-            baseConfig: {
-              ...DEFAULT_GAME_CONFIG,
-              player: { ...DEFAULT_GAME_CONFIG.player, maxHealth: testMode.playerMaxHealth },
-            },
-          }),
-      profiler: testMode.profile ? new FrameProfiler() : null,
-      timeSource: testMode.manualTime ? 'manual' : 'realTime',
       sound: audio,
       overlays,
       onMatchEnded: (result) => onMatchEndedRef.current(result),
@@ -112,7 +100,7 @@ function reloadsOf(runtime: GameRuntime, match: MatchView): WeaponReloads {
   };
 }
 
-const PAUSE_REASON_TEXT: Record<string, string> = {
+const PAUSE_REASON_TEXT: Readonly<Record<PauseReason, string>> = {
   manual: 'Take a breath, captain.',
   blur: 'The game paused because the window lost focus.',
   hidden: 'The game paused because the tab was hidden.',
@@ -159,7 +147,7 @@ function GameOverlays({
       )}
       {match.status === 'paused' && (
         <PauseOverlay
-          reasonText={PAUSE_REASON_TEXT[match.pauseReason ?? 'manual'] ?? ''}
+          reasonText={PAUSE_REASON_TEXT[match.pauseReason ?? 'manual']}
           onResume={() => runtime.resume()}
           onRestart={() => runtime.restart()}
           onMainMenu={onExitToMenu}

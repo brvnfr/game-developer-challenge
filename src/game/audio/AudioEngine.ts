@@ -1,15 +1,11 @@
 import { z } from 'zod';
+import { Listeners } from '@/shared/Listeners';
 import { LocalStore, type KeyValueStorage } from '@/storage/LocalStore';
-import type { SoundOutput } from './SoundOutput';
+import type { PlayOptions, SoundOutput } from './SoundOutput';
 import { SOUND_IDS, soundFileName, type LoopSoundId, type SoundId } from './soundCatalog';
 
 export const AUDIO_SETTINGS_KEY = 'pirate-battle.audio.v1';
 const PLAY_LOG_LIMIT = 100;
-
-export interface PlayOptions {
-  readonly volume?: number;
-  readonly playbackRate?: number;
-}
 
 export interface AudioEngineOptions {
   /** Base URL of the app (import.meta.env.BASE_URL); sounds are under `${baseUrl}assets/audio/`. */
@@ -20,7 +16,8 @@ export interface AudioEngineOptions {
   readonly fetchFile?: (url: string) => Promise<ArrayBuffer>;
 }
 
-interface ActiveLoop {
+/** One sound playing: its source and the gain node that sets its volume. */
+interface Voice {
   readonly source: AudioBufferSourceNode;
   readonly gain: GainNode;
 }
@@ -44,9 +41,9 @@ export class AudioEngine implements SoundOutput {
   private context: AudioContext | null = null;
   private master: GainNode | null = null;
   private readonly buffers = new Map<SoundId, AudioBuffer>();
-  private readonly loops = new Map<LoopSoundId, ActiveLoop>();
+  private readonly loops = new Map<LoopSoundId, Voice>();
   private readonly store: LocalStore<{ isMuted: boolean }>;
-  private readonly listeners = new Set<() => void>();
+  private readonly listeners = new Listeners();
   private readonly log: SoundId[] = [];
   private muted: boolean;
   private loading: Promise<void> | null = null;
@@ -73,11 +70,8 @@ export class AudioEngine implements SoundOutput {
     return this.log;
   }
 
-  /** For useSyncExternalStore. */
-  readonly subscribe = (listener: () => void): (() => void) => {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  };
+  /** For useSyncExternalStore (the mute choice). */
+  readonly subscribe = this.listeners.subscribe;
 
   readonly getMutedSnapshot = (): boolean => this.muted;
 
@@ -86,7 +80,7 @@ export class AudioEngine implements SoundOutput {
     this.muted = isMuted;
     this.store.write({ isMuted });
     if (isMuted) this.stopAllLoops();
-    for (const listener of this.listeners) listener();
+    this.listeners.notify();
   }
 
   /** Unlocks audio on the first gesture. Returns a function that removes the listeners. */
@@ -127,16 +121,10 @@ export class AudioEngine implements SoundOutput {
   }
 
   play(id: SoundId, { volume = 1, playbackRate = 1 }: PlayOptions = {}): void {
-    const buffer = this.buffers.get(id);
-    if (this.muted || !buffer || !this.context || !this.master) return;
-    const source = this.context.createBufferSource();
-    source.buffer = buffer;
-    source.playbackRate.value = playbackRate;
-    const gain = this.context.createGain();
-    gain.gain.value = volume;
-    source.connect(gain).connect(this.master);
-    source.addEventListener('ended', () => gain.disconnect(), { once: true });
-    source.start();
+    if (this.muted) return;
+    const voice = this.startVoice(id, volume, { playbackRate });
+    if (!voice) return;
+    voice.source.addEventListener('ended', () => voice.gain.disconnect(), { once: true });
     this.record(id);
   }
 
@@ -151,16 +139,9 @@ export class AudioEngine implements SoundOutput {
       active.gain.gain.value = volume;
       return;
     }
-    const buffer = this.buffers.get(id);
-    if (!buffer || !this.context || !this.master) return;
-    const source = this.context.createBufferSource();
-    source.buffer = buffer;
-    source.loop = true;
-    const gain = this.context.createGain();
-    gain.gain.value = volume;
-    source.connect(gain).connect(this.master);
-    source.start();
-    this.loops.set(id, { source, gain });
+    const voice = this.startVoice(id, volume, { isLooping: true });
+    if (!voice) return;
+    this.loops.set(id, voice);
     this.record(id);
   }
 
@@ -172,17 +153,26 @@ export class AudioEngine implements SoundOutput {
     return this.loops.has(id);
   }
 
-  /** Closes the AudioContext (page teardown). */
-  dispose(): void {
-    this.stopAllLoops();
-    void this.context?.close().catch(() => undefined);
-    this.context = null;
-    this.master = null;
-    this.buffers.clear();
-    this.loading = null;
+  /** Starts a loaded sound through its own gain node; null before the sound (or the audio) is ready. */
+  private startVoice(
+    id: SoundId,
+    volume: number,
+    { playbackRate = 1, isLooping = false }: { readonly playbackRate?: number; readonly isLooping?: boolean },
+  ): Voice | null {
+    const buffer = this.buffers.get(id);
+    if (!buffer || !this.context || !this.master) return null;
+    const source = this.context.createBufferSource();
+    source.buffer = buffer;
+    source.loop = isLooping;
+    source.playbackRate.value = playbackRate;
+    const gain = this.context.createGain();
+    gain.gain.value = volume;
+    source.connect(gain).connect(this.master);
+    source.start();
+    return { source, gain };
   }
 
-  private stopLoop(id: LoopSoundId, loop: ActiveLoop): void {
+  private stopLoop(id: LoopSoundId, loop: Voice): void {
     try {
       loop.source.stop();
     } catch {

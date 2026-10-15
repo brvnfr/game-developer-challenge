@@ -1,36 +1,7 @@
 import { Container, Graphics, Sprite } from 'pixi.js';
-import type { UiFrame } from '../assets/atlasFrames.generated';
+import { clamp } from '@/game/core/math/numbers';
 import type { GameTextures } from '../assets/GameTextures';
-
-interface HealthBarStyle {
-  readonly frame: UiFrame;
-  /** Fill textures from the highest to the lowest health band. */
-  readonly fills: readonly { readonly minimumRatio: number; readonly frame: UiFrame }[];
-  /** Area of the fill inside the bar, in logical pixels of the UI atlas (from ui_sheet.json `fill_rect`). */
-  readonly fillRect: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
-  readonly displayWidth: number;
-}
-
-export const PLAYER_HEALTH_BAR: HealthBarStyle = {
-  frame: 'health_frame',
-  fills: [
-    { minimumRatio: 0.5, frame: 'health_fill_green' },
-    { minimumRatio: 0.25, frame: 'health_fill_amber' },
-    { minimumRatio: 0, frame: 'health_fill_red' },
-  ],
-  fillRect: { x: 30, y: 15, width: 196, height: 20 },
-  displayWidth: 92,
-};
-
-export const ENEMY_HEALTH_BAR: HealthBarStyle = {
-  frame: 'enemy_health_frame',
-  fills: [
-    { minimumRatio: 0.35, frame: 'enemy_health_fill_green' },
-    { minimumRatio: 0, frame: 'enemy_health_fill_red' },
-  ],
-  fillRect: { x: 24, y: 12, width: 112, height: 15 },
-  displayWidth: 70,
-};
+import { healthBandFor, type HealthBarStyle } from '../healthBarStyles';
 
 /**
  * Health bar drawn above a ship. The fill is clipped from the left (as described by the UI atlas
@@ -47,7 +18,7 @@ export class HealthBarView {
     private readonly style: HealthBarStyle,
   ) {
     const frame = new Sprite(textures.uiElement(style.frame));
-    this.fill = new Sprite(textures.uiElement(style.fills[0]?.frame ?? style.frame));
+    this.fill = new Sprite(textures.uiElement(healthBandFor(style, 1)));
     this.fill.mask = this.clip;
     this.container.addChild(frame, this.fill, this.clip);
     this.container.scale.set(style.displayWidth / frame.texture.width);
@@ -56,11 +27,10 @@ export class HealthBarView {
   }
 
   setRatio(ratio: number): void {
-    const clamped = Math.min(1, Math.max(0, ratio));
+    const clamped = clamp(ratio, 0, 1);
     if (clamped === this.shownRatio) return;
     this.shownRatio = clamped;
-    const band = this.style.fills.find((fill) => clamped >= fill.minimumRatio) ?? this.style.fills.at(-1);
-    if (band) this.fill.texture = this.textures.uiElement(band.frame);
+    this.fill.texture = this.textures.uiElement(healthBandFor(this.style, clamped));
     const { x, y, width, height } = this.style.fillRect;
     this.clip
       .clear()

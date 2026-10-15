@@ -1,3 +1,4 @@
+import { Button } from '@/ui/components/Button';
 import { useFocusOnMount } from '@/ui/useFocusOnMount';
 import type { GameAssetsState } from './useGameAssets';
 
@@ -28,12 +29,12 @@ function LoadingErrorView({
       <div className="panel loading-panel" role="alert">
         <h2 className="panel__title">Could not load the game</h2>
         <p>{message} Check your connection and try again.</p>
-        <button ref={retryRef} type="button" className="primary-button" onClick={onRetry}>
+        <Button ref={retryRef} onClick={onRetry}>
           Retry
-        </button>
-        <button type="button" className="secondary-button" onClick={onBack}>
+        </Button>
+        <Button variant="secondary" onClick={onBack}>
           Main Menu
-        </button>
+        </Button>
       </div>
     </div>
   );

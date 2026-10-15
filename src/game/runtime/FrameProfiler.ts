@@ -81,8 +81,7 @@ export class FrameProfiler {
   }
 
   report(): ProfileReport {
-    const sortedWork = [...this.updateDurationsMs].sort((first, second) => first - second);
-    const work = summarizeFrameTimes(sortedWork);
+    const work = summarizeFrameTimes(this.updateDurationsMs);
     const peak = (key: keyof EntityCounts) => Math.max(0, ...this.timeline.map((sample) => sample[key]));
     return {
       durationSeconds:

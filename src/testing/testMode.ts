@@ -1,6 +1,8 @@
-import { DEFAULT_USER_SETTINGS } from '@/game/config/defaults';
+import { DEFAULT_GAME_CONFIG, DEFAULT_USER_SETTINGS } from '@/game/config/defaults';
 import { validateSettings } from '@/game/config/settingsValidation';
 import type { UserSettings } from '@/game/config/types';
+import { FrameProfiler } from '@/game/runtime/FrameProfiler';
+import type { GameRuntimeOptions } from '@/game/runtime/GameRuntime';
 import type { MatchSetup } from '@/game/sim/match/MatchSetup';
 import { COMBAT_SETUPS, isCombatSetupName } from './combatSetups';
 
@@ -50,5 +52,26 @@ export function readTestMode(search: string = window.location.search): TestModeO
       isEnabled && Number.isInteger(playerHealth) && playerHealth >= 1 && playerHealth <= 1_000_000
         ? playerHealth
         : undefined,
+  };
+}
+
+/** What test mode pins in the matches it starts: seed, starting layout, clock, profiler and (profiling) health. */
+export type TestRuntimeOptions = Pick<GameRuntimeOptions, 'seed' | 'setup' | 'baseConfig' | 'profiler' | 'timeSource'>;
+
+export function runtimeOptionsFor(testMode: TestModeOptions): TestRuntimeOptions {
+  const { seed, setup, playerMaxHealth } = testMode;
+  return {
+    ...(seed === undefined ? {} : { seed }),
+    ...(setup === undefined ? {} : { setup }),
+    ...(playerMaxHealth === undefined
+      ? {}
+      : {
+          baseConfig: {
+            ...DEFAULT_GAME_CONFIG,
+            player: { ...DEFAULT_GAME_CONFIG.player, maxHealth: playerMaxHealth },
+          },
+        }),
+    profiler: testMode.profile ? new FrameProfiler() : null,
+    timeSource: testMode.manualTime ? 'manual' : 'realTime',
   };
 }

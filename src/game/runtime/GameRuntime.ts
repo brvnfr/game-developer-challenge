@@ -117,10 +117,6 @@ export class GameRuntime {
     return this.options.profiler ?? null;
   }
 
-  get isDisposed(): boolean {
-    return this.disposed;
-  }
-
   async mount(host: HTMLElement): Promise<void> {
     GameRuntime.liveInstances.add(this);
     const application = new Application();
@@ -167,8 +163,7 @@ export class GameRuntime {
   pause(reason: PauseReason): void {
     if (!this.session.pause(reason)) return;
     this.sounds?.stop();
-    this.input.clear();
-    this.keyboard.isAcceptingActions = false;
+    this.setControlsEnabled(false);
     this.publish();
   }
 
@@ -176,8 +171,7 @@ export class GameRuntime {
   resume(): void {
     if (!this.session.resume()) return;
     this.clock.discardPendingTime();
-    this.input.clear();
-    this.keyboard.isAcceptingActions = true;
+    this.setControlsEnabled(true);
     this.publish();
   }
 
@@ -194,8 +188,7 @@ export class GameRuntime {
     this.hasReportedResult = false;
     this.secondsSinceEnd = 0;
     this.clock.discardPendingTime();
-    this.input.clear();
-    this.keyboard.isAcceptingActions = true;
+    this.setControlsEnabled(true);
     this.scene?.showMatch(this.session);
     this.session.start();
     this.publish();
@@ -316,14 +309,20 @@ export class GameRuntime {
   private handleEndedFrame(frameSeconds: number): void {
     const result = this.session.result;
     if (!result || this.hasReportedResult) return;
-    if (this.secondsSinceEnd === 0) {
-      this.keyboard.isAcceptingActions = false;
-      this.input.clear();
-    }
+    if (this.secondsSinceEnd === 0) this.setControlsEnabled(false);
     this.secondsSinceEnd += frameSeconds;
     if (this.secondsSinceEnd < RESULT_REVEAL_DELAY_SECONDS) return;
     this.hasReportedResult = true;
     this.options.onMatchEnded?.(result);
+  }
+
+  /**
+   * Drops whatever is held (keys, fingers, the helm) and, while disabled, ignores new game keys except pause, so
+   * nothing pressed during a pause or after the end carries over.
+   */
+  private setControlsEnabled(isEnabled: boolean): void {
+    this.input.clear();
+    this.keyboard.isAcceptingActions = isEnabled;
   }
 
   private resizeTo(host: HTMLElement): void {

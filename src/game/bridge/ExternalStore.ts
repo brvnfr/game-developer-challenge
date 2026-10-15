@@ -1,4 +1,4 @@
-type Listener = () => void;
+import { Listeners } from '@/shared/Listeners';
 
 /**
  * Minimal external store compatible with React's `useSyncExternalStore`. Listeners are notified only when
@@ -6,7 +6,7 @@ type Listener = () => void;
  */
 export class ExternalStore<State extends object> {
   private state: State;
-  private readonly listeners = new Set<Listener>();
+  private readonly listeners = new Listeners();
   private notificationCount = 0;
 
   constructor(initialState: State) {
@@ -15,10 +15,7 @@ export class ExternalStore<State extends object> {
 
   readonly getSnapshot = (): State => this.state;
 
-  readonly subscribe = (listener: Listener): (() => void) => {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  };
+  readonly subscribe = this.listeners.subscribe;
 
   /** Number of change notifications sent so far (diagnostics and tests). */
   get notifications(): number {
@@ -26,7 +23,7 @@ export class ExternalStore<State extends object> {
   }
 
   get listenerCount(): number {
-    return this.listeners.size;
+    return this.listeners.count;
   }
 
   /** Replaces the state if any top-level field differs, then notifies the listeners. */
@@ -34,7 +31,7 @@ export class ExternalStore<State extends object> {
     if (ExternalStore.isShallowEqual(this.state, nextState)) return;
     this.state = nextState;
     this.notificationCount++;
-    for (const listener of this.listeners) listener();
+    this.listeners.notify();
   }
 
   private static isShallowEqual(first: object, second: object): boolean {

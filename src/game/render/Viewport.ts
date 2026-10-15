@@ -1,3 +1,4 @@
+import { clamp } from '@/game/core/math/numbers';
 import { Vector2 } from '@/game/core/math/Vector2';
 
 export interface ViewportLayout {
@@ -23,10 +24,6 @@ export class Viewport {
     readonly worldHeight: number,
   ) {}
 
-  get layout(): ViewportLayout {
-    return this.currentLayout;
-  }
-
   /** Recomputes the layout for a screen area in CSS pixels. */
   fit(screenWidth: number, screenHeight: number): ViewportLayout {
     const scale = Math.max(0.01, Math.min(screenWidth / this.worldWidth, screenHeight / this.worldHeight));
@@ -49,6 +46,6 @@ export class Viewport {
   }
 
   static renderResolutionFor(devicePixelRatio: number): number {
-    return Math.min(Math.max(devicePixelRatio, 1), MAX_RENDER_RESOLUTION);
+    return clamp(devicePixelRatio, 1, MAX_RENDER_RESOLUTION);
   }
 }

@@ -1,7 +1,7 @@
 import type { Arena } from '@/game/sim/arena/Arena';
-import type { TerrainKind } from '@/game/sim/arena/ArenaDefinition';
+import { isLand, type IslandKind } from '@/game/sim/arena/ArenaDefinition';
 
-export type IslandKind = Extract<TerrainKind, 'grassIsland' | 'sandIsland'>;
+export type { IslandKind };
 
 /** One island of the arena: a rectangle of tiles of a single kind. */
 export interface IslandArea {
@@ -18,9 +18,7 @@ export interface GridCell {
 }
 
 /** Smallest island the nine-slice art can draw: its corners are one tile each. */
-export const MIN_ISLAND_TILES = 2;
-
-const isIslandKind = (kind: TerrainKind): kind is IslandKind => kind === 'grassIsland' || kind === 'sandIsland';
+const MIN_ISLAND_TILES = 2;
 
 /** Tiles of one connected island (sides and corners count, so touching islands are reported together). */
 function floodIsland(arena: Arena, start: GridCell, visited: Set<string>): GridCell[] {
@@ -33,7 +31,7 @@ function floodIsland(arena: Arena, start: GridCell, visited: Set<string>): GridC
       for (let columnOffset = -1; columnOffset <= 1; columnOffset++) {
         const next = { column: cell.column + columnOffset, row: cell.row + rowOffset };
         const key = `${next.column},${next.row}`;
-        if (visited.has(key) || !isIslandKind(arena.terrainAt(next.column, next.row))) continue;
+        if (visited.has(key) || !isLand(arena.terrainAt(next.column, next.row))) continue;
         visited.add(key);
         pending.push(next);
       }
@@ -54,7 +52,7 @@ export function readIslands(arena: Arena): { readonly islands: IslandArea[]; rea
   for (let row = 0; row < arena.rows; row++) {
     for (let column = 0; column < arena.columns; column++) {
       const kind = arena.terrainAt(column, row);
-      if (!isIslandKind(kind) || visited.has(`${column},${row}`)) continue;
+      if (!isLand(kind) || visited.has(`${column},${row}`)) continue;
       const cells = floodIsland(arena, { column, row }, visited);
       const minColumn = Math.min(...cells.map((cell) => cell.column));
       const maxColumn = Math.max(...cells.map((cell) => cell.column));

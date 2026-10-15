@@ -1,19 +1,11 @@
 import { Container } from 'pixi.js';
-import { Vector2 } from '@/game/core/math/Vector2';
 import type { Ship } from '@/game/sim/entities/Ship';
 import type { GameEvent } from '@/game/sim/events/GameEvent';
 import type { MatchSession } from '@/game/sim/match/MatchSession';
 import type { GameTextures } from '../assets/GameTextures';
 import { EffectsLayer } from '../effects/EffectsLayer';
-import {
-  DamageNumberEffect,
-  ExplosionEffect,
-  MuzzleFlashEffect,
-  SinkingWreckEffect,
-  SplashEffect,
-} from '../effects/effects';
-import { EFFECT_FRAMES, SHIP_SPRITE_ROTATION_OFFSET, shipFrameFor, WRECK_STAGE } from '../spriteCatalog';
 import type { ViewportLayout } from '../Viewport';
+import { CombatEffects } from './CombatEffects';
 import { DamageFeedback } from './DamageFeedback';
 import { HitboxOverlayView } from './HitboxOverlayView';
 import { AimGuideView } from './AimGuideView';
@@ -24,10 +16,6 @@ import { PuffLayer, SMOKE_STYLE, WAKE_STYLE } from './PuffLayer';
 
 /** Extra sea drawn past the screen edges (world px), so the damage shake never uncovers the background. */
 const SCREEN_EDGE_MARGIN = 24;
-/** Damage numbers start this far above the ship's centre (world px): just over its health bar, never under it. */
-const DAMAGE_NUMBER_LIFT = 62;
-const WATER_SPLASH_COLOUR = 0xe8f8ff;
-const DUST_COLOUR = 0xf3dcab;
 
 /** Developer overlays, off by default and switched on in Developer tools (main menu). */
 export interface SceneOverlays {
@@ -70,9 +58,9 @@ export class GameScene {
   /** Damage numbers, above the health bars so a bar never hides them. */
   private readonly floatingText = new EffectsLayer('floating-text');
   private readonly damageFeedback: DamageFeedback;
+  private readonly combatEffects: CombatEffects;
   private readonly shipViews = new Map<number, ShipView>();
   private layout: ViewportLayout = { scale: 1, offsetX: 0, offsetY: 0 };
-  private damageNumberSide = 1;
 
   constructor(
     private session: MatchSession,
@@ -83,6 +71,10 @@ export class GameScene {
     this.terrain = new TerrainView(session.arena, textures, { isAnimated: !prefersReducedMotion });
     this.projectiles = new ProjectileViews(textures);
     this.damageFeedback = new DamageFeedback(session.arena.width, session.arena.height, prefersReducedMotion);
+    this.combatEffects = new CombatEffects(textures, this.effects, this.floatingText, this.damageFeedback, {
+      shipView: (shipId) => this.shipViews.get(shipId),
+      projectile: (projectileId) => this.session.world.projectiles.find((projectile) => projectile.id === projectileId),
+    });
     this.aimGuide = this.createAimGuide();
     this.aimGuideLayer.visible = overlays.aimLanes;
     this.hitboxes = overlays.hitboxes ? new HitboxOverlayView(session.arena) : null;
@@ -129,8 +121,7 @@ export class GameScene {
   /** Switches to a new match (restart): drops every entity view and effect, keeps the terrain. */
   showMatch(session: MatchSession): void {
     this.session = session;
-    for (const view of this.shipViews.values()) view.destroy();
-    this.shipViews.clear();
+    this.destroyShipViews();
     this.projectiles.clear();
     this.effects.clear();
     this.floatingText.clear();
@@ -153,7 +144,7 @@ export class GameScene {
   }
 
   handleEvents(events: readonly GameEvent[]): void {
-    for (const event of events) this.handleEvent(event);
+    for (const event of events) this.combatEffects.handle(event);
   }
 
   /** Draws the current state. `deltaSeconds` is presentation time (0 while paused, freezing effects). */
@@ -175,8 +166,7 @@ export class GameScene {
   }
 
   destroy(): void {
-    for (const view of this.shipViews.values()) view.destroy();
-    this.shipViews.clear();
+    this.destroyShipViews();
     this.projectiles.destroy();
     this.effects.destroy();
     this.floatingText.destroy();
@@ -186,6 +176,11 @@ export class GameScene {
     this.smoke.destroy();
     this.terrain.destroy();
     this.root.destroy({ children: true });
+  }
+
+  private destroyShipViews(): void {
+    for (const view of this.shipViews.values()) view.destroy();
+    this.shipViews.clear();
   }
 
   private syncShips(interpolation: number, deltaSeconds: number): void {
@@ -220,51 +215,5 @@ export class GameScene {
     const aimGuide = new AimGuideView(this.session.player);
     this.aimGuideLayer.addChild(aimGuide.guide);
     return aimGuide;
-  }
-
-  private handleEvent(event: GameEvent): void {
-    const explosionFrames = EFFECT_FRAMES.explosions.map((frame) => this.textures.ship(frame));
-    switch (event.type) {
-      case 'weaponFired': {
-        for (const projectileId of event.projectileIds) {
-          const projectile = this.session.world.projectiles.find((candidate) => candidate.id === projectileId);
-          if (projectile)
-            this.effects.add(new MuzzleFlashEffect(projectile.position, this.textures.ship('explosion_3')));
-        }
-        return;
-      }
-      case 'projectileHit':
-        this.effects.add(new ExplosionEffect(event.position, explosionFrames.slice(1), 0.35, 0.3));
-        return;
-      case 'projectileExpired':
-        if (event.reason === 'rangeExhausted' || event.reason === 'ownerDestroyed') {
-          this.effects.add(new SplashEffect(event.position, WATER_SPLASH_COLOUR, 14));
-        } else if (event.reason === 'hitIsland') {
-          this.effects.add(new SplashEffect(event.position, DUST_COLOUR, 10));
-        }
-        return;
-      case 'shipDamaged': {
-        this.shipViews.get(event.shipId)?.flashHit();
-        // Numbers of consecutive hits lean left and right so they do not stack into one blob.
-        this.damageNumberSide = -this.damageNumberSide;
-        const origin = event.position.add(new Vector2(this.damageNumberSide * 14, -DAMAGE_NUMBER_LIFT));
-        this.floatingText.add(new DamageNumberEffect(origin, event.damage, event.kind === 'player'));
-        if (event.kind === 'player') this.damageFeedback.trigger();
-        return;
-      }
-      case 'shipDestroyed': {
-        const view = this.shipViews.get(event.shipId);
-        const rotation = view?.body.rotation ?? SHIP_SPRITE_ROTATION_OFFSET;
-        if (event.kind !== 'player') {
-          this.effects.add(
-            new SinkingWreckEffect(event.position, rotation, this.textures.ship(shipFrameFor(event.kind, WRECK_STAGE))),
-          );
-        }
-        this.effects.add(new ExplosionEffect(event.position, explosionFrames, event.cause === 'ram' ? 1.1 : 0.9, 0.7));
-        return;
-      }
-      default:
-        return;
-    }
   }
 }

@@ -26,10 +26,6 @@ export class KeyboardInputSource {
     private readonly onTogglePause: () => void,
   ) {}
 
-  get isAttached(): boolean {
-    return this.attached;
-  }
-
   attach(): void {
     if (this.attached) return;
     this.target.addEventListener('keydown', this.handleKeyDown);

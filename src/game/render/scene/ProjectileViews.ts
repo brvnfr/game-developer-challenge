@@ -1,4 +1,5 @@
 import { Container, Sprite, Texture } from 'pixi.js';
+import { clamp } from '@/game/core/math/numbers';
 import type { Projectile } from '@/game/sim/entities/Projectile';
 import type { GameTextures } from '../assets/GameTextures';
 import { EFFECT_FRAMES } from '../spriteCatalog';
@@ -43,7 +44,7 @@ export class ProjectileViews {
       view.container.position.set(position.x, position.y);
       const { velocity } = projectile;
       view.trail.rotation = Math.atan2(velocity.y, velocity.x);
-      view.trail.width = Math.min(TRAIL_LENGTH.max, Math.max(TRAIL_LENGTH.min, velocity.length * TRAIL_SECONDS));
+      view.trail.width = clamp(velocity.length * TRAIL_SECONDS, TRAIL_LENGTH.min, TRAIL_LENGTH.max);
     }
     for (const [id, view] of this.active) {
       if (!visibleIds.has(id)) this.release(id, view);

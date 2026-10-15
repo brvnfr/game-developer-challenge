@@ -122,7 +122,7 @@ export function installTestHarness(audio: AudioEngine): void {
           weaponSlot: projectile.weaponSlot,
           x: projectile.position.x,
           y: projectile.position.y,
-          heading: Math.atan2(projectile.velocity.y, projectile.velocity.x),
+          heading: projectile.heading,
         })),
         statistics: match.statisticsSnapshot,
         enemiesSpawned: match.enemiesSpawned,
