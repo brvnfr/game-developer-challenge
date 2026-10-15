@@ -4,14 +4,16 @@ import '@fontsource/lilita-one/latin-400.css';
 import '@fontsource/nunito/latin-400.css';
 import '@fontsource/nunito/latin-700.css';
 import { App } from '@/app/App';
+import { BootSplash } from '@/app/boot/BootSplash';
+import { preloadUi } from '@/app/boot/preloadUi';
 import { createBrowserServices } from '@/app/AppServices';
 import { AudioEngine } from '@/game/audio/AudioEngine';
-import type { MockServer } from '@/mocks/MockServer';
 import { readApiConfig } from '@/remote/apiConfig';
 import { createRemoteServices } from '@/remote/RemoteServices';
 import { browserLocalStorage } from '@/storage/LocalStore';
 import { installTestHarness } from '@/testing/TestHarness';
 import { readTestMode } from '@/testing/testMode';
+import { SEA_BACKDROP_IMAGES } from '@/ui/backdrop/seaBackdropArt';
 import { trackFocusModality } from '@/ui/focusModality';
 import '@/app/global.css';
 
@@ -39,9 +41,13 @@ async function bootstrap(container: HTMLElement): Promise<void> {
   // deterministic, and a CPU-rendered browser is not kept busy compositing a moving sea behind every step.
   if (testMode.manualTime) document.documentElement.setAttribute('data-motion', 'still');
   const apiConfig = readApiConfig();
-  const mockServer: MockServer | null = apiConfig.areMocksEnabled
-    ? await startMockApi(apiConfig.apiPath, apiConfig.scenarioOverrides)
-    : null;
+  // The loading screen (inline in index.html) stays up while the mock API starts and the interface's art and
+  // fonts load, so the first screen appears complete rather than painting piece by piece.
+  const splash = BootSplash.fromDocument(document);
+  const [mockServer] = await Promise.all([
+    apiConfig.areMocksEnabled ? startMockApi(apiConfig.apiPath, apiConfig.scenarioOverrides) : Promise.resolve(null),
+    preloadUi(SEA_BACKDROP_IMAGES, (fraction) => splash.setProgress(fraction)),
+  ]);
   const remote = createRemoteServices({
     baseUrl: apiConfig.baseUrl,
     timeoutMs: apiConfig.timeoutMs,
@@ -55,6 +61,13 @@ async function bootstrap(container: HTMLElement): Promise<void> {
       <App services={createBrowserServices(remote, audio)} />
     </StrictMode>,
   );
+  await afterNextPaint();
+  await splash.finish();
+}
+
+/** Resolves once the browser has painted the frame after this call. */
+function afterNextPaint(): Promise<void> {
+  return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
 }
 
 const container = document.getElementById('root');

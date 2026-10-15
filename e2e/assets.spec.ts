@@ -7,6 +7,31 @@ test.describe('asset loading (E2E-02)', () => {
   // These tests do not use the API, so service workers are blocked and the app runs without mocks.
   test.use({ serviceWorkers: 'block' });
 
+  test('the page opens on a loading screen until the menu art is ready, then shows the complete menu', async ({
+    page,
+  }) => {
+    let releaseTitle: () => void = () => undefined;
+    const titleHeld = new Promise<void>((resolve) => {
+      releaseTitle = resolve;
+    });
+    await page.route('**/title_pirate_battle*.png', async (route) => {
+      await titleHeld;
+      await route.continue();
+    });
+    await page.goto('/?test=1', { waitUntil: 'domcontentloaded' });
+    const splash = page.getByRole('progressbar', { name: 'Loading Pirate Battle' });
+    await expect(splash).toBeVisible();
+    await expect.poll(async () => Number(await splash.getAttribute('aria-valuenow'))).toBeGreaterThan(0);
+    expect(Number(await splash.getAttribute('aria-valuenow'))).toBeLessThan(100);
+    await expect(page.getByRole('button', { name: 'Play' })).toHaveCount(0);
+
+    releaseTitle();
+    await expect(splash).toHaveCount(0);
+    const title = page.getByRole('img', { name: 'Pirate Battle' });
+    await expect(title).toBeVisible();
+    expect(await title.evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  });
+
   test('shows progress while the atlases load', async ({ page }) => {
     await page.route('**/assets/game/tiles@*', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 800));

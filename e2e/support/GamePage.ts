@@ -71,11 +71,13 @@ export class GamePage {
   }
 
   /**
-   * The app renders only after the mock API's service worker has started, which is after the page's load event.
-   * Waiting for the first screen (and its initial focus) keeps tests from racing the bootstrap.
+   * The app renders only after the mock API's service worker has started and the interface's art has loaded
+   * (behind the boot splash). Waiting for the first screen (and its initial focus) keeps tests from racing it.
    */
   async waitForApp(): Promise<void> {
     await this.page.waitForFunction(() => (document.getElementById('root')?.childElementCount ?? 0) > 0);
+    // The boot splash fades out after the first screen is drawn; wait until it is gone so it never takes a click.
+    await this.page.waitForFunction(() => document.getElementById('boot-splash') === null);
     await this.page.evaluate(
       () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
     );

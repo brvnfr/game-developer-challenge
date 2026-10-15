@@ -3,14 +3,138 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#1b2a3a" />
+    <meta name="theme-color" content="#0b2236" />
     <meta
       name="description"
       content="Pirate Battle — a top-down naval shooter. Navigate the islands and survive the battle."
     />
     <title>Pirate Battle</title>
+    <!-- Boot splash: inline so it shows at once, before the app's code and art have downloaded. -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #0b2236;
+      }
+
+      #boot-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        padding: 24px;
+        color: #f6e7c8;
+        font-family: 'Trebuchet MS', system-ui, sans-serif;
+        background: radial-gradient(ellipse at 50% 40%, #134a6e 0%, #0b2a44 45%, #061827 100%);
+        transition: opacity 0.35s ease;
+      }
+
+      #boot-splash.boot-splash--done {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .boot-splash__wheel {
+        width: 96px;
+        height: 96px;
+        animation: boot-splash-turn 4s linear infinite;
+      }
+
+      .boot-splash__title {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #f3c46a;
+        text-shadow: 0 2px 0 #3a210b;
+      }
+
+      .boot-splash__track {
+        width: min(320px, 72vw);
+        height: 14px;
+        padding: 3px;
+        border: 2px solid #b5722f;
+        border-radius: 999px;
+        background: #071a2a;
+        box-shadow: inset 0 0 0 1px #f3c46a55;
+      }
+
+      .boot-splash__fill {
+        width: 0;
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(#ffe39a, #e0a54c);
+        transition: width 0.2s ease-out;
+      }
+
+      .boot-splash__status {
+        margin: 0;
+        font-size: 15px;
+        letter-spacing: 0.04em;
+      }
+
+      .boot-splash__brand {
+        position: absolute;
+        right: 16px;
+        bottom: 14px;
+        width: 104px;
+        opacity: 0.8;
+      }
+
+      @keyframes boot-splash-turn {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .boot-splash__wheel {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div
+      id="boot-splash"
+      role="progressbar"
+      aria-label="Loading Pirate Battle"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      data-testid="boot-splash"
+    >
+      <svg class="boot-splash__wheel" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#e0a54c" stroke-linecap="round">
+          <circle cx="50" cy="50" r="30" stroke-width="7" />
+          <circle cx="50" cy="50" r="9" stroke-width="6" />
+          <path
+            stroke-width="6"
+            d="M50 5v36M50 59v36M5 50h36M59 50h36M18 18l25 25M57 57l25 25M82 18L57 43M43 57L18 82"
+          />
+        </g>
+        <g fill="#f3c46a">
+          <circle cx="50" cy="4" r="5" />
+          <circle cx="50" cy="96" r="5" />
+          <circle cx="4" cy="50" r="5" />
+          <circle cx="96" cy="50" r="5" />
+          <circle cx="17" cy="17" r="5" />
+          <circle cx="83" cy="83" r="5" />
+          <circle cx="83" cy="17" r="5" />
+          <circle cx="17" cy="83" r="5" />
+        </g>
+      </svg>
+      <p class="boot-splash__title">Pirate Battle</p>
+      <div class="boot-splash__track"><div class="boot-splash__fill"></div></div>
+      <p class="boot-splash__status">Hoisting the sails…</p>
+      <img class="boot-splash__brand" src="./assets/logo_jungle_gaming.svg" alt="Jungle Gaming" />
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
