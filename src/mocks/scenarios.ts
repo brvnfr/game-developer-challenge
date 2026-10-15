@@ -111,7 +111,6 @@ export class ScenarioController {
   private random: SeededRandom;
   private requestCounts = new Map<MockEndpoint, number>();
   private readonly firstSaveAttempts = new Set<string>();
-  private readonly listeners = new Set<() => void>();
 
   constructor(storage: KeyValueStorage | null, overrides: Partial<ScenarioSettings> = {}) {
     this.store = new LocalStore(SCENARIO_SETTINGS_KEY, settingsSchema, storage);
@@ -135,11 +134,6 @@ export class ScenarioController {
     this.current = DEFAULT_SCENARIO_SETTINGS;
     this.store.write(this.current);
     this.restart();
-  }
-
-  subscribe(listener: () => void): () => void {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
   }
 
   /** Decides delay and outcome of one request. `matchId` identifies saves. */
@@ -201,6 +195,5 @@ export class ScenarioController {
     this.random = new SeededRandom(this.current.seed);
     this.requestCounts = new Map();
     this.firstSaveAttempts.clear();
-    for (const listener of this.listeners) listener();
   }
 }

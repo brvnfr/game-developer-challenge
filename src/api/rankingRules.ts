@@ -1,7 +1,12 @@
 import type { MatchRecord, Page, PageRequest } from './contracts';
 
+/** Plain code-point order: the same in every browser and locale. */
+function compareIds(first: string, second: string): number {
+  return first < second ? -1 : first > second ? 1 : 0;
+}
+
 /**
- * Ranking order (ADR-011), fully deterministic:
+ * Ranking order, fully deterministic:
  * 1. more points first;
  * 2. same points: the shorter match first (the points were scored faster);
  * 3. still tied: the match that ended first (it reached the score earlier in real time);
@@ -15,16 +20,13 @@ export function compareForRanking(
     second.score - first.score ||
     first.durationMs - second.durationMs ||
     Date.parse(first.endedAt) - Date.parse(second.endedAt) ||
-    (first.matchId < second.matchId ? -1 : first.matchId > second.matchId ? 1 : 0)
+    compareIds(first.matchId, second.matchId)
   );
 }
 
 /** Newest first, then by match id (stable order for matches that ended at the same instant). */
 export function compareForHistory(first: MatchRecord, second: MatchRecord): number {
-  return (
-    Date.parse(second.endedAt) - Date.parse(first.endedAt) ||
-    (first.matchId < second.matchId ? -1 : first.matchId > second.matchId ? 1 : 0)
-  );
+  return Date.parse(second.endedAt) - Date.parse(first.endedAt) || compareIds(first.matchId, second.matchId);
 }
 
 /** Slices an already sorted list. Pages are 1-based; a page past the end is empty but keeps the totals. */

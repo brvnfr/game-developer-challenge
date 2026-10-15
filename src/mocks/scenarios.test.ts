@@ -67,12 +67,11 @@ describe('ScenarioController', () => {
     expect(historyFails.plan('register', 'x').fault).toBeNull();
   });
 
-  it('reset goes back to the default scenario and notifies listeners', () => {
-    const controller = new ScenarioController(new MemoryStorage(), { scenarioId: 'timeout' });
-    let notifications = 0;
-    controller.subscribe(() => notifications++);
+  it('reset goes back to the default scenario and keeps it after a reload', () => {
+    const storage = new MemoryStorage();
+    const controller = new ScenarioController(storage, { scenarioId: 'timeout' });
     controller.reset();
     expect(controller.settings.scenarioId).toBe('success');
-    expect(notifications).toBe(1);
+    expect(new ScenarioController(storage).settings.scenarioId).toBe('success');
   });
 });

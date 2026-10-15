@@ -6,6 +6,7 @@ import {
   MAX_PAGE_SIZE,
   registerMatchRequestSchema,
   type ApiErrorBody,
+  type Page,
   type PageRequest,
 } from '@/api/contracts';
 import { parseConfigKey } from '@/game/config/matchConfig';
@@ -19,6 +20,11 @@ const pageQuerySchema = z.object({
 
 function errorResponse(status: number, code: string, message: string) {
   return HttpResponse.json<ApiErrorBody>({ code, message }, { status });
+}
+
+/** The "empty lists" scenario answers with the same page, emptied. */
+function listResponse<Item>(plan: ResponsePlan, page: Page<Item>) {
+  return HttpResponse.json(plan.listMode === 'empty' ? { ...page, items: [], totalItems: 0, totalPages: 0 } : page);
 }
 
 function readPage(url: URL): PageRequest | null {
@@ -85,10 +91,7 @@ export function createHandlers(server: MockServer, apiPath: string) {
           return Promise.resolve(errorResponse(400, 'bad_request', 'configKey, page and pageSize are required.'));
         }
         const extra = plan.listMode === 'many' ? server.demoRanking(settings) : [];
-        const page = server.database.ranking(configKey, pageRequest, extra);
-        return Promise.resolve(
-          HttpResponse.json(plan.listMode === 'empty' ? { ...page, items: [], totalItems: 0, totalPages: 0 } : page),
-        );
+        return Promise.resolve(listResponse(plan, server.database.ranking(configKey, pageRequest, extra)));
       }),
     ),
 
@@ -102,10 +105,7 @@ export function createHandlers(server: MockServer, apiPath: string) {
         }
         const known = server.database.history(playerId, { page: 1, pageSize: 1 }).items[0];
         const extra = plan.listMode === 'many' ? server.demoHistory(playerId, known?.playerName ?? 'You') : [];
-        const page = server.database.history(playerId, pageRequest, extra);
-        return Promise.resolve(
-          HttpResponse.json(plan.listMode === 'empty' ? { ...page, items: [], totalItems: 0, totalPages: 0 } : page),
-        );
+        return Promise.resolve(listResponse(plan, server.database.history(playerId, pageRequest, extra)));
       }),
     ),
 

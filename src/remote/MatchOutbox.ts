@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { registerMatchRequestSchema, type RegisterMatchRequest } from '@/api/contracts';
+import { Listeners } from '@/shared/Listeners';
 import { LocalStore, type KeyValueStorage } from '@/storage/LocalStore';
 
 export const OUTBOX_KEY = 'pirate-battle.outbox.v1';
@@ -47,7 +48,7 @@ const EMPTY_STATE: OutboxState = { pending: [], confirmed: [] };
 export class MatchOutbox {
   private readonly store: LocalStore<OutboxState>;
   private state: OutboxState;
-  private readonly listeners = new Set<() => void>();
+  private readonly listeners = new Listeners();
 
   constructor(
     storage: KeyValueStorage | null,
@@ -59,10 +60,7 @@ export class MatchOutbox {
 
   readonly getSnapshot = (): OutboxState => this.state;
 
-  readonly subscribe = (listener: () => void): (() => void) => {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  };
+  readonly subscribe = this.listeners.subscribe;
 
   find(matchId: string): PendingSubmission | undefined {
     return this.state.pending.find((submission) => submission.request.matchId === matchId);
@@ -108,6 +106,6 @@ export class MatchOutbox {
   private update(state: OutboxState): void {
     this.state = state;
     this.store.write(state);
-    for (const listener of this.listeners) listener();
+    this.listeners.notify();
   }
 }

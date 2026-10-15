@@ -3,21 +3,17 @@ import type { z } from 'zod';
 /** The subset of the Web Storage API used by the stores (lets tests inject an in-memory implementation). */
 export type KeyValueStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
-export function browserLocalStorage(): KeyValueStorage | null {
+/** The browser's storage, or null where it is unavailable (e.g. disabled by privacy settings). */
+function browserStorage(area: 'localStorage' | 'sessionStorage'): KeyValueStorage | null {
   try {
-    return window.localStorage;
-  } catch {
-    return null; // e.g. storage disabled by privacy settings
-  }
-}
-
-export function browserSessionStorage(): KeyValueStorage | null {
-  try {
-    return window.sessionStorage;
+    return window[area];
   } catch {
     return null;
   }
 }
+
+export const browserLocalStorage = (): KeyValueStorage | null => browserStorage('localStorage');
+export const browserSessionStorage = (): KeyValueStorage | null => browserStorage('sessionStorage');
 
 /**
  * One versioned, schema-validated value in browser storage. Corrupted or outdated data is discarded

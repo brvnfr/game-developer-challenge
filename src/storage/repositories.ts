@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { matchEndReasonSchema } from '@/api/contracts';
 import { DEFAULT_USER_SETTINGS } from '@/game/config/defaults';
 import { validateSettings } from '@/game/config/settingsValidation';
 import type { UserSettings } from '@/game/config/types';
@@ -78,7 +79,7 @@ const resultSchema = z.object({
   matchId: z.string(),
   score: z.number(),
   durationMs: z.number(),
-  endReason: z.enum(['timeUp', 'playerDestroyed']),
+  endReason: matchEndReasonSchema,
   endedAt: z.string(),
   settings: settingsSchema,
   seed: z.number(),

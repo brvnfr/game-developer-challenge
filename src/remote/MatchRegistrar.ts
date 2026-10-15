@@ -66,10 +66,6 @@ export class MatchRegistrar {
     for (const submission of this.options.outbox.getSnapshot().pending) void this.send(submission.request.matchId);
   };
 
-  isSending(matchId: string): boolean {
-    return this.inFlight.has(matchId);
-  }
-
   private async send(matchId: string): Promise<void> {
     const submission = this.options.outbox.find(matchId);
     if (!submission || this.inFlight.has(matchId)) return;
