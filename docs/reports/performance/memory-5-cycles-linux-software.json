@@ -1,6 +1,6 @@
 {
   "environment": {
-    "recordedAt": "2026-10-14T20:13:31.909Z",
+    "recordedAt": "2026-10-14T23:33:40.688Z",
     "machine": {
       "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
       "cores": 2,
@@ -24,95 +24,120 @@
   "samples": [
     {
       "label": "menu before any match",
-      "jsHeapUsedMb": 3.28,
+      "jsHeapUsedMb": 3.45,
       "domNodes": 26,
-      "jsEventListeners": 5,
+      "jsEventListeners": 6,
       "documents": 1,
       "liveRuntimes": 0,
       "canvases": 0
     },
     {
       "label": "after cycle 1",
-      "jsHeapUsedMb": 7.95,
-      "domNodes": 117,
-      "jsEventListeners": 185,
-      "documents": 1,
+      "jsHeapUsedMb": 8.29,
+      "domNodes": 122,
+      "jsEventListeners": 187,
+      "documents": 2,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 3,
-        "projectiles": 1,
-        "pooledProjectiles": 7,
-        "effects": 1,
-        "wakePuffs": 60
+        "ships": 4,
+        "projectiles": 0,
+        "pooledProjectiles": 8,
+        "effects": 0,
+        "wakePuffs": 98,
+        "smokePuffs": 0,
+        "overlays": {
+          "aimLanes": false,
+          "hitboxes": false
+        }
       }
     },
     {
       "label": "after cycle 2",
-      "jsHeapUsedMb": 8.16,
-      "domNodes": 117,
-      "jsEventListeners": 185,
-      "documents": 1,
+      "jsHeapUsedMb": 8.52,
+      "domNodes": 122,
+      "jsEventListeners": 187,
+      "documents": 2,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 3,
-        "projectiles": 6,
-        "pooledProjectiles": 2,
-        "effects": 2,
-        "wakePuffs": 62
+        "ships": 4,
+        "projectiles": 0,
+        "pooledProjectiles": 8,
+        "effects": 0,
+        "wakePuffs": 98,
+        "smokePuffs": 0,
+        "overlays": {
+          "aimLanes": false,
+          "hitboxes": false
+        }
       }
     },
     {
       "label": "after cycle 3",
-      "jsHeapUsedMb": 8.34,
-      "domNodes": 117,
-      "jsEventListeners": 185,
-      "documents": 1,
+      "jsHeapUsedMb": 8.82,
+      "domNodes": 122,
+      "jsEventListeners": 187,
+      "documents": 2,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 3,
-        "projectiles": 1,
-        "pooledProjectiles": 7,
+        "ships": 4,
+        "projectiles": 0,
+        "pooledProjectiles": 8,
         "effects": 1,
-        "wakePuffs": 58
+        "wakePuffs": 98,
+        "smokePuffs": 0,
+        "overlays": {
+          "aimLanes": false,
+          "hitboxes": false
+        }
       }
     },
     {
       "label": "after cycle 4",
-      "jsHeapUsedMb": 8.41,
-      "domNodes": 117,
-      "jsEventListeners": 185,
-      "documents": 1,
+      "jsHeapUsedMb": 8.91,
+      "domNodes": 122,
+      "jsEventListeners": 187,
+      "documents": 2,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 3,
-        "projectiles": 1,
-        "pooledProjectiles": 7,
-        "effects": 2,
-        "wakePuffs": 56
+        "ships": 4,
+        "projectiles": 0,
+        "pooledProjectiles": 8,
+        "effects": 1,
+        "wakePuffs": 98,
+        "smokePuffs": 0,
+        "overlays": {
+          "aimLanes": false,
+          "hitboxes": false
+        }
       }
     },
     {
       "label": "after cycle 5",
-      "jsHeapUsedMb": 8.54,
-      "domNodes": 117,
-      "jsEventListeners": 185,
-      "documents": 1,
+      "jsHeapUsedMb": 8.91,
+      "domNodes": 122,
+      "jsEventListeners": 187,
+      "documents": 2,
       "liveRuntimes": 0,
       "canvases": 0,
       "sceneDuringMatch": {
-        "ships": 3,
-        "projectiles": 1,
-        "pooledProjectiles": 7,
-        "effects": 2,
-        "wakePuffs": 56
+        "ships": 4,
+        "projectiles": 0,
+        "pooledProjectiles": 8,
+        "effects": 1,
+        "wakePuffs": 94,
+        "smokePuffs": 0,
+        "overlays": {
+          "aimLanes": false,
+          "hitboxes": false
+        }
       }
     }
   ],
-  "heapGrowthFromCycle1ToLastMb": 0.59,
+  "heapGrowthFromCycle1ToLastMb": 0.62,
   "nativeObjectsInHeapSnapshots": {
     "after cycle 1": {
       "HTMLCanvasElement": 6,

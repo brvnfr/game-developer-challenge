@@ -44,22 +44,24 @@ run B below). Every report records the WebGL renderer and `isGpuAccelerated`, an
 | Match      | 180 s, spawn 3 s, seed 7, player health 10 000, all cannons firing |
 
 **3-minute match** ([match-3min-linux-software.json](reports/performance/match-3min-linux-software.json)),
-after the visual patch, with the values measured before it for comparison:
+after the second visual patch (nine-slice islands, smoke, damage numbers, streaks, helm joystick), with the values
+of the first visual patch and of the version before it for comparison:
 
-| Metric                                   | After the patch                                                                                            | Before                           |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Average FPS                              | **4.4**                                                                                                    | 6.5                              |
-| Frame interval p50 / **p95** / p99 / max | 220 / **285** / 323 / 726 ms                                                                               | 144 / 215 / 264 / 627 ms         |
-| Main-thread work per frame avg / p95     | **2.5 / 5.5 ms** (max 115 ms)                                                                              | 1.6 / 4.3 ms                     |
-| Peak entities (per-second samples)       | 14 enemies · 13 projectiles · 12 effects · 872 display objects                                             | 12 · 12 · 14 · 724               |
-| Match totals                             | 81 enemies spawned (39 Chasers, 42 Shooters) · 1 160 player and 497 enemy projectiles · 40 kills · 27 rams | 110 spawned · 53 kills · 44 rams |
-| JS heap at the end                       | 26 MB                                                                                                      | 21 MB                            |
+| Metric                                   | After patch 2                                                                                              | After patch 1                   | Before patch 1                   |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------- | -------------------------------- |
+| Average FPS                              | **5.0**                                                                                                    | 4.4                             | 6.5                              |
+| Frame interval p50 / **p95** / p99 / max | 197 / **239** / 265 / 679 ms                                                                               | 220 / 285 / 323 / 726 ms        | 144 / 215 / 264 / 627 ms         |
+| Main-thread work per frame avg / p95     | **3.6 / 9.0 ms** (max 109 ms)                                                                              | 2.5 / 5.5 ms                    | 1.6 / 4.3 ms                     |
+| Peak entities (per-second samples)       | 14 enemies · 10 projectiles · 18 effects · 587 display objects                                             | 14 · 13 · 12 · 872              | 12 · 12 · 14 · 724               |
+| Match totals                             | 96 enemies spawned (51 Chasers, 45 Shooters) · 1 160 player and 377 enemy projectiles · 39 kills · 44 rams | 81 spawned · 40 kills · 27 rams | 110 spawned · 53 kills · 44 rams |
+| JS heap at the end                       | 22 MB                                                                                                      | 26 MB                           | 21 MB                            |
 
-What the numbers say: the game's own work per frame (rules + scene + draw submission) stays far below the
-16.7 ms budget of 60 FPS (p95 5.5 ms, a third of the budget; 4.3 ms before the patch). The frame rate here is limited by the
+What the numbers say: the game's own work per frame (rules + scene + draw submission) stays below the
+16.7 ms budget of 60 FPS (p95 9.0 ms; 5.5 ms after patch 1, 4.3 ms before it — the smoke and damage numbers add
+sprites to update, and this CPU also rasterises). The frame rate here is limited by the
 software rasteriser drawing 1280 × 720 pixels on two virtual CPUs without a GPU — the same reason the E2E suite
 uses a manual clock. PixiJS's ticker reports at most 100 ms per frame (its `minFPS` of 10), so with frames this
-slow the 180 s match took 410 s of wall time (278 s before the patch). **This environment cannot show 60 FPS and
+slow the 180 s match took 359 s of wall time (410 s after patch 1, 278 s before it). **This environment cannot show 60 FPS and
 is not the reference for that target.**
 
 What the patch costs here: with software rasterisation the cost of a frame follows the number of pixels blended.
@@ -68,24 +70,26 @@ cached as arena-sized textures) and took about 330 ms per frame in a 20-second s
 old terrain. Dropping the second (additive "glints") sea layer and caching each island and its shallows as their
 own small textures brought it to about 210 ms; the sea is now the only layer covering the whole arena. Wakes,
 aim lanes and reload arcs made no measurable difference here. With the GPU (Environment C) the patch did not change
-the frame rate; the reduction mainly helps weak mobile GPUs.
+the frame rate; the reduction mainly helps weak mobile GPUs. Patch 2 drew each island as one nine-slice instead of
+one sprite per tile (587 display objects at the peak instead of 872) and recovered some frame rate here; the GPU
+reference run below was recorded after patch 1 and should be repeated after patch 2.
 
 **Memory, 5 cycles** ([memory-5-cycles-linux-software.json](reports/performance/memory-5-cycles-linux-software.json)),
-after the visual patch:
+after the second visual patch:
 
 | After               | JS heap (MB) | DOM nodes | JS listeners | Live runtimes | Canvases |
 | ------------------- | -----------: | --------: | -----------: | ------------: | -------: |
-| Menu (no match yet) |         3.28 |        26 |            5 |             0 |        0 |
-| Cycle 1             |         7.95 |       117 |          185 |             0 |        0 |
-| Cycle 2             |         8.16 |       117 |          185 |             0 |        0 |
-| Cycle 3             |         8.34 |       117 |          185 |             0 |        0 |
-| Cycle 4             |         8.41 |       117 |          185 |             0 |        0 |
-| Cycle 5             |         8.54 |       117 |          185 |             0 |        0 |
+| Menu (no match yet) |         3.45 |        26 |            6 |             0 |        0 |
+| Cycle 1             |         8.29 |       122 |          187 |             0 |        0 |
+| Cycle 2             |         8.52 |       122 |          187 |             0 |        0 |
+| Cycle 3             |         8.82 |       122 |          187 |             0 |        0 |
+| Cycle 4             |         8.91 |       122 |          187 |             0 |        0 |
+| Cycle 5             |         8.91 |       122 |          187 |             0 |        0 |
 
 - The first match loads the atlases, sounds and code (+4.7 MB): expected, and kept for later matches.
-- From cycle 1 to 5: **+0.59 MB** (+0.21, +0.18, +0.07, +0.13 MB; before the patch +0.60 MB); DOM nodes and
-  listeners return to the same level; no runtime or canvas survives a match. The wake texture drawn on a canvas
-  and the cached island textures are released with each match: the canvas and WebGL counts below do not grow. Native objects in the heap snapshots are identical after
+- From cycle 1 to 5: **+0.62 MB** (+0.23, +0.30, +0.09, +0.00 MB; +0.59 MB after patch 1, +0.60 MB before it); DOM nodes and
+  listeners return to the same level; no runtime or canvas survives a match. The wake and smoke textures drawn on
+  canvases and the cached island textures are released with each match: the canvas and WebGL counts below do not grow. Native objects in the heap snapshots are identical after
   cycle 1 and cycle 5 (6 canvas and 7 WebGL context objects held by PixiJS's and the browser's capability checks
   and caches, 0 detached canvases, 2 resize observers) — nothing accumulates per match. A 10-cycle run
   ([memory-10-cycles-linux-software.json](reports/performance/memory-10-cycles-linux-software.json), measured before the visual patch) goes from 7.49 MB after cycle 1
