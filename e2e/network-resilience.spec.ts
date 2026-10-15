@@ -38,17 +38,30 @@ test.describe('timeouts and late answers (E2E-12)', () => {
       const matchId = await game.lastResultId();
 
       await page.getByRole('button', { name: 'Main Menu' }).click();
-      const saves: string[] = [];
+      // Saves in flight at the same moment: a background retry may also run while the scenario changes, but
+      // never two at once (and the server ends with one record).
+      let inFlight = 0;
+      let mostInFlight = 0;
+      let saves = 0;
+      const settle = (request: { method: () => string }) => {
+        if (request.method() === 'PUT') inFlight--;
+      };
       page.on('request', (request) => {
-        if (request.method() === 'PUT') saves.push(request.url());
+        if (request.method() !== 'PUT') return;
+        saves++;
+        inFlight++;
+        mostInFlight = Math.max(mostInFlight, inFlight);
       });
+      page.on('requestfinished', settle);
+      page.on('requestfailed', settle);
       await game.selectNetworkScenario('Slow network'); // Apply resends at once; the answer takes ~2.5 s
       await game.openCaptainsLog('Match History');
       const retry = page.getByTestId('pending-submissions').getByRole('button', { name: 'Retry now' });
       for (let press = 0; press < 5; press++) await retry.click({ timeout: 2_000 }).catch(() => undefined);
 
       await expect(page.getByTestId('pending-submissions')).toBeHidden({ timeout: 10_000 });
-      expect(saves).toHaveLength(1);
+      expect(saves).toBeGreaterThanOrEqual(1);
+      expect(mostInFlight).toBe(1);
       expect(await game.storedCopiesOf(matchId)).toBe(1);
     });
   });
