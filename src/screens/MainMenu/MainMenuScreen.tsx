@@ -10,6 +10,7 @@ import { ControlsHelp } from '@/ui/ControlsHelp';
 import gearIcon from '@/ui/icons/gear.svg';
 import { summarizeResult } from '@/ui/matchResultText';
 import { useFocusOnMount } from '@/ui/useFocusOnMount';
+import { ControlsDialog } from './ControlsDialog';
 import { DeveloperToolsDialog } from './DeveloperToolsDialog';
 import { NetworkScenariosDialog } from './NetworkScenariosDialog';
 
@@ -24,7 +25,7 @@ interface MainMenuScreenProps {
   readonly onDeveloperToolsChange: (settings: DeveloperToolsSettings) => void;
 }
 
-type OpenDialog = 'none' | 'developerTools' | 'networkScenarios';
+type OpenDialog = 'none' | 'controls' | 'developerTools' | 'networkScenarios';
 
 /**
  * Main menu: Play, Options, the Captain's Log tabs, the last battle and the control instructions. Testing aids
@@ -85,6 +86,10 @@ export function MainMenuScreen({
         <Button variant="small" onClick={onMatchHistory}>
           Match History
         </Button>
+        {/* Small screens hide the "How to play" panel; this opens the same instructions in a dialog. */}
+        <Button variant="small" className="menu-panel__controls-button" onClick={() => setOpenDialog('controls')}>
+          Controls
+        </Button>
       </div>
       <button
         type="button"
@@ -95,6 +100,7 @@ export function MainMenuScreen({
       >
         <img src={gearIcon} alt="" />
       </button>
+      {openDialog === 'controls' && <ControlsDialog onClose={() => setOpenDialog('none')} />}
       {openDialog === 'developerTools' && (
         <DeveloperToolsDialog
           settings={developerTools}

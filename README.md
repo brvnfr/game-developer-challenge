@@ -97,6 +97,9 @@ run the reference check with `npm run test:e2e:docker`. Three consecutive runs p
 | Fire left / right broadside | `Q` / `E`         | Side buttons (right group)  | Side buttons, right group    |
 | Pause / resume              | `P` / `Esc`       | Pause button (top right)    | Pause button (top right)     |
 
+The main menu lists these controls beside the menu on large screens; on small or short screens (phones) a
+**Controls** button opens them in a dialog, and the menu compacts so it fits without scrolling.
+
 Sailing and firing can be combined. Game keys are only captured while a match is on screen. The match pauses
 automatically when the window loses focus or the tab is hidden; resuming always needs a player action.
 

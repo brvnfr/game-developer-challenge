@@ -92,6 +92,18 @@ describe('App screen flow', () => {
     expect(screen.getByRole('complementary', { name: 'How to play' })).toBeInTheDocument();
   });
 
+  it('opens the control instructions in a dialog from the Controls button (small screens) and returns focus', async () => {
+    const { user } = renderApp();
+    const opener = screen.getByRole('button', { name: 'Controls' });
+    await user.click(opener);
+    const dialog = screen.getByRole('dialog', { name: 'Controls' });
+    expect(within(dialog).getByText('Fire front cannon')).toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Close' })).toHaveFocus();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog', { name: 'Controls' })).toBeNull();
+    expect(opener).toHaveFocus();
+  });
+
   it('asks for a captain name on the first Play only', async () => {
     const { user } = renderApp();
     await nameCaptainAndPlay(user);

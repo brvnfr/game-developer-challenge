@@ -255,14 +255,56 @@ kbd {
   text-align: left;
 }
 
-@media (width <= 900px) {
+/* The Controls button opens the instructions in a dialog where the "How to play" panel does not fit beside
+   the menu (narrow or short screens). */
+.menu-panel__controls-button {
+  display: none;
+}
+
+@media (width <= 900px), (height <= 520px) {
   .menu-screen--with-aside {
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
   }
 
   .menu-aside {
-    width: min(520px, 94vw);
+    display: none;
+  }
+
+  .menu-panel__controls-button {
+    display: inline-block;
+  }
+}
+
+.controls-dialog {
+  justify-items: stretch;
+  text-align: left;
+}
+
+.controls-dialog > .small-button {
+  justify-self: center;
+}
+
+/* Short screens: the instructions in two columns, so the dialog fits with its title. */
+@media (height <= 520px) {
+  .dialog.controls-dialog {
+    width: min(720px, 96vw);
+    gap: 8px;
+  }
+
+  .controls-dialog .controls-help__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 24px;
+  }
+
+  .controls-dialog .controls-help__row {
+    grid-template-columns: 82px 1fr;
+    font-size: 14px;
+  }
+
+  .controls-dialog .controls-help__touch {
+    margin-top: 6px;
+    font-size: 12px;
   }
 }
 
@@ -505,12 +547,54 @@ kbd {
     font-size: 48px;
   }
 
+  /* Main menu on short screens (phones in landscape): smaller title and buttons, Play and Options side by
+     side, the motto left out, so the whole menu fits without scrolling. */
+  .menu-screen {
+    padding: 8px;
+  }
+
   .menu-panel {
-    gap: 10px;
+    gap: 8px;
+    width: min(600px, 96vw);
   }
 
   .menu-panel__title img {
-    width: min(260px, 50vw);
+    width: min(220px, 40vw);
+  }
+
+  .menu-panel__tagline {
+    font-size: 11px;
+  }
+
+  .menu-panel__captain {
+    font-size: 14px;
+  }
+
+  .menu-panel__actions {
+    grid-auto-flow: column;
+    gap: 12px;
+  }
+
+  .menu-panel .primary-button {
+    min-width: 160px;
+    min-height: 44px;
+    padding: 6px 22px;
+    font-size: 17px;
+  }
+
+  .menu-panel .small-button {
+    min-width: 0;
+    min-height: 36px;
+    padding: 6px 18px;
+    font-size: 13px;
+  }
+
+  .menu-panel__motto {
+    display: none;
+  }
+
+  .menu-panel__log-actions {
+    gap: 8px;
   }
 }
 

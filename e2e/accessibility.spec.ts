@@ -17,6 +17,15 @@ test.describe('accessibility audit (T-046)', () => {
     await game.open({ captainName: null });
     await expectNoViolations(page);
 
+    // Small screens show the instructions in a Controls dialog.
+    const controlsButton = page.getByRole('button', { name: 'Controls' });
+    if (await controlsButton.isVisible()) {
+      await controlsButton.click();
+      await expect(page.getByRole('dialog', { name: 'Controls' })).toBeVisible();
+      await expectNoViolations(page);
+      await page.keyboard.press('Escape');
+    }
+
     await page.getByRole('button', { name: 'Play' }).click();
     await expect(page.getByRole('dialog', { name: 'Name your captain' })).toBeVisible();
     await expectNoViolations(page);

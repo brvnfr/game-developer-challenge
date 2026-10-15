@@ -161,3 +161,32 @@ test.describe('on-screen controls with a keyboard (E2E-09)', () => {
     await expect(page.getByTestId('reload-fireLeft')).toBeVisible();
   });
 });
+
+test.describe('main menu on small screens (E2E-09)', () => {
+  test('the instructions sit beside the menu on large screens and open in a dialog on small ones', async ({
+    page,
+    isMobile,
+  }) => {
+    const game = new GamePage(page);
+    await game.open();
+    const aside = page.getByRole('complementary', { name: 'How to play' });
+    const controlsButton = page.getByRole('button', { name: 'Controls' });
+    if (!isMobile) {
+      await expect(aside).toBeVisible();
+      await expect(controlsButton).toBeHidden();
+      return;
+    }
+    await expect(aside).toBeHidden();
+    // The whole menu fits a phone in landscape without scrolling.
+    const viewport = page.viewportSize();
+    const logButton = await page.getByRole('button', { name: 'Match History' }).boundingBox();
+    expect((logButton?.y ?? Infinity) + (logButton?.height ?? 0)).toBeLessThanOrEqual(viewport?.height ?? 0);
+    await controlsButton.click();
+    const dialog = page.getByRole('dialog', { name: 'Controls' });
+    await expect(dialog).toContainText('Fire front cannon');
+    await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
+    await dialog.getByRole('button', { name: 'Close' }).click();
+    await expect(dialog).toBeHidden();
+    await expect(controlsButton).toBeFocused();
+  });
+});
