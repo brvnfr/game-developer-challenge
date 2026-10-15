@@ -8,7 +8,7 @@ describe('DifficultyCurve', () => {
   it('starts at the first keyframe', () => {
     expect(curve.levelAt(0)).toEqual({
       enemiesPerWave: 1,
-      maxEnemiesAlive: 6,
+      maxEnemiesAlive: 5,
       shooterProbability: 0.3,
       enemySpeedMultiplier: 1,
       shooterCooldownMultiplier: 1,
@@ -17,9 +17,9 @@ describe('DifficultyCurve', () => {
 
   it('interpolates between keyframes and rounds counts down', () => {
     const level = curve.levelAt(30);
-    expect(level.shooterProbability).toBeCloseTo(0.375);
-    expect(level.maxEnemiesAlive).toBe(7);
-    expect(level.enemySpeedMultiplier).toBeCloseTo(1.05);
+    expect(level.shooterProbability).toBeCloseTo(0.35);
+    expect(level.maxEnemiesAlive).toBe(5); // 5.5 rounded down
+    expect(level.enemySpeedMultiplier).toBeCloseTo(1.025);
   });
 
   it('holds the last keyframe afterwards and never gets easier over time', () => {
@@ -32,6 +32,12 @@ describe('DifficultyCurve', () => {
       expect(current.shooterProbability).toBeGreaterThanOrEqual(previous.shooterProbability);
       previous = current;
     }
+  });
+
+  it('stays gentle: single waves until the last half minute, at most eight enemies alive', () => {
+    expect(curve.levelAt(149).enemiesPerWave).toBe(1);
+    expect(curve.levelAt(150).enemiesPerWave).toBe(2);
+    for (let second = 0; second <= 180; second++) expect(curve.levelAt(second).maxEnemiesAlive).toBeLessThanOrEqual(8);
   });
 
   it('requires at least one keyframe', () => {

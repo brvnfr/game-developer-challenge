@@ -177,7 +177,7 @@ released, and the ship always moved exactly along its bow. It felt rigid. Ships 
   exactly once and removes the projectile; destroyed ships stop colliding and firing, and their balls in flight
   are removed.
 - **Ship vs ship**: symmetric separation, re-resolved against islands. Broad phase is a plain pair loop: with the
-  alive cap of 14 enemies the cost is negligible (see [PERFORMANCE.md](docs/PERFORMANCE.md)).
+  alive cap of 8 enemies the cost is negligible (see [PERFORMANCE.md](docs/PERFORMANCE.md)).
 - **Spawn points** are sampled in a band along the arena edges, must be free of islands and ships (hull radius
   plus clearance) and at least 480 px from the player; the farthest free water tile is the fallback.
 
@@ -265,8 +265,10 @@ so changes made later only affect new matches.
 Balancing decisions (ADR-007):
 
 - The configured spawn interval is honoured exactly; difficulty grows on other axes, interpolated over the
-  match time: enemies per wave 1 → 2 → 3, alive cap 6 → 9 → 14, Shooter share 30 % → 45 % → 60 %, enemy speed
-  ×1.0 → ×1.3, Shooter cooldown ×1.0 → ×0.7 (keyframes at 0, 60 and 150 s).
+  match time: enemies per wave 1 → 1 → 2, alive cap 5 → 6 → 8, Shooter share 30 % → 40 % → 50 %, enemy speed
+  ×1.0 → ×1.12, Shooter cooldown ×1.0 → ×0.88 (keyframes at 0, 60 and 150 s). Counts are floored, so waves of
+  two only start at 150 s, in the last half minute of a 3-minute match. Play-testing showed the earlier, steeper
+  ramp (waves of up to 3, 14 alive, ×1.3 speed) swamped the player from mid-match on, so it was flattened.
 - The first two waves are a Chaser and a Shooter, so both kinds always appear.
 - The player is faster (170 px/s) and turns quicker (2.6 rad/s) than both enemies, so kiting is possible.
   Its rudder (13 rad/s²) is close to the enemies' (12–14) so it answers quickly, but it drifts more after a

@@ -80,30 +80,32 @@ export const DEFAULT_GAME_CONFIG: GameConfig = {
     maxAttempts: 40,
     openingSequence: ['chaser', 'shooter'],
   },
+  // Gentle ramp (balanced after play-testing: the later waves used to swamp the player). A wave of two only
+  // comes in the last half minute of a 3-minute match, and never more than eight enemies are alive at once.
   difficulty: [
     {
       atSeconds: 0,
       enemiesPerWave: 1,
-      maxEnemiesAlive: 6,
+      maxEnemiesAlive: 5,
       shooterProbability: 0.3,
       enemySpeedMultiplier: 1,
       shooterCooldownMultiplier: 1,
     },
     {
       atSeconds: 60,
-      enemiesPerWave: 2,
-      maxEnemiesAlive: 9,
-      shooterProbability: 0.45,
-      enemySpeedMultiplier: 1.1,
-      shooterCooldownMultiplier: 0.85,
+      enemiesPerWave: 1,
+      maxEnemiesAlive: 6,
+      shooterProbability: 0.4,
+      enemySpeedMultiplier: 1.05,
+      shooterCooldownMultiplier: 0.95,
     },
     {
       atSeconds: 150,
-      enemiesPerWave: 3,
-      maxEnemiesAlive: 14,
-      shooterProbability: 0.6,
-      enemySpeedMultiplier: 1.3,
-      shooterCooldownMultiplier: 0.7,
+      enemiesPerWave: 2,
+      maxEnemiesAlive: 8,
+      shooterProbability: 0.5,
+      enemySpeedMultiplier: 1.12,
+      shooterCooldownMultiplier: 0.88,
     },
   ],
 };

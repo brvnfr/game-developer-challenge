@@ -54,23 +54,28 @@ describe('SpawnSystem', () => {
   it('respects the alive cap of the difficulty curve', () => {
     const { context, runSteps } = setUp(1);
     runSteps(1, 60 * 20);
-    expect(context.world.livingEnemies().length).toBeLessThanOrEqual(7);
+    expect(context.world.livingEnemies().length).toBeLessThanOrEqual(5);
   });
 
-  it('spawns larger waves as the match goes on', () => {
+  it('only sends waves of two in the last stretch of a long match', () => {
     const { context, runSteps } = setUp(5);
     const clearArena = () => {
       for (const enemy of context.world.livingEnemies()) enemy.destroy();
       context.world.removeInactive();
     };
-    const waveSizes: number[] = [];
-    runSteps(1, 60 * 170, () => {
+    const waves: { atSeconds: number; size: number }[] = [];
+    // The events drained before a step were emitted by the step before it.
+    let previousStep = 0;
+    runSteps(1, 60 * 180 + 1, () => {
       const spawned = eventsOfType(context.events.drain(), 'enemySpawned').length;
-      if (spawned > 0) waveSizes.push(spawned);
+      if (spawned > 0) waves.push({ atSeconds: previousStep / 60, size: spawned });
+      previousStep++;
       clearArena();
     });
-    expect(waveSizes[0]).toBe(1);
-    expect(waveSizes.at(-1)).toBe(3);
+    expect(waves[0]?.size).toBe(1);
+    expect(Math.max(...waves.map((wave) => wave.size))).toBe(2);
+    const firstPair = waves.find((wave) => wave.size === 2);
+    expect(firstPair?.atSeconds).toBeGreaterThanOrEqual(150);
   });
 
   it('turns new enemies towards the player', () => {

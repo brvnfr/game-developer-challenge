@@ -218,6 +218,10 @@ the match by design) and do not resize it during the run. A run whose renderer i
 
 - Runs A and B rendered WebGL in software and are kept as worst cases; the 60 FPS target is confirmed by the GPU
   run (Environment C) on one desktop, before and after the visual patch; other GPUs and browsers were not measured.
+- All runs above were recorded with the earlier, steeper difficulty curve (waves of up to 3, up to 14 enemies
+  alive) and with the reload arcs around the player's ship. Both were later dropped (see the balancing decisions
+  in [ARCHITECTURE.md](../ARCHITECTURE.md)): a match now peaks at 8 enemies and draws fewer objects, so these
+  figures are an upper bound. They were not measured again.
 - Entity counts are sampled once per second, so very short peaks between samples are not reflected.
 - The memory method measures the JS heap and DOM; GPU memory is released through PixiJS/WebGL and verified
   indirectly (no surviving WebGL context or canvas).
