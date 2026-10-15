@@ -204,6 +204,12 @@ export const TILE_FRAMES = [
   'tile_96',
 ] as const;
 
+export const TERRAIN_FRAMES = [
+  'island_grass',
+  'island_sand',
+  'shallows',
+] as const;
+
 export const UI_FRAMES = [
   'button_primary_disabled',
   'button_primary_hover',
@@ -245,4 +251,5 @@ export const UI_FRAMES = [
 
 export type ShipFrame = (typeof SHIP_FRAMES)[number];
 export type TileFrame = (typeof TILE_FRAMES)[number];
+export type TerrainFrame = (typeof TERRAIN_FRAMES)[number];
 export type UiFrame = (typeof UI_FRAMES)[number];

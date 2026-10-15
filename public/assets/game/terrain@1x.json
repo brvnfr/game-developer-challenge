@@ -1,0 +1,92 @@
+{
+ "frames": {
+  "island_grass": {
+   "frame": {
+    "x": 4,
+    "y": 4,
+    "w": 256,
+    "h": 256
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 256,
+    "h": 256
+   },
+   "sourceSize": {
+    "w": 256,
+    "h": 256
+   },
+   "borders": {
+    "left": 64,
+    "top": 64,
+    "right": 64,
+    "bottom": 64
+   }
+  },
+  "island_sand": {
+   "frame": {
+    "x": 268,
+    "y": 4,
+    "w": 192,
+    "h": 192
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 192
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 192
+   },
+   "borders": {
+    "left": 64,
+    "top": 64,
+    "right": 64,
+    "bottom": 64
+   }
+  },
+  "shallows": {
+   "frame": {
+    "x": 468,
+    "y": 4,
+    "w": 192,
+    "h": 192
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 192,
+    "h": 192
+   },
+   "sourceSize": {
+    "w": 192,
+    "h": 192
+   },
+   "borders": {
+    "left": 64,
+    "top": 64,
+    "right": 64,
+    "bottom": 64
+   }
+  }
+ },
+ "meta": {
+  "app": "pirate-battle/scripts/build-atlases.ts",
+  "image": "terrain@1x.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 664,
+   "h": 264
+  },
+  "scale": "1"
+ }
+}

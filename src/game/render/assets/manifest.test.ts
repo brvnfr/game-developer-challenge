@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { SHIP_FRAMES, TILE_FRAMES, UI_FRAMES } from './atlasFrames.generated';
+import { SHIP_FRAMES, TERRAIN_FRAMES, TILE_FRAMES, UI_FRAMES } from './atlasFrames.generated';
 import { atlasFile, createGameBundle, GAME_ATLASES, GAME_TEXTURES, pickAtlasResolution, type AtlasResolution, type GameAtlas } from './manifest';
 
 const publicDir = join(process.cwd(), 'public', 'assets', 'game');
@@ -13,7 +13,12 @@ interface AtlasJson {
 const readAtlas = (atlas: GameAtlas, res: AtlasResolution) =>
   JSON.parse(readFileSync(join(publicDir, atlasFile(atlas, res)), 'utf8')) as AtlasJson;
 
-const expectedFrames: Record<GameAtlas, readonly string[]> = { ships: SHIP_FRAMES, tiles: TILE_FRAMES, ui: UI_FRAMES };
+const expectedFrames: Record<GameAtlas, readonly string[]> = {
+  ships: SHIP_FRAMES,
+  tiles: TILE_FRAMES,
+  terrain: TERRAIN_FRAMES,
+  ui: UI_FRAMES,
+};
 
 describe('game asset manifest', () => {
   it.each(GAME_ATLASES.flatMap((atlas) => ([1, 2] as const).map((res) => [atlas, res] as const)))(
@@ -51,6 +56,7 @@ describe('game asset manifest', () => {
     expect(bundle.assets).toEqual([
       { alias: 'ships', src: '/assets/game/ships.json' },
       { alias: 'tiles', src: '/assets/game/tiles@2x.json' },
+      { alias: 'terrain', src: '/assets/game/terrain@2x.json' },
       { alias: 'ui', src: '/assets/game/ui@2x.json' },
       { alias: 'water', src: '/assets/game/water.png' },
     ]);

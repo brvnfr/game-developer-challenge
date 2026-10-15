@@ -15,6 +15,8 @@ import { ShipView } from './ShipView';
 import { TerrainView } from './terrain/TerrainView';
 import { WakeLayer } from './WakeLayer';
 
+/** Extra sea drawn past the screen edges (world px), so the damage shake never uncovers the background. */
+const SCREEN_EDGE_MARGIN = 24;
 const WATER_SPLASH_COLOUR = 0xe8f8ff;
 const DUST_COLOUR = 0xf3dcab;
 
@@ -123,6 +125,11 @@ export class GameScene {
     this.layout = layout;
     this.root.scale.set(layout.scale);
     this.root.position.set(layout.offsetX, layout.offsetY);
+    // The screen around the arena (bars on screens of another shape) shows more sea, never empty bars.
+    const marginX = layout.offsetX / layout.scale + SCREEN_EDGE_MARGIN;
+    const marginY = layout.offsetY / layout.scale + SCREEN_EDGE_MARGIN;
+    const { width, height } = this.session.arena;
+    this.terrain.showVisibleArea(-marginX, -marginY, width + marginX * 2, height + marginY * 2);
   }
 
   handleEvents(events: readonly GameEvent[]): void {

@@ -67,11 +67,18 @@ export class GameAssetLoader {
         string,
         Spritesheet | Texture | undefined
       >;
-      const { ships, tiles, ui, water } = assets;
-      if (!isSpritesheet(ships) || !isSpritesheet(tiles) || !isSpritesheet(ui) || !(water instanceof Texture)) {
+      const { ships, tiles, terrain, ui, water } = assets;
+      const atlases = [ships, tiles, terrain, ui];
+      if (!atlases.every(isSpritesheet) || !(water instanceof Texture)) {
         throw new AssetLoadError('Some game assets are missing.', 'network');
       }
-      GameAssetLoader.loadedTextures = new GameTextures(ships, tiles, ui, water);
+      GameAssetLoader.loadedTextures = new GameTextures({
+        ships: ships as Spritesheet,
+        tiles: tiles as Spritesheet,
+        terrain: terrain as Spritesheet,
+        ui: ui as Spritesheet,
+        water,
+      });
       return GameAssetLoader.loadedTextures;
     } catch (error) {
       await Assets.unloadBundle(GAME_BUNDLE).catch(() => undefined);

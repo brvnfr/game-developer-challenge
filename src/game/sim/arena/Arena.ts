@@ -1,6 +1,6 @@
 import { circleBoxSeparation, circleOverlapsBox, segmentBoxEntry, type BoundingBox } from '@/game/core/math/geometry';
 import { Vector2 } from '@/game/core/math/Vector2';
-import { isLand, terrainKindOf, type ArenaDefinition, type TerrainKind } from './ArenaDefinition';
+import { isLand, isObstacle, terrainKindOf, type ArenaDefinition, type TerrainKind } from './ArenaDefinition';
 import { buildIslandColliders } from './islandColliders';
 
 export interface CircleResolution {
@@ -10,6 +10,8 @@ export interface CircleResolution {
 }
 
 const MAX_SEPARATION_PASSES = 4;
+/** A reef rock's collider leaves this fraction of the tile free on each side (the rock art is smaller). */
+const ROCK_INSET = 0.18;
 
 /** Static playfield: bounds and island colliders, with the spatial queries used by every system. */
 export class Arena {
@@ -18,9 +20,10 @@ export class Arena {
   readonly tileSize: number;
   readonly columns: number;
   readonly rows: number;
+  /** Every obstacle as an axis-aligned box: merged island tiles, then one smaller box per reef rock. */
   readonly islandColliders: readonly BoundingBox[];
   private readonly terrainGrid: readonly (readonly TerrainKind[])[];
-  private readonly landGrid: readonly (readonly boolean[])[];
+  private readonly obstacleGrid: readonly (readonly boolean[])[];
 
   constructor(readonly definition: ArenaDefinition) {
     const { tiles, tileSize } = definition;
@@ -34,12 +37,18 @@ export class Arena {
     this.terrainGrid = tiles.map((row) =>
       Array.from(row, (character) => {
         const kind = terrainKindOf(character);
-        if (!kind) throw new Error(`Unknown arena tile "${character}" (use ".", "#" or "s")`);
+        if (!kind) throw new Error(`Unknown arena tile "${character}" (use ".", "#", "s" or "r")`);
         return kind;
       }),
     );
-    this.landGrid = this.terrainGrid.map((row) => row.map(isLand));
-    this.islandColliders = buildIslandColliders(this.landGrid, tileSize);
+    this.obstacleGrid = this.terrainGrid.map((row) => row.map(isObstacle));
+    this.islandColliders = [
+      ...buildIslandColliders(
+        this.terrainGrid.map((row) => row.map(isLand)),
+        tileSize,
+      ),
+      ...this.rockColliders(),
+    ];
   }
 
   get playerStart(): Vector2 {
@@ -47,8 +56,9 @@ export class Arena {
     return new Vector2(column * this.tileSize, row * this.tileSize);
   }
 
+  /** True for any tile ships cannot sail through (island or reef rock). */
   isLandTile(column: number, row: number): boolean {
-    return this.landGrid[row]?.[column] ?? false;
+    return this.obstacleGrid[row]?.[column] ?? false;
   }
 
   /** Terrain of a tile; outside the arena is open water. */
@@ -126,5 +136,22 @@ export class Arena {
       }
     }
     return centers;
+  }
+
+  private rockColliders(): BoundingBox[] {
+    const inset = this.tileSize * ROCK_INSET;
+    const boxes: BoundingBox[] = [];
+    this.terrainGrid.forEach((row, rowIndex) => {
+      row.forEach((kind, column) => {
+        if (kind !== 'rock') return;
+        boxes.push({
+          minX: column * this.tileSize + inset,
+          minY: rowIndex * this.tileSize + inset,
+          maxX: (column + 1) * this.tileSize - inset,
+          maxY: (rowIndex + 1) * this.tileSize - inset,
+        });
+      });
+    });
+    return boxes;
   }
 }

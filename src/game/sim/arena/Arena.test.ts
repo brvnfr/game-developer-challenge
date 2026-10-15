@@ -26,11 +26,13 @@ describe('Arena', () => {
       .join('')
       .split('')
       .filter((tile) => tile === '#' || tile === 's').length;
+    const rockCount = DEFAULT_ARENA.tiles.join('').split('r').length - 1;
+    const rockSide = 64 * (1 - 2 * 0.18);
     const colliderArea = arena.islandColliders.reduce(
       (area, box) => area + (box.maxX - box.minX) * (box.maxY - box.minY),
       0,
     );
-    expect(colliderArea).toBe(landTileCount * 64 * 64);
+    expect(colliderArea).toBeCloseTo(landTileCount * 64 * 64 + rockCount * rockSide * rockSide);
     for (let row = 0; row < arena.rows; row++) {
       for (let column = 0; column < arena.columns; column++) {
         const tileCenter = new Vector2((column + 0.5) * 64, (row + 0.5) * 64);
@@ -51,6 +53,15 @@ describe('Arena', () => {
     expect(arena.terrainAt(3, 1)).toBe('sandIsland');
     expect(arena.terrainAt(0, 0)).toBe('water');
     expect(arena.terrainAt(-1, 99)).toBe('water');
+  });
+
+  it('gives a reef rock a collider smaller than its tile', () => {
+    const arena = new Arena({ ...TINY_ARENA, tileSize: 100, tiles: ['.....', '..r..', '.....'] });
+    expect(arena.terrainAt(2, 1)).toBe('rock');
+    expect(arena.isLandTile(2, 1)).toBe(true);
+    expect(arena.islandColliders).toEqual([{ minX: 218, minY: 118, maxX: 282, maxY: 182 }]);
+    expect(arena.isCircleBlocked(new Vector2(205, 150), 10)).toBe(false); // inside the tile, beside the rock
+    expect(arena.isCircleBlocked(new Vector2(250, 150), 10)).toBe(true);
   });
 
   it('rejects malformed definitions', () => {
