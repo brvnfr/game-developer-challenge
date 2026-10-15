@@ -89,16 +89,20 @@ run the reference check with `npm run test:e2e:docker`. Three consecutive runs p
 
 ## Controls
 
-| Action                      | Keyboard          | Touch                       |
-| --------------------------- | ----------------- | --------------------------- |
-| Sail forward                | `W` / `↑`         | Helm joystick (bottom left) |
-| Turn left / right           | `A` `D` / `←` `→` | Helm joystick (bottom left) |
-| Fire front cannon           | `Space`           | Centre button (right group) |
-| Fire left / right broadside | `Q` / `E`         | Side buttons (right group)  |
-| Pause / resume              | `P` / `Esc`       | Pause button (top right)    |
+| Action                      | Keyboard          | Touch                       | On-screen (keyboard devices) |
+| --------------------------- | ----------------- | --------------------------- | ---------------------------- |
+| Sail forward                | `W` / `↑`         | Helm joystick (bottom left) | Middle button, left group    |
+| Turn left / right           | `A` `D` / `←` `→` | Helm joystick (bottom left) | Side buttons, left group     |
+| Fire front cannon           | `Space`           | Centre button (right group) | Middle button, right group   |
+| Fire left / right broadside | `Q` / `E`         | Side buttons (right group)  | Side buttons, right group    |
+| Pause / resume              | `P` / `Esc`       | Pause button (top right)    | Pause button (top right)     |
 
 Sailing and firing can be combined. Game keys are only captured while a match is on screen. The match pauses
 automatically when the window loses focus or the tab is hidden; resuming always needs a player action.
+
+**On-screen controls.** The controls are always on screen. With a keyboard, each button carries its key on a
+brass plate and lights up while that key is held (or while it is pressed with the mouse); on touch screens the
+movement buttons are replaced by the helm joystick, and the cannon buttons light up under the finger.
 
 **Helm joystick (touch).** Drag the helm in the direction you want to sail: the ship turns towards that
 heading (braking its turn before it gets there) and sails with a throttle that follows how far the knob is
@@ -118,9 +122,11 @@ when the system asks for reduced motion. The result screen adds battle highlight
 Island and two sandbars (one with a wreck on its reef) — plus single reef rocks. Channels between islands are
 at least three tiles wide, and rocks block ships and shots like islands do.
 
-**Mobile orientation:** matches are played in **landscape**. On touch devices held in portrait the match pauses
-behind a "Rotate your device" notice; after rotating back, the pause dialog asks the player to resume. Menus
-work in both orientations.
+**Mobile orientation:** matches are played in **landscape**. On a touch device held upright the match pauses
+behind a full-screen "Turn your phone sideways" notice (HUD and controls hidden); after turning back, the pause
+dialog asks the player to resume. Menus work in both orientations. On phones in landscape the HUD is compact:
+one slim ribbon with health, score and time, a small pause button in the corner, and the sound toggle in the
+pause dialog (it is there on every screen).
 
 ## Options and local data
 
@@ -234,7 +240,7 @@ match and controls time; rules, input, collisions and rendering run unchanged.
 | `session`     | `session=60`         | Game session time for this page (60–180), overrides Options                   |
 | `spawn`       | `spawn=10`           | Enemy spawn time for this page (1–10, step 0.5), overrides                    |
 | `time=manual` | `time=manual`        | Real time stops; tests advance the game with `advanceTime(ms)`                |
-| `touch=1`     | `touch=1`            | Shows the touch controls on any device (also without `test`)                  |
+| `touch=1`     | `touch=1`            | Shows the touch controls (helm joystick) on any device (also without `test`)  |
 | `apiTimeout`  | `apiTimeout=1500`    | API request timeout in ms (test mode only)                                    |
 | `setup`       | `setup=chaser-ahead` | Starting layout for combat tests: `open-water`, `chaser-ahead`, `shooter-far` |
 

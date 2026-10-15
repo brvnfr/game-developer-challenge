@@ -2,8 +2,32 @@
   min-width: min(340px, 90vw);
 }
 
-.rotate-device__icon {
-  font-size: 56px;
-  line-height: 1;
-  color: var(--color-gold);
+.pause-overlay__extra {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* Short screens (phones in landscape): Restart, Main Menu and Sound on one row under Resume, so everything fits
+   without scrolling. */
+@media (height <= 520px) {
+  .dialog.pause-overlay__dialog {
+    grid-template-columns: repeat(3, auto);
+    justify-content: center;
+    align-items: center;
+    gap: 8px 12px;
+    width: min(720px, 96vw);
+  }
+
+  .dialog.pause-overlay__dialog > :is(h2, p, .primary-button) {
+    grid-column: 1 / -1;
+  }
+
+  .pause-overlay__extra {
+    margin-top: 0;
+  }
+
+  .dialog.pause-overlay__dialog .dialog__description {
+    margin: 0;
+  }
 }

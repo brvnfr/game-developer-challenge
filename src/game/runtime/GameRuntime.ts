@@ -332,6 +332,11 @@ export class GameRuntime {
     const height = Math.max(1, host.clientHeight);
     this.application.renderer.resize(width, height, Viewport.renderResolutionFor(window.devicePixelRatio));
     this.scene?.applyLayout(this.viewport.fit(width, height));
+    // Resizing clears the canvas; with the manual clock (tests) nothing else would redraw it until the next step.
+    if (this.timeSource === 'manual') {
+      this.scene?.render(this.clock.interpolationFactor, 0);
+      this.application.render();
+    }
   }
 
   private publish(): void {

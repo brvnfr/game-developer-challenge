@@ -44,6 +44,25 @@ describe('InputState', () => {
     expect(input.toCommands()).toEqual(IDLE_COMMANDS);
   });
 
+  it('tells subscribers when the held actions change, not on repeats', () => {
+    const input = new InputState();
+    let changes = 0;
+    const unsubscribe = input.subscribe(() => changes++);
+    input.press('keyboard', 'sailForward');
+    input.press('keyboard', 'sailForward'); // key repeat
+    input.press('touch:1', 'sailForward'); // still held: nothing new
+    expect(changes).toBe(1);
+    expect(input.getHeldKey()).toBe('sailForward');
+    input.press('touch:2', 'fireLeft');
+    expect(input.getHeldKey()).toBe('sailForward fireLeft');
+    input.clear();
+    expect(input.getHeldKey()).toBe('');
+    expect(changes).toBe(3);
+    unsubscribe();
+    input.press('keyboard', 'fireFront');
+    expect(changes).toBe(3);
+  });
+
   it('passes the joystick steering on until that touch lets go', () => {
     const input = new InputState();
     input.steer('joystick:4', { heading: Math.PI / 2, throttle: 0.6 });

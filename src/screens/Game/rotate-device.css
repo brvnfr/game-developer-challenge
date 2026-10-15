@@ -1,0 +1,113 @@
+/* Full-screen "turn your phone" notice: the game's sea, darkened, with a brass phone turning sideways. */
+.rotate-device {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: max(24px, env(safe-area-inset-top)) 28px max(24px, env(safe-area-inset-bottom));
+  text-align: center;
+  color: var(--color-parchment);
+  background:
+    radial-gradient(circle at 50% 40%, rgb(8 34 54 / 70%) 0 28%, rgb(3 12 20 / 94%) 78%),
+    url('@assets/png/retina/tiles/tile_73.png') 0 0 / 96px 96px repeat,
+    #071a2a;
+}
+
+.rotate-device__phone {
+  width: min(42vw, 170px);
+  height: auto;
+  margin-bottom: 6px;
+  overflow: visible;
+}
+
+.rotate-device__turn {
+  transform-origin: 60px 60px;
+  animation: rotate-device-turn 2.8s ease-in-out infinite;
+}
+
+.rotate-device__body {
+  fill: #2b1a0d;
+  stroke: #e0a54c;
+  stroke-width: 4;
+}
+
+.rotate-device__screen {
+  fill: #1f78a8;
+}
+
+.rotate-device__ship {
+  fill: #f6e7c8;
+  stroke: #f6e7c8;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.rotate-device__mast {
+  stroke: #f6e7c8;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.rotate-device__dot {
+  fill: #e0a54c;
+}
+
+.rotate-device__arrow {
+  fill: none;
+  stroke: #f3c46a;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rotate-device__kicker {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.rotate-device__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 8vw, 34px);
+  line-height: 1.1;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 45%);
+}
+
+.rotate-device__text {
+  max-width: 300px;
+  margin: 0 0 12px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Upright for a breath, a quarter turn to the right, a breath, back. */
+@keyframes rotate-device-turn {
+  0%,
+  25% {
+    transform: rotate(0deg);
+  }
+
+  55%,
+  85% {
+    transform: rotate(90deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotate-device__turn {
+    animation: none;
+    transform: rotate(90deg);
+  }
+}

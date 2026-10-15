@@ -7,7 +7,7 @@ arena; a framework-free **simulation** owns the rules. Ranking and match history
 ```mermaid
 flowchart LR
   subgraph React["React (src/app, src/screens, src/ui)"]
-    Screens[Screens & dialogs] --> HUD[HUD · touch controls · pause]
+    Screens[Screens & dialogs] --> HUD[HUD · on-screen controls · pause]
   end
   subgraph Game["Game (src/game)"]
     Runtime[GameRuntime<br/>ticker · clock · lifecycle] --> Sim[MatchSession<br/>systems · world · events]
@@ -66,7 +66,7 @@ run and be unit-tested in Node, deterministically. Coding conventions are in
 - **No per-frame React renders.** The runtime publishes a `MatchView` (status, score, whole seconds left,
   health, pause reason, result) to an `ExternalStore` every frame, but the store notifies React only when a value
   actually changes (shallow compare). An integration test counts HUD renders while frames run.
-- React → game: settings (snapshot), `pause()`, `resume()`, `restart()`, and `InputState` for the touch buttons.
+- React → game: settings (snapshot), `pause()`, `resume()`, `restart()`, and `InputState` for the on-screen controls (which also subscribe to it to show what is held).
   Game → React: `MatchView` and `onMatchEnded(result)`.
 - The canvas is `aria-hidden`; the HUD exposes score, time, health and status as a semantic list, and a polite
   live region (`MatchAnnouncer`) announces only meaningful changes (status, time milestones, low health, score
@@ -95,7 +95,7 @@ sequenceDiagram
 - **Time-based, frame-rate independent.** A fixed step of 1/60 s; the number of steps per frame depends only
   on elapsed time, so 30, 60 or 144 FPS produce the same simulation. Rendering interpolates between the last
   two steps. A single frame is capped at 0.25 s, so a long hitch is dropped instead of simulated as a burst.
-- **Pause** (manual, window blur, hidden tab, portrait orientation on touch devices) freezes the match:
+- **Pause** (manual, window blur, hidden tab, a touch device held upright) freezes the match:
   no steps, no cooldowns, no spawn timer, no clock. Resuming needs a player action; it discards pending time
   and clears held inputs, so nothing accumulates while paused.
 - **State machine:** `ready → running ⇄ paused → ended`. Once ended, `step()` does nothing (one guard), so
@@ -213,12 +213,18 @@ released, and the ship always moved exactly along its bow. It felt rigid. Ships 
   to the runtime when a match starts, like the settings snapshot.
 - Ship damage stages swap the hull texture and add flames as health drops; health bars above every ship use the UI atlas frame
   and a mask clipped to its fill area.
-- **Viewport**: the world (1920 × 1088) is letterboxed into the available area with its proportions preserved;
-  the renderer resolution follows the device pixel ratio (capped at 2). Resizing never changes the world, the
-  rules or the arena bounds. Touch controls are DOM elements (a helm joystick and fire buttons), so
-  pointer coordinates never need converting. The joystick moves its knob through a ref and a CSS transform, and
-  the fire buttons' reload sweep is a CSS animation restarted per volley (keyed by the snapshot's volley
-  counters), so neither re-renders React every frame.
+- **Viewport**: the world (1920 × 1088) is letterboxed into the available area with its proportions preserved
+  (the sea fills the bars); the renderer resolution follows the device pixel ratio (capped at 2). Resizing never
+  changes the world, the rules or the arena bounds. With the manual clock (tests) a resize redraws the scene at
+  once. Touch devices held upright pause behind a full-screen notice (`RotateDeviceNotice`, ADR-025); short
+  screens get a compact HUD (one ribbon, sound toggle in the pause dialog) — CSS only, no game change.
+- **On-screen controls** (`GameControls`, DOM): on keyboard devices, six buttons with their key on a brass plate
+  (taken from `KEY_BINDINGS`); on touch screens, the helm joystick and the three cannon buttons. Every button
+  lights up while its action is held by any source — `InputState.subscribe` notifies only when the set of held
+  actions changes (not on key repeats), read with `useSyncExternalStore`, so there are no per-frame renders.
+  Buttons also work with the mouse (each pointer is an input source). The joystick moves its knob through a
+  ref and a CSS transform, and the cannon buttons' reload sweep is a CSS animation restarted per volley (keyed by
+  the snapshot's volley counters).
 - **Start banner and result highlights**: a "Battle stations!" banner shows the match length for the first two
   seconds (decorative, `aria-hidden`; the HUD already announces it). The result keeps `MatchHighlights`
   (cannonballs fired, hits, damage dealt and taken) from `MatchStatistics`, stored with the last result.
@@ -363,7 +369,8 @@ scenarios** dialog or the URL and can be reset to the initial state (see README)
   fixtures. Clearing site data resets them.
 - Visual baselines exist for Linux only (CI / Playwright Docker image); on other systems those checks are
   skipped with instructions.
-- Matches are played in landscape on phones; portrait shows a "rotate your device" pause.
+- Phones play in landscape only; held upright, the match pauses behind a "turn your phone" notice. Desktop
+  windows of any shape letterbox the arena.
 - The broad phase is a pair loop, adequate for the configured alive cap; a much larger cap would call for a
   spatial grid.
 - Performance was measured on one desktop GPU (144 FPS, p95 7.1 ms) and, as worst cases, with software WebGL;

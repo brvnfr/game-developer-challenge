@@ -11,8 +11,8 @@ import type { MatchView } from '@/game/bridge/MatchView';
 import { useExternalStore } from '@/game/bridge/useExternalStore';
 import { Hud } from '@/ui/hud/Hud';
 import { MatchStartBanner } from '@/ui/hud/MatchStartBanner';
-import { SoundToggleIcon } from '@/ui/SoundToggle';
-import { TouchControls, type WeaponReloads } from '@/ui/touch/TouchControls';
+import { SoundToggleButton, SoundToggleIcon } from '@/ui/SoundToggle';
+import { GameControls, type ControlMode, type WeaponReloads } from '@/ui/controls/GameControls';
 import type { TestModeOptions } from '@/testing/testMode';
 import { useMediaQuery } from '@/ui/useMediaQuery';
 import { PauseOverlay } from './PauseOverlay';
@@ -23,7 +23,8 @@ interface GameStageProps {
   readonly settings: UserSettings;
   readonly testMode: TestModeOptions;
   readonly overlays: SceneOverlays;
-  readonly showTouchControls: boolean;
+  /** Which on-screen controls to show: touch (helm joystick) or keyboard (buttons with their keys). */
+  readonly controlMode: ControlMode;
   readonly audio: AudioEngine | null;
   readonly onMatchEnded: (result: MatchResult) => void;
   readonly onExitToMenu: () => void;
@@ -38,7 +39,7 @@ export function GameStage({
   settings,
   testMode,
   overlays,
-  showTouchControls,
+  controlMode,
   audio,
   onMatchEnded,
   onExitToMenu,
@@ -92,12 +93,7 @@ export function GameStage({
     <div className="game-stage">
       <div ref={hostRef} className="game-stage__canvas" />
       {runtime && (
-        <GameOverlays
-          runtime={runtime}
-          audio={audio}
-          showTouchControls={showTouchControls}
-          onExitToMenu={onExitToMenu}
-        />
+        <GameOverlays runtime={runtime} audio={audio} controlMode={controlMode} onExitToMenu={onExitToMenu} />
       )}
     </div>
   );
@@ -106,7 +102,7 @@ export function GameStage({
 /** The "Battle stations!" call stays over the arena for the first two seconds of play. */
 const START_BANNER_SECONDS = 2;
 
-/** Reload indicators of the touch cannon buttons: volleys so far and each weapon's cooldown in this match. */
+/** Reload indicators of the on-screen cannon buttons: volleys so far and each weapon's cooldown in this match. */
 function reloadsOf(runtime: GameRuntime, match: MatchView): WeaponReloads {
   const { frontCannon, broadside } = runtime.match.config.player;
   return {
@@ -120,28 +116,29 @@ const PAUSE_REASON_TEXT: Record<string, string> = {
   manual: 'Take a breath, captain.',
   blur: 'The game paused because the window lost focus.',
   hidden: 'The game paused because the tab was hidden.',
-  orientation: 'The game paused while your device was in portrait.',
+  orientation: 'The match waited while your phone was upright. Take the helm when you are ready.',
 };
 
 function GameOverlays({
   runtime,
   audio,
-  showTouchControls,
+  controlMode,
   onExitToMenu,
 }: {
   readonly runtime: GameRuntime;
   readonly audio: AudioEngine | null;
-  readonly showTouchControls: boolean;
+  readonly controlMode: ControlMode;
   readonly onExitToMenu: () => void;
 }) {
   const match = useExternalStore(runtime.store);
+  // Touch devices play in landscape: held upright, the match pauses behind a full-screen notice.
   const isPortrait = useMediaQuery('(orientation: portrait)');
-  const mustRotate = showTouchControls && isPortrait;
+  const mustTurn = controlMode === 'touch' && isPortrait;
   useEffect(() => {
-    if (mustRotate) runtime.pause('orientation');
-  }, [mustRotate, runtime]);
+    if (mustTurn) runtime.pause('orientation');
+  }, [mustTurn, runtime]);
 
-  if (mustRotate) return <RotateDeviceNotice onMainMenu={onExitToMenu} />;
+  if (mustTurn) return <RotateDeviceNotice onMainMenu={onExitToMenu} />;
   return (
     <>
       <Hud
@@ -152,8 +149,13 @@ function GameOverlays({
       {match.status === 'running' && match.durationSeconds - match.remainingSeconds < START_BANNER_SECONDS && (
         <MatchStartBanner durationSeconds={match.durationSeconds} />
       )}
-      {showTouchControls && (match.status === 'running' || match.status === 'paused') && (
-        <TouchControls input={runtime.input} reloads={reloadsOf(runtime, match)} isHidden={match.status === 'paused'} />
+      {(match.status === 'running' || match.status === 'paused') && (
+        <GameControls
+          input={runtime.input}
+          mode={controlMode}
+          reloads={reloadsOf(runtime, match)}
+          isHidden={match.status === 'paused'}
+        />
       )}
       {match.status === 'paused' && (
         <PauseOverlay
@@ -161,6 +163,7 @@ function GameOverlays({
           onResume={() => runtime.resume()}
           onRestart={() => runtime.restart()}
           onMainMenu={onExitToMenu}
+          extraActions={audio && <SoundToggleButton engine={audio} />}
         />
       )}
     </>

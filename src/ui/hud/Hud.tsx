@@ -43,29 +43,32 @@ export function Hud({ store, onPause, extraControls, onRender }: HudProps) {
 
   return (
     <div className="hud">
-      <div className="hud__health" aria-hidden="true">
-        <img className="hud__heart" src={heartIcon} alt="" />
-        <div className="hud__bar">
-          <img src={healthFrame} alt="" />
-          <img
-            className="hud__bar-fill"
-            src={healthFillFor(healthRatio)}
-            alt=""
-            style={{ clipPath: `inset(0 ${clipRight}% 0 0)` }}
-          />
-          <span className="hud__bar-label">
-            {match.health} / {match.maxHealth}
-          </span>
+      {/* Health, score and time: separate plaques on large screens, one slim ribbon on compact ones (hud.css). */}
+      <div className="hud__status">
+        <div className="hud__health" aria-hidden="true">
+          <img className="hud__heart" src={heartIcon} alt="" />
+          <div className="hud__bar">
+            <img src={healthFrame} alt="" />
+            <img
+              className="hud__bar-fill"
+              src={healthFillFor(healthRatio)}
+              alt=""
+              style={{ clipPath: `inset(0 ${clipRight}% 0 0)` }}
+            />
+            <span className="hud__bar-label">
+              {match.health} / {match.maxHealth}
+            </span>
+          </div>
         </div>
-      </div>
-      <div className="hud__counters" aria-hidden="true">
-        <div className="hud__counter">
-          <img src={scoreIcon} alt="" />
-          <span data-testid="hud-score">{match.score}</span>
-        </div>
-        <div className="hud__counter">
-          <img src={timeIcon} alt="" />
-          <span data-testid="hud-time">{formatClock(match.remainingSeconds)}</span>
+        <div className="hud__counters" aria-hidden="true">
+          <div className="hud__counter">
+            <img src={scoreIcon} alt="" />
+            <span data-testid="hud-score">{match.score}</span>
+          </div>
+          <div className="hud__counter">
+            <img src={timeIcon} alt="" />
+            <span data-testid="hud-time">{formatClock(match.remainingSeconds)}</span>
+          </div>
         </div>
       </div>
       {extraControls}

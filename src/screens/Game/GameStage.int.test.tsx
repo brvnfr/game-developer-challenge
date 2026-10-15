@@ -10,8 +10,10 @@ const lifecycle = vi.hoisted(() => ({ created: 0, disposed: 0, live: new Set<obj
 vi.mock('@/game/runtime/GameRuntime', async () => {
   const { ExternalStore } = await import('@/game/bridge/ExternalStore');
   const { InputState } = await import('@/game/input/InputState');
+  const { DEFAULT_GAME_CONFIG } = await import('@/game/config/defaults');
   class FakeGameRuntime {
     readonly input = new InputState();
+    readonly match = { config: DEFAULT_GAME_CONFIG };
     readonly store = new ExternalStore({
       status: 'running',
       pauseReason: null,
@@ -22,6 +24,9 @@ vi.mock('@/game/runtime/GameRuntime', async () => {
       durationSeconds: 120,
       enemiesAlive: 0,
       endReason: null,
+      frontVolleys: 0,
+      leftVolleys: 0,
+      rightVolleys: 0,
       result: null,
     });
     constructor() {
@@ -53,7 +58,7 @@ describe('GameStage lifecycle', () => {
           settings={DEFAULT_USER_SETTINGS}
           testMode={readTestMode('')}
           overlays={{ aimLanes: false, hitboxes: false }}
-          showTouchControls={false}
+          controlMode="keyboard"
           audio={null}
           onMatchEnded={vi.fn()}
           onExitToMenu={vi.fn()}

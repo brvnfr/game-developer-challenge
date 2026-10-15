@@ -40,10 +40,10 @@ test.describe('touch controls (E2E-09)', () => {
     const game = new GamePage(page);
     await game.open({ seed: 3, spawnSeconds: 10 });
     await game.startMatch();
-    await expect(page.getByTestId('touch-controls')).toBeVisible();
+    await expect(page.getByTestId('game-controls')).toHaveAttribute('data-mode', 'touch');
 
-    const helm = await page.getByTestId('touch-joystick').boundingBox();
-    const fire = await page.getByTestId('touch-fireFront').boundingBox();
+    const helm = await page.getByTestId('control-joystick').boundingBox();
+    const fire = await page.getByTestId('control-fireFront').boundingBox();
     if (!helm || !fire) throw new Error('Touch controls are not laid out');
     const helmCentre = { x: helm.x + helm.width / 2, y: helm.y + helm.height / 2 };
     const push = (dx: number, dy: number) => ({
@@ -79,7 +79,7 @@ test.describe('touch controls (E2E-09)', () => {
 });
 
 test.describe('mobile orientation (E2E-09)', () => {
-  test('portrait pauses the match behind a rotate notice; landscape needs an explicit resume', async ({
+  test('portrait pauses the match behind a "turn your phone" notice; landscape needs an explicit resume', async ({
     page,
     isMobile,
   }) => {
@@ -91,7 +91,12 @@ test.describe('mobile orientation (E2E-09)', () => {
     if (!landscape) throw new Error('No viewport');
 
     await page.setViewportSize({ width: landscape.height, height: landscape.width });
-    await expect(page.getByRole('dialog', { name: 'Rotate your device' })).toBeVisible();
+    const notice = page.getByRole('dialog', { name: 'Turn your phone sideways' });
+    await expect(notice).toBeVisible();
+    await expect(notice.getByRole('button', { name: 'Main Menu' })).toBeFocused();
+    // Only the notice is on screen: no HUD, no controls behind it.
+    await expect(page.getByTestId('game-controls')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Pause' })).toHaveCount(0);
     expect((await game.state()).status).toBe('paused');
     const pausedAt = (await game.state()).elapsedSeconds;
     await game.advance(3_000);
@@ -99,8 +104,60 @@ test.describe('mobile orientation (E2E-09)', () => {
 
     await page.setViewportSize(landscape);
     await expect(game.pauseDialog()).toBeVisible();
-    await expect(game.pauseDialog()).toContainText('portrait');
+    await expect(game.pauseDialog()).toContainText('upright');
     await game.pauseDialog().getByRole('button', { name: 'Resume' }).click();
     expect((await game.state()).status).toBe('running');
+  });
+
+  test('the compact HUD keeps the arena clear: one ribbon, the pause button, sound in the pause dialog', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'The compact HUD is for phones in landscape');
+    const game = new GamePage(page);
+    await game.open({ seed: 3, spawnSeconds: 10 });
+    await game.startMatch();
+    await expect(page.getByRole('button', { name: 'Sound' })).toBeHidden();
+    const ribbon = await page.locator('.hud__status').boundingBox();
+    const viewport = page.viewportSize();
+    if (!ribbon || !viewport) throw new Error('No HUD');
+    expect(ribbon.height).toBeLessThan(44);
+    await page.getByRole('button', { name: 'Pause' }).click();
+    await expect(game.pauseDialog().getByRole('button', { name: /Sound: (on|off)/ })).toBeVisible();
+  });
+});
+
+test.describe('on-screen controls with a keyboard (E2E-09)', () => {
+  test('each control lights up while its key is held, and the mouse can use them too', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Keyboard controls run on the desktop project');
+    const game = new GamePage(page);
+    await game.open({ seed: 3, spawnSeconds: 10 });
+    await game.startMatch();
+    const controls = page.getByTestId('game-controls');
+    await expect(controls).toHaveAttribute('data-mode', 'keyboard');
+    await expect(page.getByTestId('control-sailForward')).toContainText('W');
+    await expect(page.getByTestId('control-fireFront')).toContainText('Space');
+
+    await page.keyboard.down('KeyW');
+    await page.keyboard.down('KeyA');
+    await expect(page.getByTestId('control-sailForward')).toHaveAttribute('data-held', 'true');
+    await expect(page.getByTestId('control-turnLeft')).toHaveAttribute('data-held', 'true');
+    await expect(page.getByTestId('control-turnRight')).toHaveAttribute('data-held', 'false');
+    await game.advance(500);
+    await page.keyboard.up('KeyW');
+    await page.keyboard.up('KeyA');
+    await expect(page.getByTestId('control-sailForward')).toHaveAttribute('data-held', 'false');
+
+    // Holding the left broadside button with the mouse fires it, exactly like Q.
+    const before = (await game.state()).statistics.playerVolleys.left;
+    const button = page.getByTestId('control-fireLeft');
+    await button.hover();
+    await page.mouse.down();
+    await expect(button).toHaveAttribute('data-held', 'true');
+    await game.advance(200);
+    await page.mouse.up();
+    await expect(button).toHaveAttribute('data-held', 'false');
+    expect((await game.state()).statistics.playerVolleys.left).toBe(before + 1);
+    await expect(page.getByTestId('reload-fireLeft')).toBeVisible();
   });
 });

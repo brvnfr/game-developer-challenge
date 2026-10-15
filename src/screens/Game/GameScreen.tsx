@@ -4,6 +4,7 @@ import type { UserSettings } from '@/game/config/types';
 import type { SceneOverlays } from '@/game/render/scene/GameScene';
 import type { MatchResult } from '@/game/sim/match/types';
 import type { TestModeOptions } from '@/testing/testMode';
+import type { ControlMode } from '@/ui/controls/GameControls';
 import { GameStage } from './GameStage';
 import { LoadingView } from './LoadingView';
 import { useGameAssets } from './useGameAssets';
@@ -22,8 +23,8 @@ interface GameScreenProps {
 /** Loads the assets (with progress and retry) and then starts the match. Leaving this screen abandons the match. */
 export function GameScreen({ settings, testMode, overlays, audio, onMatchEnded, onExitToMenu }: GameScreenProps) {
   const { state, retry } = useGameAssets();
-  const showTouchControls = useMemo(
-    () => testMode.forceTouchControls || window.matchMedia('(pointer: coarse)').matches,
+  const controlMode = useMemo<ControlMode>(
+    () => (testMode.forceTouchControls || window.matchMedia('(pointer: coarse)').matches ? 'touch' : 'keyboard'),
     [testMode],
   );
 
@@ -36,7 +37,7 @@ export function GameScreen({ settings, testMode, overlays, audio, onMatchEnded, 
           settings={settings}
           testMode={testMode}
           overlays={overlays}
-          showTouchControls={showTouchControls}
+          controlMode={controlMode}
           audio={audio}
           onMatchEnded={onMatchEnded}
           onExitToMenu={onExitToMenu}

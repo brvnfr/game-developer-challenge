@@ -11,6 +11,10 @@
   color: var(--color-parchment);
 }
 
+.hud__status {
+  display: contents;
+}
+
 .hud__health {
   display: flex;
   align-items: center;
@@ -71,4 +75,111 @@
 
 .hud__sound {
   pointer-events: auto;
+}
+
+/* Narrow screens (phones in portrait): health and the buttons on the first row, score and time below. */
+@media (width <= 560px) {
+  .hud {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 6px 8px;
+  }
+
+  .hud__health {
+    margin-right: auto;
+  }
+
+  .hud__bar {
+    width: clamp(120px, 38vw, 170px);
+  }
+
+  .hud__bar-label {
+    font-size: 12px;
+  }
+
+  .hud__counters {
+    order: 3;
+    flex-basis: 100%;
+    margin-left: 0;
+    gap: 8px;
+  }
+
+  .hud__counter {
+    min-width: 84px;
+    height: 34px;
+    padding: 0 12px 0 8px;
+    font-size: 17px;
+  }
+
+  .hud__counter img {
+    width: 20px;
+  }
+
+  .hud .round-button {
+    --round-button-size: 40px;
+  }
+}
+
+/* Compact screens (phones in landscape): one slim ribbon in the middle — health, score and time — and a small
+   pause button in the corner, so the arena stays clear. The sound toggle moves to the pause dialog. */
+@media (height <= 520px) {
+  .hud {
+    justify-content: center;
+    padding-top: max(6px, env(safe-area-inset-top));
+  }
+
+  .hud__status {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 3px 16px 3px 8px;
+    border: 2px solid rgb(224 165 76 / 85%);
+    border-radius: 999px;
+    background: rgb(7 22 36 / 72%);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 30%);
+  }
+
+  .hud__heart {
+    width: 20px;
+  }
+
+  .hud__bar {
+    width: 112px;
+  }
+
+  .hud__bar-label {
+    font-size: 11px;
+  }
+
+  .hud__counters {
+    margin-left: 0;
+    gap: 14px;
+  }
+
+  .hud__counter {
+    min-width: 0;
+    height: auto;
+    padding: 0;
+    gap: 5px;
+    background: none;
+    font-size: 17px;
+  }
+
+  .hud__counter img {
+    width: 18px;
+  }
+
+  .hud .hud__sound {
+    display: none;
+  }
+
+  .hud__pause {
+    position: absolute;
+    top: max(6px, env(safe-area-inset-top));
+    right: max(10px, env(safe-area-inset-right));
+  }
+
+  .hud .round-button {
+    --round-button-size: 36px;
+  }
 }

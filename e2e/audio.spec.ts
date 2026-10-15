@@ -20,10 +20,14 @@ test.describe('sound (T-039)', () => {
     expect(played.some((sound) => sound.startsWith('cannon_fire_'))).toBe(true);
     expect(played).toContain('ocean_ambience_loop');
 
-    const soundToggle = page.getByRole('button', { name: 'Sound' });
-    await expect(soundToggle).toHaveAttribute('aria-pressed', 'true');
-    await soundToggle.click();
-    await expect(soundToggle).toHaveAttribute('aria-pressed', 'false');
+    // The pause dialog has the sound toggle on every screen (compact HUDs leave the round HUD toggle out).
+    await page.keyboard.press('Escape');
+    await game.pauseDialog().getByRole('button', { name: 'Sound: on' }).click();
+    await expect(game.pauseDialog().getByRole('button', { name: 'Sound: off' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+    await game.pauseDialog().getByRole('button', { name: 'Resume' }).click();
     const countWhenMuted = (await playedSounds(page)).length;
     await game.holdKeys(['Space', 'KeyQ'], 1_000);
     played = await playedSounds(page);

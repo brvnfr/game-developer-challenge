@@ -12,14 +12,30 @@ export class InputState {
   );
   /** Joystick steering per source; the most recent source wins. */
   private readonly steeringBySource = new Map<string, SteeringCommand>();
+  private readonly listeners = new Set<() => void>();
+  private heldKey = '';
 
   press(sourceId: string, action: GameAction): void {
     this.holdersByAction.get(action)?.add(sourceId);
+    this.notifyIfHeldChanged();
   }
 
   release(sourceId: string, action: GameAction): void {
     this.holdersByAction.get(action)?.delete(sourceId);
+    this.notifyIfHeldChanged();
   }
+
+  /**
+   * Calls `listener` whenever the set of held actions changes (not on key repeats or steering moves), so the
+   * on-screen controls can show what is pressed without polling every frame. Returns the unsubscribe function.
+   */
+  subscribe = (listener: () => void): (() => void) => {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  };
+
+  /** Held actions as a stable key ("fireFront sailForward"; empty when nothing is held). */
+  getHeldKey = (): string => this.heldKey;
 
   /** Sets (or moves) a source's joystick steering. */
   steer(sourceId: string, steering: SteeringCommand): void {
@@ -35,6 +51,7 @@ export class InputState {
   releaseSource(sourceId: string): void {
     for (const holders of this.holdersByAction.values()) holders.delete(sourceId);
     this.steeringBySource.delete(sourceId);
+    this.notifyIfHeldChanged();
   }
 
   isActive(action: GameAction): boolean {
@@ -45,6 +62,7 @@ export class InputState {
   clear(): void {
     for (const holders of this.holdersByAction.values()) holders.clear();
     this.steeringBySource.clear();
+    this.notifyIfHeldChanged();
   }
 
   /** Commands for the next simulation step. */
@@ -59,5 +77,12 @@ export class InputState {
       isFiringRight: this.isActive('fireRight'),
       steering: [...this.steeringBySource.values()].at(-1) ?? null,
     };
+  }
+
+  private notifyIfHeldChanged(): void {
+    const key = GAME_ACTIONS.filter((action) => this.isActive(action)).join(' ');
+    if (key === this.heldKey) return;
+    this.heldKey = key;
+    for (const listener of this.listeners) listener();
   }
 }

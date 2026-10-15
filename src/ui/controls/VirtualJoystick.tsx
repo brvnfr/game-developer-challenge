@@ -66,7 +66,7 @@ export function VirtualJoystick({ input }: { readonly input: InputState }) {
     <div
       ref={baseRef}
       className="joystick"
-      data-testid="touch-joystick"
+      data-testid="control-joystick"
       aria-hidden="true"
       onPointerDown={start}
       onPointerMove={(event) => {

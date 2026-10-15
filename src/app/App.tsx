@@ -27,7 +27,7 @@ function useButtonClickSound(audio: AudioEngine): void {
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       const target = event.target instanceof Element ? event.target.closest('button') : null;
-      if (target && !target.closest('[data-testid="touch-controls"]')) audio.play('ui_click', { volume: 0.5 });
+      if (target && !target.closest('[data-testid="game-controls"]')) audio.play('ui_click', { volume: 0.5 });
     };
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
